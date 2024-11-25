@@ -1,6 +1,9 @@
 # Node.js dependencies
 node_modules/
 
+# Ignore database credentials
+config/secrets.js
+
 # Logs
 logs/
 *.log
@@ -29,6 +32,3 @@ dist/
 build/
 *.bak
 *.tmp
-
-# Ignore database credentials
-config/secrets.js
