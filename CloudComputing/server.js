@@ -1,15 +1,16 @@
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv');
-dotenv.config();
-
-const authRoutes = require('./auth/authRoutes'); // Path ke authRoutes.js
-
+const bodyParser = require('body-parser');
+const authRoutes = require('./auth/authRoutes');
 const app = express();
-app.use(express.json());
 
-app.use('/api/auth', authRoutes); // Endpoint untuk login dan register
+// Middleware
+app.use(bodyParser.json()); // Untuk parsing JSON
 
-const PORT = process.env.PORT || 8000;
+// Daftarkan route
+app.use('/api/auth', authRoutes);
+
+const PORT = 8000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });

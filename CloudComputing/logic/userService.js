@@ -1,15 +1,19 @@
-const db = require('../config/dbConfig');
+const { pool } = require("../config/dbConfig");
+const bcrypt = require("bcrypt");
 
-const getUserById = (userId) => {
-  console.log('Attempting to fetch user with ID:', userId);
+const createUser = async (username, email, password) => {
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+        const [result] = await pool.execute(query, [username, email, hashedPassword]);
 
-  db.query('SELECT * FROM users WHERE id = ?', [userId], (err, result) => {
-    if (err) {
-      console.error('Error fetching user from database:', err);
-    } else {
-      console.log('User fetched successfully:', result);
+        console.log("Insert query result:", result);  // Log hasil query
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Error in createUser:", error);
+        return { success: false, message: "Failed to create user" };
     }
-  });
 };
 
-module.exports = { getUserById };
+module.exports = { createUser };
