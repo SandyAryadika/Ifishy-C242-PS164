@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="page_padding_margin">28dp</dimen>
+    <dimen name="title_onboarding">36sp</dimen>
+    <dimen name="desc_onboarding">16sp</dimen>
+    <dimen name="indicator_height">14dp</dimen>
+    <dimen name="button_height">60dp</dimen>
+</resources>
