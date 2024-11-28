@@ -11,4 +11,13 @@
     <string name="login">Login</string>
     <string name="get_started">Get Started</string>
     <string name="opening_desc">Make sure to give your fish the love and care they deserve from this moment forward!</string>
+    <string name="logo">logo</string>
+    <string name="sign_up_title">Hello, Let’s Sign Up</string>
+    <string name="sign_up_desc">Please enter your information to join with us</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="don_t_have_an_account_register">Don’t have an account? <b>Register</b></string>
 </resources>

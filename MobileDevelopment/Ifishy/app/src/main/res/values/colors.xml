@@ -5,4 +5,6 @@
     <color name="primary_light">#283654</color>
     <color name="secondary_light">#DDDFE4</color>
     <color name="dark_background">#212121</color>
+    <color name="edit_text_background">#E9EBEE</color>
+    <color name="hint_edit_text">#757677</color>
 </resources>
