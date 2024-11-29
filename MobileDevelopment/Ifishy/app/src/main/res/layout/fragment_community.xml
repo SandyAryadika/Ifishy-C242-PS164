@@ -4,17 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.history.FragmentHistory"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".fragment.community.FragmentCommunity">
 
-    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/global_page_padding_margin">
-        
+
         <TextView
-            android:id="@+id/tvFragment"
+            android:id="@+id/tvCommunity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -25,10 +24,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/judul_fragment_history"/>
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchViewHistory"
+            android:text="@string/community"/>
+        
+        <SearchView
+            android:id="@+id/searchviewcommunity"
             android:layout_width="0dp"
             android:layout_height="@dimen/image_button"
             android:layout_marginTop="20dp"
@@ -36,41 +35,22 @@
             android:background="@drawable/search_bar"
             android:backgroundTint="@color/edit_text_background"
             android:hint="@string/hint_search"
+            app:layout_constraintTop_toBottomOf="@id/tvCommunity"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/date_history"
-            app:layout_constraintTop_toBottomOf="@id/tvFragment"
-            app:layout_constraintHorizontalWeight="1"
-            app:layout_constraintHorizontalBias="0.5" />
-
-        <ImageButton
-            android:id="@+id/date_history"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/search_bar"
-            android:backgroundTint="@color/primary_light"
-            android:contentDescription="@string/button_date_for_history"
-            android:outlineProvider="none"
-            android:src="@drawable/date"
-            app:layout_constraintStart_toEndOf="@id/searchViewHistory"
-            app:layout_constraintTop_toBottomOf="@id/tvFragment"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvHistory"
+            android:id="@+id/rvCommunity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
+            app:layout_constraintTop_toBottomOf="@id/searchviewcommunity"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchViewHistory"
-            tools:listitem="@layout/history_item"/>
+            tools:listitem="@layout/item_full_feature"/>
 
-
-        
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

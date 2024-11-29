@@ -37,5 +37,17 @@
     <string name="date_history">Date history</string>
     <string name="judul_history_item">judul history item</string>
     <string name="history_item_cv">history item cv</string>
+    <string name="community">COMMUNITY</string>
+    <string name="comment_count">19</string>
+    <string name="count_comment">0</string>
+    <string name="share_button_biasa">share button biasa</string>
+    <string name="comment_icon">comment icon</string>
+    <string name="upvote">upvote</string>
+    <string name="downvote">downvote</string>
+    <string name="home_menu">Home</string>
+    <string name="history_menu">History</string>
+    <string name="scan_menu">Scan</string>
+    <string name="community_menu">Community</string>
+    <string name="profile_menu">Profile</string>
 
 </resources>
