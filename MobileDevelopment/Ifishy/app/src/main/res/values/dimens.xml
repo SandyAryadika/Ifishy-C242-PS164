@@ -2,8 +2,13 @@
 <resources>
     <dimen name="page_padding_margin">28dp</dimen>
     <dimen name="global_page_padding_margin">20dp</dimen>
-    <dimen name="title_onboarding">36sp</dimen>
-    <dimen name="desc_onboarding">16sp</dimen>
+    <dimen name="extra_large_text">36sp</dimen>
+    <dimen name="large_text">26sp</dimen>
+    <dimen name="medium_text">16sp</dimen>
+    <dimen name="small_text">14sp</dimen>
     <dimen name="indicator_height">14dp</dimen>
-    <dimen name="button_height">60dp</dimen>
+    <dimen name="author_padding_horizontal">15dp</dimen>
+    <dimen name="author_padding_vertical">2dp</dimen>
+    <dimen name="back_button">55dp</dimen>
+    <dimen name="image_button">48dp</dimen>
 </resources>

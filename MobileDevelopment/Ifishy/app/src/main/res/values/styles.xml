@@ -3,4 +3,7 @@
     <style name="Indicator.CornerRadius" parent="Theme.Ifishy">
         <item name="cornerSize">50%</item>
     </style>
+    <style name="Indicator.CornerRadius.Image" parent="Theme.Ifishy">
+        <item name="cornerSize">5%</item>
+    </style>
 </resources>
