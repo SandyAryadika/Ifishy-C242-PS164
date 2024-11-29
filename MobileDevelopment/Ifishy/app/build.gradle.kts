@@ -51,4 +51,8 @@ dependencies {
     //Lottie
     implementation(libs.lottie)
 
+    //navigation
+    implementation(libs.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+
 }
