@@ -1,6 +1,8 @@
 const pool = require('../config/dbConfig');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { Storage } = require('@google-cloud/storage');
+const path = require('path');
 const { JWT_SECRET } = require('../config/secrets');
 
 // Register User
@@ -109,39 +111,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getLoggedInUser = async (req, res) => {
-  try {
-      const token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
-          return res.status(401).json({
-              success: false,
-              message: "Access token missing",
-          });
-      }
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const [rows] = await pool.query("SELECT id, username, email FROM users WHERE id = ?", [decoded.id]);
-
-      if (rows.length === 0) {
-          return res.status(404).json({
-              success: false,
-              message: "User not found",
-          });
-      }
-
-      res.status(200).json({
-          success: true,
-          user: rows[0],
-      });
-  } catch (error) {
-      console.error("Error in getLoggedInUser:", error);
-      res.status(500).json({
-          success: false,
-          message: "Failed to fetch user info",
-      });
-  }
-};
-
 // Fungsi untuk mengupdate profil pengguna
 const updateUserProfile = async (req, res) => {
   const { username, email, password, newPassword } = req.body;
@@ -245,10 +214,746 @@ const deleteUserAccount = async (req, res) => {
   }
 };
 
+// Logout User
+const logoutUser = async (req, res) => {
+  try {
+    // Hapus token dari sisi klien (opsional untuk server)
+    res.status(200).json({
+      success: true,
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    console.error("Error in logoutUser:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to logout",
+    });
+  }
+};
+
+const storage = new Storage({
+  projectId: 'bangkit-capstone-ps164',
+  keyFilename: './service-account-key.json',
+});
+
+// Nama bucket
+const bucketName = 'ifishy-photos';
+const profileFolder = 'photo-profile-user';
+const postFolder = 'image-post';
+
+const uploadProfilePhoto = async (req, res) => {
+  try {
+    const { userId } = req.body; // Ambil userId dari body
+    const file = req.file; // File yang diunggah
+
+    if (!file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    // Upload ke bucket GCS di folder photo-profile-user
+    const blob = storage.bucket(bucketName).file(`${profileFolder}/${Date.now()}-${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      contentType: file.mimetype,
+    });
+
+    blobStream.on('error', (err) => {
+      console.error('Error uploading to GCS:', err);
+      res.status(500).json({ success: false, message: 'Failed to upload profile photo' });
+    });
+
+    blobStream.on('finish', async () => {
+      const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+
+      // Update URL foto profil di database
+      const sql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
+      await pool.query(sql, [publicUrl, userId]);
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile photo uploaded successfully!',
+        photoUrl: publicUrl,
+      });
+    });
+
+    blobStream.end(file.buffer);
+  } catch (error) {
+    console.error('Error in uploadProfilePhoto:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to upload profile photo',
+    });
+  }
+};
+
+// Fungsi untuk mendapatkan data dashboard berdasarkan email
+const getDashboardData = async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    // Query untuk mendapatkan data pengguna berdasarkan email
+    const [rows] = await pool.query('SELECT id, username, email, profile_photo FROM users WHERE email = ?', [email]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Mengembalikan data pengguna
+    res.status(200).json({
+      success: true,
+      message: 'Dashboard data retrieved successfully',
+      data: rows[0], // Mengambil data pengguna pertama yang ditemukan
+    });
+  } catch (error) {
+    console.error('Error in getDashboardData:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve dashboard data',
+    });
+  }
+};
+
+// Mendapatkan profile user berdasarkan email
+const getUserProfile = async (req, res) => {
+  try {
+    const { email } = req.params; // Mengambil email dari parameter URL
+
+    // Query untuk mendapatkan data user berdasarkan email
+    const sql = 'SELECT id, username, email, profile_photo FROM users WHERE email = ?';
+    const [rows] = await pool.query(sql, [email]); 
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'User profile retrieved successfully',
+      profile: rows[0],
+    });
+  } catch (error) {
+    console.error('Error in getUserProfile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve user profile',
+    });
+  }
+};
+
+// membuat postingan
+const createPost = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const { user } = req; // Informasi user dari token JWT
+    const file = req.file; // File yang diunggah
+
+    let imageUrl = null;
+    if (file) {
+      // Upload ke bucket GCS di folder image-post
+      const blob = storage.bucket(bucketName).file(`${postFolder}/${Date.now()}-${file.originalname}`);
+      const blobStream = blob.createWriteStream({
+        resumable: false,
+        contentType: file.mimetype,
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on('error', reject);
+        blobStream.on('finish', resolve);
+        blobStream.end(file.buffer);
+      });
+
+      imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+    }
+
+    // Simpan data postingan ke database
+    const sql = 'INSERT INTO posts (user_id, title, content, image_url) VALUES (?, ?, ?, ?)';
+    const [result] = await pool.query(sql, [user.id, title, content, imageUrl]);
+
+    res.status(201).json({
+      success: true,
+      message: 'Post created successfully!',
+      postId: result.insertId,
+    });
+  } catch (error) {
+    console.error('Error in createPost:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create post',
+    });
+  }
+};
+
+// menampilkan postingan semua
+const getPosts = async (req, res) => {
+  try {
+    // Ambil semua postingan beserta username dari user yang mem-posting
+    const sqlPosts = `
+      SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username
+      FROM posts p
+      JOIN users u ON p.user_id = u.id
+      ORDER BY p.created_at DESC
+    `;
+    const [posts] = await pool.query(sqlPosts);
+
+    // Ambil komentar untuk setiap postingan
+    const postsWithComments = await Promise.all(posts.map(async (post) => {
+      // Ambil komentar berdasarkan post_id
+      const sqlComments = `
+        SELECT c.id, c.content, c.created_at, u.username
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.post_id = ?
+        ORDER BY c.created_at ASC
+      `;
+      const [comments] = await pool.query(sqlComments, [post.id]);
+
+      // Hitung waktu sejak komentar
+      const formattedComments = comments.map(comment => ({
+        ...comment,
+        timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
+      }));
+
+      return {
+        ...post,
+        comments: formattedComments, // Menambahkan komentar ke setiap postingan
+        timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      posts: postsWithComments, // Mengirimkan postingan beserta komentar
+    });
+  } catch (error) {
+    console.error('Error in getPosts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve posts',
+    });
+  }
+};
+
+
+//User dapat berkomentar pada postingan
+const addComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const { user } = req;
+    const { postId } = req.params;
+
+    // Periksa jika postId valid
+    if (!postId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Post ID is required',
+      });
+    }
+
+    if (!content) {
+      return res.status(400).json({
+        success: false,
+        message: 'Content is required',
+      });
+    }
+
+    const sql = 'INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)';
+    await pool.query(sql, [postId, user.id, content]);
+
+    res.status(201).json({
+      success: true,
+      message: 'Comment added successfully!',
+    });
+  } catch (error) {
+    console.error('Error in addComment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add comment',
+    });
+  }
+};
+
+//Menampilkan semua komentar pada sebuah postingan
+const getComments = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Query untuk mendapatkan semua komentar terkait postingan
+    const commentsSql = `
+      SELECT c.id, c.content, c.created_at, u.username
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.post_id = ?
+      ORDER BY c.created_at ASC
+    `;
+    const [comments] = await pool.query(commentsSql, [postId]);
+
+    // Query untuk mendapatkan semua balasan komentar terkait postingan
+    const repliesSql = `
+      SELECT r.id, r.content, r.created_at, r.parent_comment_id, u.username
+      FROM replies r
+      JOIN users u ON r.user_id = u.id
+      WHERE r.parent_comment_id IN (SELECT id FROM comments WHERE post_id = ?)
+      ORDER BY r.created_at ASC
+    `;
+    const [replies] = await pool.query(repliesSql, [postId]);
+
+    // Gabungkan komentar dengan balasannya dalam struktur nested
+    const formattedComments = comments.map((comment) => {
+      const commentReplies = replies
+        .filter((reply) => reply.parent_comment_id === comment.id)
+        .map((reply) => ({
+          id: reply.id,
+          content: reply.content,
+          created_at: reply.created_at,
+          username: reply.username,
+          timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
+        }));
+
+      return {
+        ...comment,
+        timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
+        replies: commentReplies, // Tambahkan array replies ke setiap komentar
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      comments: formattedComments,
+    });
+  } catch (error) {
+    console.error('Error in getComments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve comments',
+    });
+  }
+};
+
+//Membalas komentar
+const addReplyToComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { userId, content } = req.body; // userId dan content harus dikirimkan dari client
+
+    if (!content) {
+      return res.status(400).json({
+        success: false,
+        message: 'Reply content is required',
+      });
+    }
+
+    const sql = 'INSERT INTO replies (parent_comment_id, user_id, content) VALUES (?, ?, ?)';
+    await pool.query(sql, [commentId, userId, content]);
+
+    res.status(201).json({
+      success: true,
+      message: 'Reply added successfully',
+    });
+  } catch (error) {
+    console.error('Error adding reply to comment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add reply to comment',
+    });
+  }
+};
+
+const getCommentsWithReplies = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Query untuk mendapatkan semua komentar terkait postingan
+    const commentsSql = `
+      SELECT c.id, c.content, c.created_at, u.username,
+             (SELECT COUNT(*) FROM likes WHERE comment_id = c.id) AS like_count
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.post_id = ?
+      ORDER BY c.created_at ASC
+    `;
+    const [comments] = await pool.query(commentsSql, [postId]);
+
+    // Query untuk mendapatkan semua balasan terkait komentar
+    const repliesSql = `
+      SELECT r.id, r.content, r.created_at, r.parent_comment_id, u.username
+      FROM replies r
+      JOIN users u ON r.user_id = u.id
+      WHERE r.parent_comment_id IN (SELECT id FROM comments WHERE post_id = ?)
+      ORDER BY r.created_at ASC
+    `;
+    const [replies] = await pool.query(repliesSql, [postId]);
+
+    // Gabungkan komentar dengan balasannya
+    const commentsWithReplies = comments.map((comment) => {
+      const commentReplies = replies
+        .filter((reply) => reply.parent_comment_id === comment.id)
+        .map((reply) => ({
+          id: reply.id,
+          content: reply.content,
+          created_at: reply.created_at,
+          username: reply.username,
+          timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
+        }));
+
+      return {
+        ...comment,
+        timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
+        replies: commentReplies,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      comments: commentsWithReplies,
+    });
+  } catch (error) {
+    console.error('Error in getCommentsWithReplies:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve comments and replies',
+    });
+  }
+};
+
+//menambahkan like
+const addLikeToComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req.user.id; // Mengambil userId dari token JWT
+
+    // Cek apakah user sudah memberikan like pada komentar ini
+    const checkLikeQuery = 'SELECT * FROM likes WHERE comment_id = ? AND user_id = ?';
+    const [existingLike] = await pool.query(checkLikeQuery, [commentId, userId]);
+
+    if (existingLike.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already liked this comment',
+      });
+    }
+
+    // Jika belum ada like, tambahkan like
+    const addLikeQuery = 'INSERT INTO likes (comment_id, user_id) VALUES (?, ?)';
+    await pool.query(addLikeQuery, [commentId, userId]);
+
+    // Update jumlah like di komentar
+    const updateLikeCountQuery = 'UPDATE comments SET like_count = like_count + 1 WHERE id = ?';
+    await pool.query(updateLikeCountQuery, [commentId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Like added to comment successfully',
+    });
+  } catch (error) {
+    console.error('Error adding like to comment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add like to comment',
+    });
+  }
+};
+
+// Menghapus like dari komentar
+const removeLikeFromComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req.user.id; // Mengambil userId dari token JWT
+
+    // Cek apakah user sudah memberikan like pada komentar ini
+    const checkLikeQuery = 'SELECT * FROM likes WHERE comment_id = ? AND user_id = ?';
+    const [existingLike] = await pool.query(checkLikeQuery, [commentId, userId]);
+
+    if (existingLike.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have not liked this comment yet',
+      });
+    }
+
+    // Jika sudah ada like, hapus like
+    const removeLikeQuery = 'DELETE FROM likes WHERE comment_id = ? AND user_id = ?';
+    await pool.query(removeLikeQuery, [commentId, userId]);
+
+    // Update jumlah like di komentar
+    const updateLikeCountQuery = 'UPDATE comments SET like_count = like_count - 1 WHERE id = ?';
+    await pool.query(updateLikeCountQuery, [commentId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Like removed from comment successfully',
+    });
+  } catch (error) {
+    console.error('Error removing like from comment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove like from comment',
+    });
+  }
+};
+
+// Menampilkan semua komentar yang disukai oleh user
+const getLikedCommentsByUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // Mengambil userId dari token JWT
+
+    // Query untuk mendapatkan komentar yang disukai oleh user
+    const sql = `
+      SELECT c.id, c.content, c.created_at, c.like_count, p.title AS post_title, p.id AS post_id
+      FROM likes l
+      JOIN comments c ON l.comment_id = c.id
+      JOIN posts p ON c.post_id = p.id
+      WHERE l.user_id = ?
+      ORDER BY c.created_at DESC
+    `;
+    
+    const [likedComments] = await pool.query(sql, [userId]);
+
+    // Format waktu komentar yang disukai
+    const formattedComments = likedComments.map(comment => ({
+      ...comment,
+      timeSinceLiked: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
+    }));
+
+    res.status(200).json({
+      success: true,
+      likedComments: formattedComments,
+    });
+  } catch (error) {
+    console.error('Error in getLikedCommentsByUser:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve liked comments',
+    });
+  }
+};
+
+// Fungsi untuk memperbarui skor postingan berdasarkan upvote dan downvote
+const updatePostScore = async (postId) => {
+  try {
+    const updateScoreQuery = `
+      UPDATE posts
+      SET score = (
+        SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'upvote'
+      ) - (
+        SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'downvote'
+      )
+      WHERE id = ?
+    `;
+    await pool.query(updateScoreQuery, [postId, postId, postId]);
+  } catch (error) {
+    console.error('Error updating post score:', error);
+  }
+};
+
+// Endpoint untuk upvote postingan
+const addUpvoteToPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Cek apakah pengguna sudah memberikan upvote atau downvote pada postingan ini
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length > 0) {
+      if (existingVote[0].vote_type === 'upvote') {
+        return res.status(400).json({
+          success: false,
+          message: 'You have already upvoted this post',
+        });
+      }
+      if (existingVote[0].vote_type === 'downvote') {
+        // Hapus downvote jika ada, kemudian tambahkan upvote
+        const removeVoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
+        await pool.query(removeVoteQuery, [postId, userId]);
+
+        const addUpvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
+        await pool.query(addUpvoteQuery, [postId, userId, 'upvote']);
+
+        // Update jumlah upvote di postingan
+        const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?';
+        await pool.query(updateUpvoteCountQuery, [postId]);
+
+        return res.status(200).json({
+          success: true,
+          message: 'Upvote added successfully',
+        });
+      }
+    } else {
+      // Jika belum ada vote, tambahkan upvote
+      const addUpvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
+      await pool.query(addUpvoteQuery, [postId, userId, 'upvote']);
+
+      // Update jumlah upvote di postingan
+      const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?';
+      await pool.query(updateUpvoteCountQuery, [postId]);
+
+      res.status(200).json({
+        success: true,
+        message: 'Upvote added successfully',
+      });
+    }
+  } catch (error) {
+    console.error('Error adding upvote:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add upvote',
+    });
+  }
+};
+
+const addDownvoteToPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Cek apakah user sudah memberikan vote
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length > 0) {
+      if (existingVote[0].vote_type === 'downvote') {
+        return res.status(400).json({
+          success: false,
+          message: 'You have already downvoted this post',
+        });
+      } else if (existingVote[0].vote_type === 'upvote') {
+        // Menghapus upvote dan memberi downvote
+        const removeUpvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
+        await pool.query(removeUpvoteQuery, [postId, userId]);
+
+        // Menambahkan downvote
+        const addDownvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
+        await pool.query(addDownvoteQuery, [postId, userId, 'downvote']);
+
+        // Update jumlah downvote pada post
+        const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?';
+        await pool.query(updateDownvoteCountQuery, [postId]);
+
+        return res.status(200).json({
+          success: true,
+          message: 'Downvote added to post successfully',
+        });
+      }
+    } else {
+      // Jika belum ada vote, langsung downvote
+      const addDownvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
+      await pool.query(addDownvoteQuery, [postId, userId, 'downvote']);
+
+      // Update jumlah downvote pada post
+      const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?';
+      await pool.query(updateDownvoteCountQuery, [postId]);
+
+      res.status(200).json({
+        success: true,
+        message: 'Downvote added to post successfully',
+      });
+    }
+  } catch (error) {
+    console.error('Error adding downvote to post:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add downvote to post',
+    });
+  }
+};
+
+const removeDownvoteFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Cek apakah user sudah memberikan downvote
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length === 0 || existingVote[0].vote_type !== 'downvote') {
+      return res.status(400).json({
+        success: false,
+        message: 'You have not downvoted this post yet',
+      });
+    }
+
+    // Hapus downvote dari tabel post_votes
+    const removeDownvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
+    await pool.query(removeDownvoteQuery, [postId, userId]);
+
+    // Update jumlah downvote pada post
+    const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count - 1 WHERE id = ?';
+    await pool.query(updateDownvoteCountQuery, [postId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Downvote removed from post successfully',
+    });
+  } catch (error) {
+    console.error('Error removing downvote from post:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove downvote from post',
+    });
+  }
+};
+
+const getVoteStatus = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Query untuk memeriksa apakah pengguna sudah memberikan vote
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length > 0) {
+      // Jika sudah ada vote, kembalikan jenis vote yang diberikan
+      return res.status(200).json({
+        success: true,
+        message: 'Vote status retrieved successfully',
+        vote_status: existingVote[0].vote_type, // Bisa "upvote" atau "downvote"
+      });
+    }
+
+    // Jika belum ada vote, kembalikan status "no vote"
+    res.status(200).json({
+      success: true,
+      message: 'User has not voted yet',
+      vote_status: 'no vote',
+    });
+  } catch (error) {
+    console.error('Error retrieving vote status:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve vote status',
+    });
+  }
+};
+
 module.exports = { 
   registerUser, 
   loginUser, 
   getAllUsers, 
-  getLoggedInUser, 
   updateUserProfile, 
-  deleteUserAccount };
+  deleteUserAccount,
+  logoutUser,
+  uploadProfilePhoto,
+  getDashboardData,
+  getUserProfile,
+  createPost,
+  getPosts,
+  addComment,
+  getComments,
+  addReplyToComment,
+  getCommentsWithReplies,
+  addLikeToComment,
+  removeLikeFromComment,
+  getLikedCommentsByUser,
+  addUpvoteToPost,
+  addDownvoteToPost,
+  removeDownvoteFromPost,
+  getVoteStatus };

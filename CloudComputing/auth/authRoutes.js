@@ -1,12 +1,31 @@
 const express = require('express');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() }); // Simpan file di memori sementara
+const uploadMiddleware = require('../middleware/uploadMiddleware');
 const { body } = require('express-validator');
+const { authenticateToken } = require('../middleware/authMiddleware');
 const { 
     registerUser, 
     loginUser, 
-    getAllUsers, 
-    getLoggedInUser, 
+    getAllUsers,
     updateUserProfile, 
-    deleteUserAccount } = require('./authController');
+    deleteUserAccount,
+    logoutUser,
+    uploadProfilePhoto,
+    getDashboardData,
+    getUserProfile,
+    createPost,
+    getPosts,
+    addComment,
+    getComments,
+    addReplyToComment,
+    getCommentsWithReplies,
+    addLikeToComment,
+    removeLikeFromComment,
+    getLikedCommentsByUser,
+    addUpvoteToPost,
+    addDownvoteToPost,
+    getVoteStatus } = require('./authController');
 const router = express.Router();
 
 // Validasi untuk registrasi
@@ -31,8 +50,24 @@ router.post(
 );
 
 router.get('/users', getAllUsers);
-router.get('/me', getLoggedInUser);
 router.put('/update', updateUserProfile);
 router.delete('/delete', deleteUserAccount);
+router.post('/logout', logoutUser);
+router.post('/upload-photo',  authenticateToken, upload.single('photo'), uploadProfilePhoto); 
+router.get('/dashboard/:email', authenticateToken, getDashboardData);
+router.get('/profile/:email', authenticateToken, getUserProfile);
+router.post('/community/posts', authenticateToken, upload.single('image'), createPost); 
+router.get('/community/posts', authenticateToken, getPosts); // Ambil semua posting
+router.post('/community/posts/:postId/comments', authenticateToken, addComment); // Tambahkan komentar
+router.get('/community/posts/:postId/comments', authenticateToken, getComments); // Ambil komentar pada postingan
+router.post('/comments/:commentId/reply', authenticateToken, addReplyToComment); // Tambahkan reply ke komentar
+router.get('/community/posts/:postId/comments', authenticateToken, getCommentsWithReplies); // Dapatkan semua komentar beserta balasannya
+router.post('/comments/:commentId/like', authenticateToken, addLikeToComment); // Tambahkan like pada komentar
+router.delete('/comments/:commentId/like', authenticateToken, removeLikeFromComment); // Hapus like dari komentar
+router.get('/users/likes', authenticateToken, getLikedCommentsByUser);
+router.post('/community/posts/:postId/upvote', authenticateToken, addUpvoteToPost); // Route untuk melakukan upvote pada postingan
+router.post('/community/posts/:postId/downvote', authenticateToken, addDownvoteToPost); // Route untuk melakukan downvote pada postingan
+router.delete('/community/posts/:postId/downvote', authenticateToken, addDownvoteToPost);
+router.get('/community/posts/:postId/vote-status', authenticateToken, getVoteStatus);
 
 module.exports = router;
