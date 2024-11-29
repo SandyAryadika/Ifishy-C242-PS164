@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    tools:context=".ui.onboarding.OnBoardingActivity"
+    >
+
+    <com.ifishy.ui.onboarding.OnBoardingMotionLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/activity_on_boarding_scene"
+        android:padding="@dimen/page_padding_margin"
+        android:id="@+id/onboarding"
+        android:clipToPadding="false"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/anim_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/indicator_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/anim_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/indicator_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/anim_3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/indicator_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/indicator_1"
+            android:layout_width="48dp"
+            android:layout_height="@dimen/indicator_height"
+            android:layout_marginBottom="14dp"
+            android:background="@color/primary_light"
+            app:layout_constraintBottom_toTopOf="@+id/title_1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeAppearanceOverlay="@style/Indicator.CornerRadius" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/indicator_2"
+            android:layout_width="14dp"
+            android:layout_height="@dimen/indicator_height"
+            android:layout_marginStart="5dp"
+            android:background="@color/secondary_light"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_1"
+            app:layout_constraintStart_toEndOf="@id/indicator_1"
+            app:layout_constraintTop_toTopOf="@id/indicator_1"
+            app:shapeAppearanceOverlay="@style/Indicator.CornerRadius" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/indicator_3"
+            android:layout_width="14dp"
+            android:layout_height="@dimen/indicator_height"
+            android:layout_marginStart="5dp"
+            android:background="@color/secondary_light"
+            app:layout_constraintBottom_toBottomOf="@+id/indicator_2"
+            app:layout_constraintStart_toEndOf="@id/indicator_2"
+            app:layout_constraintTop_toTopOf="@id/indicator_2"
+            app:shapeAppearanceOverlay="@style/Indicator.CornerRadius" />
+
+        <TextView
+            android:id="@+id/title_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/welcome_to_ifishy"
+            android:textSize="@dimen/title_onboarding"
+            app:layout_constraintBottom_toTopOf="@id/desc_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:alpha="0"
+            android:id="@+id/title_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/one_click_disease_diagnostic"
+            android:textSize="@dimen/title_onboarding"
+            app:layout_constraintBottom_toBottomOf="@id/title_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_1" />
+
+        <TextView
+            android:alpha="0"
+            android:id="@+id/title_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/community_hub_for_discussions"
+            android:textSize="@dimen/title_onboarding"
+            app:layout_constraintBottom_toBottomOf="@id/title_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_1" />
+
+        <TextView
+            android:id="@+id/desc_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:justificationMode="inter_word"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:text="@string/onboarding_desc_1"
+            android:textSize="@dimen/desc_onboarding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_1" />
+
+        <TextView
+            android:alpha="0"
+            android:id="@+id/desc_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins"
+            android:justificationMode="inter_word"
+            android:includeFontPadding="false"
+            android:text="@string/onboarding_desc_2"
+            android:textSize="@dimen/desc_onboarding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_2" />
+
+        <TextView
+            android:id="@+id/desc_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:alpha="0"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:text="@string/onboarding_desc_3"
+            android:textSize="@dimen/desc_onboarding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_3" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_button"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/next"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:backgroundTint="@color/primary_light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/desc_1" />
+
+    </com.ifishy.ui.onboarding.OnBoardingMotionLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

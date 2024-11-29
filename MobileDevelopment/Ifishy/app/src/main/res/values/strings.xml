@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Ifishy</string>
+    <string name="welcome_to_ifishy">Welcome to\nIfishy!</string>
+    <string name="onboarding_desc_1">Discover a modern way to ensuring your fish\'s health. Ifishy allows you to detect fish diseases with just one click.</string>
+    <string name="next">Next</string>
+    <string name="one_click_disease_diagnostic">One Click\nDiagnostic</string>
+    <string name="community_hub_for_discussions">Community\nDiscussion</string>
+    <string name="onboarding_desc_2">Utilize advanced AI technology to identify symptoms early with one click and take action before it\'s too late!</string>
+    <string name="onboarding_desc_3">Connect with others to discuss challenges, share experiences, and find solutions for maintaining healthy fish together!</string>
+    <string name="opening_title">Take Care of Your Fish!</string>
+    <string name="login">Login</string>
+    <string name="get_started">Get Started</string>
+    <string name="opening_desc">Make sure to give your fish the love and care they deserve from this moment forward!</string>
+    <string name="logo">logo</string>
+    <string name="sign_up_title">Hello, Let’s Sign Up</string>
+    <string name="sign_up_desc">Please enter your information to join with us</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="don_t_have_an_account_register">Don’t have an account? <b>Register</b></string>
+</resources>
