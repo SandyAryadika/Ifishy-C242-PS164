@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.databinding.ActivityOpeningBinding
+import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.auth.SignUpActivity
 
 class OpeningActivity : AppCompatActivity(), View.OnClickListener {
@@ -43,7 +44,7 @@ class OpeningActivity : AppCompatActivity(), View.OnClickListener {
                 goTo(SignUpActivity::class.java)
             }
             binding.loginButton->{
-
+                goTo(LoginActivity::class.java)
             }
         }
     }

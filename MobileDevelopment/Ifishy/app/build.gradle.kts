@@ -18,9 +18,14 @@ android {
     }
     buildFeatures{
         viewBinding = true
+        buildConfig = true
     }
     buildTypes {
+        debug{
+            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/\"")
+        }
         release {
+            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -48,11 +53,19 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
     //Lottie
     implementation(libs.lottie)
 
-    //navigation
+    //Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+
+    //Retrofit
+    implementation(libs.converter.gson)
+    implementation(libs.retrofit)
 
 }

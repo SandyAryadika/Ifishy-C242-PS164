@@ -33,10 +33,6 @@
     <string name="hint_search">search</string>
     <string name="button_date_for_history">Button date for history</string>
     <string name="foto_preview_postingan">Foto preview postingan</string>
-    <string name="white_spot_disease">White Spot Disease</string>
-    <string name="date_history">Date history</string>
-    <string name="judul_history_item">judul history item</string>
-    <string name="history_item_cv">history item cv</string>
     <string name="community">COMMUNITY</string>
     <string name="comment_count">19</string>
     <string name="count_comment">0</string>
@@ -49,5 +45,6 @@
     <string name="scan_menu">Scan</string>
     <string name="community_menu">Community</string>
     <string name="profile_menu">Profile</string>
+    <string name="no_internet">No Internet Connection</string>
 
 </resources>
