@@ -28,4 +28,14 @@
     <string name="share">share</string>
     <string name="back">back</string>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="judul_fragment_history">HISTORY</string>
+    <string name="hint_search">search</string>
+    <string name="button_date_for_history">Button date for history</string>
+    <string name="foto_preview_postingan">Foto preview postingan</string>
+    <string name="white_spot_disease">White Spot Disease</string>
+    <string name="date_history">Date history</string>
+    <string name="judul_history_item">judul history item</string>
+    <string name="history_item_cv">history item cv</string>
+
 </resources>
