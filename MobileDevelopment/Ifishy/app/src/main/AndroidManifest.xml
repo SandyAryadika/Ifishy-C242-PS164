@@ -19,10 +19,14 @@
             android:exported="false" />
         <activity
             android:name=".ui.activity.auth.LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity
             android:name=".ui.activity.auth.SignUpActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity
             android:name=".ui.activity.opening.OpeningActivity"
             android:exported="false" />

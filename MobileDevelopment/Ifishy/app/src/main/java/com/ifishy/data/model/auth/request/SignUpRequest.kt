@@ -2,7 +2,7 @@ package com.ifishy.data.model.auth.request
 
 import com.google.gson.annotations.SerializedName
 
-data class RegisterRequest(
+data class SignUpRequest(
 
 	@field:SerializedName("password")
 	val password: String? = null,

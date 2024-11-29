@@ -14,6 +14,8 @@
     <string name="logo">logo</string>
     <string name="sign_up_title">Hello, Let’s Sign Up</string>
     <string name="sign_up_desc">Please enter your information to join with us</string>
+    <string name="login_title">Hello, Let’s Login</string>
+    <string name="login_desc">Please enter your login information</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

@@ -18,12 +18,14 @@ class AuthViewModelFactory private constructor(private val authRepository: AuthR
         throw IllegalArgumentException ("$modelClass not found")
     }
 
-    @Volatile
-    private var INSTANCE: AuthViewModelFactory?=null
+    companion object{
+        @Volatile
+        private var INSTANCE: AuthViewModelFactory?=null
 
-    fun getInstance(context: Application): AuthViewModelFactory{
-        return INSTANCE ?: synchronized(this){
-            INSTANCE ?: AuthViewModelFactory(Injection.authRepository(context)).also { INSTANCE = it }
+        fun getInstance(context: Application): AuthViewModelFactory{
+            return INSTANCE ?: synchronized(this){
+                INSTANCE ?: AuthViewModelFactory(Injection.authRepository(context)).also { INSTANCE = it }
+            }
         }
     }
 

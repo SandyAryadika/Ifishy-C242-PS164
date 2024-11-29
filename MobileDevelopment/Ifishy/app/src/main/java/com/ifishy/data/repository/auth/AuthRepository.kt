@@ -6,9 +6,9 @@ import com.ifishy.R
 import com.ifishy.api.ApiService
 import com.ifishy.data.model.auth.ErrorResponse
 import com.ifishy.data.model.auth.request.LoginRequest
-import com.ifishy.data.model.auth.request.RegisterRequest
+import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
-import com.ifishy.data.model.auth.response.RegisterResponse
+import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.utils.ResponseState
 import retrofit2.HttpException
 import java.io.IOException
@@ -28,9 +28,9 @@ class AuthRepository private constructor(private val apiService: ApiService,priv
         }
     }
 
-    suspend fun register(username:String,email: String,password: String,confirmPassword:String): ResponseState<RegisterResponse>{
+    suspend fun signUp(username:String,email: String,password: String,confirmPassword:String): ResponseState<SignUpResponse>{
         return try {
-            val response = apiService.register(RegisterRequest(username,email,password,confirmPassword))
+            val response = apiService.register(SignUpRequest(username,email,password,confirmPassword))
             ResponseState.Success(response)
         }catch (e: IOException){
             ResponseState.Error(context.getString(R.string.no_internet))

@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ifishy.data.model.auth.response.LoginResponse
-import com.ifishy.data.model.auth.response.RegisterResponse
+import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.utils.ResponseState
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     val loginResponse : MutableLiveData<ResponseState<LoginResponse>> = MutableLiveData()
-    val registerResponse : MutableLiveData<ResponseState<RegisterResponse>> = MutableLiveData()
+    val signUpResponse : MutableLiveData<ResponseState<SignUpResponse>> = MutableLiveData()
 
 
     fun userLogin(email: String,password:String){
@@ -24,12 +24,11 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun register(username: String,email: String,password: String,confirmPassword:String){
+    fun signUp(username: String,email: String,password: String,confirmPassword:String){
         viewModelScope.launch {
-            registerResponse.value = ResponseState.Loading
-
-            val response = authRepository.register(username,email,password,confirmPassword)
-            registerResponse.postValue(response)
+            signUpResponse.value = ResponseState.Loading
+            val response = authRepository.signUp(username,email,password,confirmPassword)
+            signUpResponse.postValue(response)
         }
     }
 

@@ -2,7 +2,7 @@ package com.ifishy.data.model.auth.response
 
 import com.google.gson.annotations.SerializedName
 
-data class RegisterResponse(
+data class SignUpResponse(
 
 	@field:SerializedName("success")
 	val success: Boolean? = null,
