@@ -7,10 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    tools:context=".ui.onboarding.OnBoardingActivity"
+    tools:context=".ui.activity.onboarding.OnBoardingActivity"
     >
 
-    <com.ifishy.ui.onboarding.OnBoardingMotionLayout
+    <com.ifishy.ui.activity.onboarding.OnBoardingMotionLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutDescription="@xml/activity_on_boarding_scene"
@@ -91,7 +91,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/welcome_to_ifishy"
-            android:textSize="@dimen/title_onboarding"
+            android:textSize="@dimen/extra_large_text"
             app:layout_constraintBottom_toTopOf="@id/desc_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -104,7 +104,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/one_click_disease_diagnostic"
-            android:textSize="@dimen/title_onboarding"
+            android:textSize="@dimen/extra_large_text"
             app:layout_constraintBottom_toBottomOf="@id/title_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,7 +118,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/community_hub_for_discussions"
-            android:textSize="@dimen/title_onboarding"
+            android:textSize="@dimen/extra_large_text"
             app:layout_constraintBottom_toBottomOf="@id/title_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -133,7 +133,7 @@
             android:fontFamily="@font/poppins"
             android:includeFontPadding="false"
             android:text="@string/onboarding_desc_1"
-            android:textSize="@dimen/desc_onboarding"
+            android:textSize="@dimen/small_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_1" />
@@ -148,7 +148,7 @@
             android:justificationMode="inter_word"
             android:includeFontPadding="false"
             android:text="@string/onboarding_desc_2"
-            android:textSize="@dimen/desc_onboarding"
+            android:textSize="@dimen/small_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_2" />
@@ -163,7 +163,7 @@
             android:includeFontPadding="false"
             android:justificationMode="inter_word"
             android:text="@string/onboarding_desc_3"
-            android:textSize="@dimen/desc_onboarding"
+            android:textSize="@dimen/small_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_3" />
@@ -185,6 +185,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/desc_1" />
 
-    </com.ifishy.ui.onboarding.OnBoardingMotionLayout>
+    </com.ifishy.ui.activity.onboarding.OnBoardingMotionLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

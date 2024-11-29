@@ -1,4 +1,4 @@
-package com.ifishy.ui.auth
+package com.ifishy.ui.activity.auth
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

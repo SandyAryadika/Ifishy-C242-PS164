@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/page_padding_margin"
-    tools:context=".ui.opening.OpeningActivity"
+    tools:context=".ui.activity.opening.OpeningActivity"
     >
 
     <androidx.constraintlayout.motion.widget.MotionLayout
@@ -27,7 +27,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/opening_title"
-            android:textSize="@dimen/title_onboarding"
+            android:textSize="@dimen/extra_large_text"
             app:layout_constraintBottom_toTopOf="@+id/opening_desc"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -40,7 +40,7 @@
             android:fontFamily="@font/poppins"
             android:includeFontPadding="false"
             android:text="@string/opening_desc"
-            android:textSize="@dimen/desc_onboarding"
+            android:textSize="@dimen/small_text"
             app:layout_constraintBottom_toTopOf="@+id/get_started_button"
             app:layout_constraintStart_toStartOf="parent" />
 

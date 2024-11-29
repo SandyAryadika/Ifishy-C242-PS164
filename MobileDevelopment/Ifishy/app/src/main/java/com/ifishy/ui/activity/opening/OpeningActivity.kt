@@ -1,4 +1,4 @@
-package com.ifishy.ui.opening
+package com.ifishy.ui.activity.opening
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.databinding.ActivityOpeningBinding
-import com.ifishy.ui.auth.SignUpActivity
+import com.ifishy.ui.activity.auth.SignUpActivity
 
 class OpeningActivity : AppCompatActivity(), View.OnClickListener {
 

@@ -4,6 +4,8 @@
     <dimen name="global_page_padding_margin">20dp</dimen>
     <dimen name="extra_large_text">36sp</dimen>
     <dimen name="large_text">26sp</dimen>
+    <dimen name="semi_large_text">20sp</dimen>
+    <dimen name="upper_meidum_text">18sp</dimen>
     <dimen name="medium_text">16sp</dimen>
     <dimen name="small_text">14sp</dimen>
     <dimen name="indicator_height">14dp</dimen>
@@ -11,4 +13,5 @@
     <dimen name="author_padding_vertical">2dp</dimen>
     <dimen name="back_button">55dp</dimen>
     <dimen name="image_button">48dp</dimen>
+    <dimen name="button_height">60dp</dimen>
 </resources>

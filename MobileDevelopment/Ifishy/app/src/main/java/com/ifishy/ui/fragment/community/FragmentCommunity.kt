@@ -1,4 +1,4 @@
-package com.ifishy.fragment.community
+package com.ifishy.ui.fragment.community
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
