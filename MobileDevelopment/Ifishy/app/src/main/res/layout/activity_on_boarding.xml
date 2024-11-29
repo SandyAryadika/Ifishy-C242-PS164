@@ -111,10 +111,10 @@
             app:layout_constraintTop_toTopOf="@id/title_1" />
 
         <TextView
-            android:alpha="0"
             android:id="@+id/title_3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:alpha="0"
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/community_hub_for_discussions"

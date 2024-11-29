@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.DetailPage.Detail"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_page_padding_margin">
+
+        <ImageButton
+            android:id="@+id/BackButtonDetail"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/button_rounder"
+            android:outlineProvider="none"
+            android:src="@drawable/back_shape"
+            android:layout_margin="@dimen/each_button"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/bookmarkButton"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/button_rounder"
+            android:outlineProvider="none"
+            android:layout_margin="@dimen/each_button"
+            android:src="@drawable/bookmark_border"
+            app:layout_constraintEnd_toStartOf="@+id/shareButton"
+            tools:ignore="MissingConstraints" />
+
+        <ImageButton
+            android:id="@+id/shareButton"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/button_rounder"
+            android:outlineProvider="none"
+            android:layout_margin="@dimen/each_button"
+            android:src="@drawable/share_vector"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/judulArtikel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_onboarding"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/judul_artikel"
+            android:textSize="@dimen/title_onboarding"
+            android:layout_marginStart="@dimen/jarak_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/BackButtonDetail"/>
+        
+        <TextView
+            android:id="@+id/uploader"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/name_upload_button"
+            android:background="@drawable/background_pembuat"
+            android:textSize="@dimen/teks_pembuat_tanggal"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:layout_margin="@dimen/jarak_start"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light"
+            android:text="@string/nama_user"
+            app:layout_constraintTop_toBottomOf="@id/judulArtikel"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/date_upload"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/name_upload_button"
+            android:background="@drawable/background_pembuat"
+            android:textSize="@dimen/teks_pembuat_tanggal"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:layout_margin="@dimen/jarak_start"
+            android:textAlignment="center"
+            android:textColor="@color/primary_light"
+            android:text="@string/tanggal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/judulArtikel"/>
+
+        <ImageView
+            android:id="@+id/gambarArtikel"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_margin="@dimen/jarak_start"
+            app:layout_constraintTop_toBottomOf="@id/uploader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/img"/>
+
+        <TextView
+            android:id="@+id/description_article"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/jarak_start"
+            android:text="@string/dekripsi_artikel"
+            android:fontFamily="@font/poppins"
+            app:layout_constraintTop_toBottomOf="@id/gambarArtikel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

@@ -6,4 +6,9 @@
     <dimen name="desc_onboarding">16sp</dimen>
     <dimen name="indicator_height">14dp</dimen>
     <dimen name="button_height">60dp</dimen>
+    <dimen name="button_width">60dp</dimen>
+    <dimen name="each_button">12dp</dimen>
+    <dimen name="name_upload_button">30dp</dimen>
+    <dimen name="jarak_start">12dp</dimen>
+    <dimen name="teks_pembuat_tanggal">14sp</dimen>
 </resources>
