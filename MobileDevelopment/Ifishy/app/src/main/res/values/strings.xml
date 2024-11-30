@@ -49,11 +49,5 @@
     <string name="profile_menu">Profile</string>
     <string name="no_internet">No Internet Connection</string>
     <string name="already_have_an_account_login">Already have an account? <b>Login</b></string>
-    <string name="welcome_home">Welcome</string>
-    <string name="profile_picture">Profile Picture</string>
-    <string name="newest_article">Newest Article</string>
-    <string name="tv_article">Article</string>
-    <string name="tools_show">Show All</string>
-    <string name="foto_artikel">foto artikel</string>
 
 </resources>
