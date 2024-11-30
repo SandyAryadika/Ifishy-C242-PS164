@@ -10,6 +10,8 @@
     >
 
     <ScrollView
+        android:scrollbars="none"
+        android:overScrollMode="never"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/global_page_padding_margin"
@@ -68,22 +70,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_title" />
 
             <EditText
-                android:maxLines="1"
-                android:layout_marginTop="30dp"
                 android:id="@+id/username"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/edit_text_shape"
                 android:fontFamily="@font/poppins"
                 android:hint="@string/username"
                 android:includeFontPadding="false"
-                android:inputType="text"
+                android:maxLines="1"
                 android:textColor="@color/black"
                 android:textSize="@dimen/upper_meidum_text"
                 app:backgroundTint="@color/edit_text_background"
                 app:layout_constraintBottom_toTopOf="@+id/email"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_desc" />
 
@@ -120,17 +121,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email"
                 app:passwordToggleEnabled="true"
-                android:autofillHints="password"
                 app:passwordToggleTint="@color/black">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:maxLines="1"
+                    android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:letterSpacing="0"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:layout_height="match_parent"
-                    android:autofillHints="password"
                     android:background="@drawable/edit_text_shape"
                     android:backgroundTint="@color/edit_text_background"
                     android:fontFamily="@font/poppins"
@@ -152,7 +152,6 @@
                 android:backgroundTint="@color/edit_text_background"
                 android:fontFamily="@font/poppins"
                 android:hint="@string/confirm_password"
-                android:inputType="textPassword"
                 android:textSize="@dimen/upper_meidum_text"
                 app:layout_constraintBottom_toTopOf="@+id/sign_up_button"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -172,20 +171,32 @@
                 android:text="@string/sign_up"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/primary_light"
-                app:layout_constraintBottom_toTopOf="@+id/register_button"
+                app:layout_constraintBottom_toTopOf="@+id/login_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/confirm_password" />
 
+            <ProgressBar
+                android:id="@+id/loading"
+                android:visibility="gone"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:indeterminateTint="@color/white"
+                app:layout_constraintTop_toTopOf="@id/sign_up_button"
+                app:layout_constraintEnd_toEndOf="@id/sign_up_button"
+                app:layout_constraintBottom_toBottomOf="@id/sign_up_button"
+                app:layout_constraintStart_toStartOf="@id/sign_up_button"
+                />
+
             <TextView
                 android:layout_marginTop="8dp"
-                android:id="@+id/register_button"
+                android:id="@+id/login_button"
                 android:textSize="@dimen/medium_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins"
-                android:text="@string/don_t_have_an_account_register"
+                android:text="@string/already_have_an_account_login"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

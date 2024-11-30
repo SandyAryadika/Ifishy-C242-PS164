@@ -48,5 +48,6 @@
     <string name="community_menu">Community</string>
     <string name="profile_menu">Profile</string>
     <string name="no_internet">No Internet Connection</string>
+    <string name="already_have_an_account_login">Already have an account? <b>Login</b></string>
 
 </resources>

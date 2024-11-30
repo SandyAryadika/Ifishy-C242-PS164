@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -30,11 +31,11 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home,
-                R.id.nav_history,
-                R.id.nav_scan,
-                R.id.nav_community,
-                R.id.nav_profile
+                R.id.home_fragment,
+                R.id.history_fragment,
+                R.id.scan_fragment,
+                R.id.community_fragment,
+                R.id.profile_fragment
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

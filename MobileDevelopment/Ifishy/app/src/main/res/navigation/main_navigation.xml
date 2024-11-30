@@ -3,20 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/home_fragment">
 
     <fragment
-        android:id="@+id/fragmentCommunity"
+        android:id="@+id/community_fragment"
         android:name="com.ifishy.ui.fragment.community.CommunityFragment"
-        android:label="fragment_community"
+        android:label="communityFragment"
         tools:layout="@layout/fragment_community" />
     <fragment
-        android:id="@+id/fragmentHistory"
+        android:id="@+id/history_fragment"
         android:name="com.ifishy.ui.fragment.history.HistoryFragment"
-        android:label="fragment_history"
+        android:label="historyFragment"
         tools:layout="@layout/fragment_history" />
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/home_fragment"
         android:name="com.ifishy.ui.fragment.home.HomeFragment"
         android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/scan_fragment"
+        android:name="com.ifishy.ui.fragment.scan.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" />
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.ifishy.ui.fragment.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

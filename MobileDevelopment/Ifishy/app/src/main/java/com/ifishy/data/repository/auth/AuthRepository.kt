@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 interface AuthRepository {
     suspend fun login(userData: LoginRequest): SingleEvent<ResponseState<LoginResponse>>
-    suspend fun signUp(username: String, email: String, password: String, confirmPassword: String): ResponseState<SignUpResponse>
+    suspend fun signUp(userData: SignUpRequest): SingleEvent<ResponseState<SignUpResponse>>
 }
 
 class AuthRepositoryImpl @Inject constructor(
@@ -39,16 +39,16 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signUp(username: String, email: String, password: String, confirmPassword: String): ResponseState<SignUpResponse> {
+    override suspend fun signUp(userData: SignUpRequest): SingleEvent<ResponseState<SignUpResponse>> {
         return try {
-            val response = apiService.register(SignUpRequest(username, email, password, confirmPassword))
-            ResponseState.Success(response)
+            val response = apiService.register(userData)
+            SingleEvent(ResponseState.Success(response))
         } catch (e: IOException) {
-            ResponseState.Error(context.getString(R.string.no_internet))
+            SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
             val errorResponse = e.response()?.errorBody()?.string()
             val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
-            ResponseState.Error(errorMessage.message!!)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }
     }
 }

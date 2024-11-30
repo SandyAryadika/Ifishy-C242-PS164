@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ifishy.data.model.auth.request.LoginRequest
+import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
 import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.data.repository.auth.AuthRepository
@@ -18,7 +19,7 @@ import javax.inject.Named
 class AuthViewModel @Inject constructor(@Named("AuthRepository") private val authRepository: AuthRepository) : ViewModel() {
 
     val loginResponse : MutableLiveData<SingleEvent<ResponseState<LoginResponse>>> = MutableLiveData()
-    val signUpResponse : MutableLiveData<ResponseState<SignUpResponse>> = MutableLiveData()
+    val signUpResponse : MutableLiveData<SingleEvent<ResponseState<SignUpResponse>>> = MutableLiveData()
 
     fun userLogin(userData: LoginRequest){
         viewModelScope.launch {
@@ -29,10 +30,10 @@ class AuthViewModel @Inject constructor(@Named("AuthRepository") private val aut
         }
     }
 
-    fun signUp(username: String,email: String,password: String,confirmPassword:String){
+    fun signUp(userData: SignUpRequest){
         viewModelScope.launch {
-            signUpResponse.value = ResponseState.Loading
-            val response = authRepository.signUp(username,email,password,confirmPassword)
+            signUpResponse.value = SingleEvent(ResponseState.Loading)
+            val response = authRepository.signUp(userData)
             signUpResponse.postValue(response)
         }
     }
