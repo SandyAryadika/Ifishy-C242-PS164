@@ -13,6 +13,7 @@ import com.ifishy.R
 import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.databinding.ActivitySignUpBinding
 import com.ifishy.ui.viewmodel.AuthViewModel
+import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -77,22 +78,27 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         is ResponseState.Success -> {
                             isLoading(false)
-                            toast("Sign Up success")
-                            startActivity(Intent(this@SignUpActivity,LoginActivity::class.java))
-                            finish()
+                            Dialog.messageDialog(supportFragmentManager,
+                                getString(R.string.signup_success),
+                                getString(R.string.sign_up_success_desc), okay = applicationContext.getString(R.string.login), onClickListener = {
+                                startActivity(
+                                    Intent(this@SignUpActivity,LoginActivity::class.java)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                )
+                            })
+
                         }
                         is ResponseState.Error -> {
                             isLoading(false)
-                            toast(response.message)
+                            Dialog.messageDialog(supportFragmentManager,
+                                message = getString(R.string.signup_error),
+                                desc = response.message
+                            )
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun toast(msg : String){
-        Toast.makeText(this@SignUpActivity,msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun onClick(v: View?) {
@@ -110,7 +116,9 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     signUp(userData)
                 }else{
-                    toast("Field Empty")
+                    Dialog.messageDialog(supportFragmentManager, message = getString(R.string.signup_error), desc = getString(
+                        R.string.field_empty
+                    ))
                 }
             }
             binding.loginButton->{

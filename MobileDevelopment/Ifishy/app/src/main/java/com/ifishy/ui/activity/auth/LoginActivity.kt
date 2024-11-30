@@ -15,6 +15,7 @@ import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivityLoginBinding
 import com.ifishy.ui.activity.main.MainActivity
 import com.ifishy.ui.viewmodel.AuthViewModel
+import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,7 +50,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun isLoading(loading:Boolean){
         if (loading){
             binding.apply {
-
                 this.loading.visibility=View.VISIBLE
                 this.button.apply {
                     this.text = ""
@@ -78,14 +78,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         is ResponseState.Success -> {
                             isLoading(false)
                             preferencesViewModel.saveToken(response.data.token!!)
-                            toast("Success")
-                            startActivity(Intent(this@LoginActivity,MainActivity::class.java)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            )
+                            goTo(MainActivity::class.java)
                         }
                         is ResponseState.Error -> {
                             isLoading(false)
-                            toast(response.message)
+                            Dialog.messageDialog(supportFragmentManager, message = getString(R.string.login_error), desc = response.message)
                         }
                     }
                 }
@@ -93,10 +90,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun toast(msg : String){
-        Toast.makeText(this@LoginActivity,msg,Toast.LENGTH_SHORT).show()
+    private fun goTo(to: Class<*>){
+        startActivity(Intent(this@LoginActivity,to))
+        finish()
     }
-
     override fun onClick(v: View?) {
         when(v){
             binding.button->{
@@ -104,12 +101,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 if(isNotValid()){
                     userLogin(userData)
                 }else{
-                    toast("Email & Password Empty")
+                    Dialog.messageDialog(supportFragmentManager, message = getString(R.string.login_error), desc = getString(R.string.field_empty))
                 }
             }
             binding.signup->{
-                startActivity(Intent(this@LoginActivity,SignUpActivity::class.java))
-                finish()
+                goTo(SignUpActivity::class.java)
             }
         }
     }

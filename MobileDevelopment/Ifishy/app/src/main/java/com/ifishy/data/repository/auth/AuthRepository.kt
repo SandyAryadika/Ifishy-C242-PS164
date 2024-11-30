@@ -36,6 +36,8 @@ class AuthRepositoryImpl @Inject constructor(
             val errorResponse = e.response()?.errorBody()?.string()
             val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
             SingleEvent(ResponseState.Error(errorMessage.message!!))
+        }catch (e: IllegalStateException){
+            SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
     }
 
@@ -49,6 +51,8 @@ class AuthRepositoryImpl @Inject constructor(
             val errorResponse = e.response()?.errorBody()?.string()
             val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
             SingleEvent(ResponseState.Error(errorMessage.message!!))
+        } catch (e: IllegalStateException){
+            SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
     }
 }
