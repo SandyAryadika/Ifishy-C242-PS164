@@ -70,6 +70,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_title" />
 
             <EditText
+                android:autofillHints="username"
                 android:id="@+id/username"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
@@ -78,6 +79,7 @@
                 android:fontFamily="@font/poppins"
                 android:hint="@string/username"
                 android:includeFontPadding="false"
+                android:inputType="text"
                 android:maxLines="1"
                 android:textColor="@color/black"
                 android:textSize="@dimen/upper_meidum_text"
@@ -89,6 +91,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/sign_up_desc" />
 
             <EditText
+                android:importantForAutofill="no"
                 android:maxLines="1"
                 android:layout_marginVertical="8dp"
                 android:id="@+id/email"
@@ -115,16 +118,21 @@
                 android:layout_height="60dp"
                 android:textColorHint="@color/hint_edit_text"
                 app:hintEnabled="false"
-                app:layout_constraintBottom_toTopOf="@+id/confirm_password"
+                app:layout_constraintBottom_toTopOf="@+id/confirm_pass"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/black">
+                app:errorEnabled="true"
+                android:autofillHints="password"
+                android:importantForAutofill="yes"
+                app:passwordToggleTint="@color/dark_background">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:maxLines="1"
+                    android:autofillHints="password"
+                    android:inputType="textPassword"
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:letterSpacing="0"
@@ -142,11 +150,14 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <EditText
+                android:autofillHints="none"
+                android:importantForAutofill="no"
                 android:maxLines="1"
                 android:textColor="@color/black"
                 android:layout_marginTop="8dp"
-                android:id="@+id/confirm_password"
+                android:id="@+id/confirm_pass"
                 android:layout_width="0dp"
+                android:inputType="textPassword"
                 android:layout_height="60dp"
                 android:background="@drawable/edit_text_shape"
                 android:backgroundTint="@color/edit_text_background"
@@ -175,7 +186,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/confirm_password" />
+                app:layout_constraintTop_toBottomOf="@+id/confirm_pass" />
 
             <ProgressBar
                 android:id="@+id/loading"

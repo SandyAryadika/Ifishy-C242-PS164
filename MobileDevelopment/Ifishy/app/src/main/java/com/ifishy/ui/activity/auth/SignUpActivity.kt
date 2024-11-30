@@ -44,7 +44,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         return binding.email.text.isNotEmpty() &&
                 binding.username.text.isNotEmpty() &&
                 binding.password.text!!.isNotEmpty() &&
-                binding.confirmPassword.text.isNotEmpty()
+                binding.confirmPass.text.isNotEmpty()
     }
 
     private fun isLoading(loading:Boolean){
@@ -86,7 +86,6 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 )
                             })
-
                         }
                         is ResponseState.Error -> {
                             isLoading(false)
@@ -111,7 +110,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                             email = this.email.text.toString(),
                             username = this.username.text.toString(),
                             password = this.password.text.toString(),
-                            confirmPassword = this.confirmPassword.text.toString()
+                            confirmPassword = this.confirmPass.text.toString()
                         )
                     }
                     signUp(userData)

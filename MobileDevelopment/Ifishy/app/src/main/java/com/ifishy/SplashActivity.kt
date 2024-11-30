@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.ifishy.data.preference.PreferenceViewModel
@@ -19,24 +20,30 @@ import kotlinx.coroutines.launch
 class SplashActivity : AppCompatActivity() {
 
     private val preferencesViewModel by viewModels<PreferenceViewModel>()
+    private lateinit var splash:SplashScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            splash = installSplashScreen()
+        }
         super.onCreate(savedInstanceState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            val splash = installSplashScreen()
-            splash.setKeepOnScreenCondition {
-                preferencesViewModel.token.value == null
+            splash.setKeepOnScreenCondition{true}
+            preferencesViewModel.token.observe(this){token->
+                lifecycleScope.launch {
+                    delay(1000)
+                    goTo(token)
+                }
+            }
+        }else{
+            preferencesViewModel.token.observe(this){token->
+                lifecycleScope.launch {
+                    delay(1000)
+                    goTo(token)
+                }
             }
         }
-
-        preferencesViewModel.token.observe(this){token->
-            lifecycleScope.launch {
-                delay(1000)
-                goTo(token)
-            }
-        }
-
     }
 
     private fun redirect(to: Class<*>){

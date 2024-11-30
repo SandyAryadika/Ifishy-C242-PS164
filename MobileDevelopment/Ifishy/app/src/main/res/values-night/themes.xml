@@ -7,7 +7,7 @@
         <item name="android:textColorHint">@color/hint_edit_text</item>
     </style>
 
-    <style name="Theme.SplashScreen" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="SplashScreen" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
