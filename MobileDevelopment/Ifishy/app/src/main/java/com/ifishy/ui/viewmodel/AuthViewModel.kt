@@ -7,13 +7,16 @@ import com.ifishy.data.model.auth.response.LoginResponse
 import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.utils.ResponseState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Named
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor(@Named("AuthRepository") private val authRepository: AuthRepository) : ViewModel() {
 
     val loginResponse : MutableLiveData<ResponseState<LoginResponse>> = MutableLiveData()
     val signUpResponse : MutableLiveData<ResponseState<SignUpResponse>> = MutableLiveData()
-
 
     fun userLogin(email: String,password:String){
         viewModelScope.launch {

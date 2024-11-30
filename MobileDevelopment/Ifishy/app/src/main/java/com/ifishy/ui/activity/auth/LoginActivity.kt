@@ -6,21 +6,20 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.data.model.auth.request.LoginRequest
 import com.ifishy.databinding.ActivityLoginBinding
-import com.ifishy.ui.viemodelfactory.AuthViewModelFactory
 import com.ifishy.ui.viewmodel.AuthViewModel
 import com.ifishy.utils.ResponseState
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding:ActivityLoginBinding
-    private val authFactory = AuthViewModelFactory
-    private val authViewModel by viewModels<AuthViewModel> { authFactory.getInstance(application) }
+    private val authViewModel by viewModels<AuthViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -10,45 +10,44 @@ import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
 import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.utils.ResponseState
+import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class AuthRepository private constructor(private val apiService: ApiService,private val context: Application) {
+interface AuthRepository {
+    suspend fun login(email: String, password: String): ResponseState<LoginResponse>
+    suspend fun signUp(username: String, email: String, password: String, confirmPassword: String): ResponseState<SignUpResponse>
+}
 
-    suspend fun login(email: String, password: String): ResponseState<LoginResponse>{
+class AuthRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    @ApplicationContext private val context: Application
+) : AuthRepository {
+
+    override suspend fun login(email: String, password: String): ResponseState<LoginResponse> {
         return try {
-            val response = apiService.login(LoginRequest(email,password))
+            val response = apiService.login(LoginRequest(email, password))
             ResponseState.Success(response)
-        }catch (e : IOException){
+        } catch (e: IOException) {
             ResponseState.Error(context.getString(R.string.no_internet))
-        }catch (e : HttpException){
+        } catch (e: HttpException) {
             val errorResponse = e.response()?.errorBody()?.string()
-            val errorMessage = Gson().fromJson(errorResponse,ErrorResponse::class.java)
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
             ResponseState.Error(errorMessage.message!!)
         }
     }
 
-    suspend fun signUp(username:String,email: String,password: String,confirmPassword:String): ResponseState<SignUpResponse>{
+    override suspend fun signUp(username: String, email: String, password: String, confirmPassword: String): ResponseState<SignUpResponse> {
         return try {
-            val response = apiService.register(SignUpRequest(username,email,password,confirmPassword))
+            val response = apiService.register(SignUpRequest(username, email, password, confirmPassword))
             ResponseState.Success(response)
-        }catch (e: IOException){
+        } catch (e: IOException) {
             ResponseState.Error(context.getString(R.string.no_internet))
-        }catch (e: HttpException){
+        } catch (e: HttpException) {
             val errorResponse = e.response()?.errorBody()?.string()
-            val errorMessage = Gson().fromJson(errorResponse,ErrorResponse::class.java)
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
             ResponseState.Error(errorMessage.message!!)
-        }
-    }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: AuthRepository?=null
-
-        fun getInstance(apiService: ApiService,context: Application): AuthRepository{
-            return INSTANCE ?: synchronized(this){
-                INSTANCE ?: AuthRepository(apiService,context).also { INSTANCE = it }
-            }
         }
     }
 }
