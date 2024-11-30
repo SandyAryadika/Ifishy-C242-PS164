@@ -49,12 +49,5 @@
     <string name="profile_menu">Profile</string>
     <string name="no_internet">No Internet Connection</string>
     <string name="already_have_an_account_login">Already have an account? <b>Login</b></string>
-    <string name="okay">Okay</string>
-    <string name="signup_success">SignUp Success</string>
-    <string name="sign_up_success_desc">Let\'s Login to start</string>
-    <string name="signup_error">SignUp Error</string>
-    <string name="field_empty">Fill data correctly</string>
-    <string name="login_error">Login Error</string>
-    <string name="internal_server_error">Internal server error</string>
 
 </resources>
