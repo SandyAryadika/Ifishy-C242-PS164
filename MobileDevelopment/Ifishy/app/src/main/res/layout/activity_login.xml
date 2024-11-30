@@ -9,6 +9,8 @@
     >
 
     <ScrollView
+        android:scrollbars="none"
+        android:overScrollMode="never"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/global_page_padding_margin"

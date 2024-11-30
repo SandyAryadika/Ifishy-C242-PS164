@@ -45,29 +45,33 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             binding.apply {
                 this.button.text=""
                 this.loading.visibility=View.VISIBLE
+                this.button.isEnabled = false
             }
         }else{
             binding.apply {
                 this.loading.visibility = View.GONE
                 this.button.text= applicationContext.getString(R.string.login)
+                this.button.isEnabled = true
             }
         }
     }
 
     private fun userLogin(data: LoginRequest){
-        authViewModel.userLogin(data.email,data.password).apply {
-            authViewModel.loginResponse.observe(this@LoginActivity){response->
-                when(response){
-                    is ResponseState.Loading -> {
-                        isLoading(true)
-                    }
-                    is ResponseState.Success -> {
-                        isLoading(false)
-                        toast(response.data.token!!)
-                    }
-                    is ResponseState.Error -> {
-                        isLoading(false)
-                        toast(response.message)
+        authViewModel.userLogin(data).apply {
+            authViewModel.loginResponse.observe(this@LoginActivity){event->
+                event.getContentIfNotHandled()?.let { response->
+                    when(response){
+                        is ResponseState.Loading -> {
+                            isLoading(true)
+                        }
+                        is ResponseState.Success -> {
+                            isLoading(false)
+                            toast(response.data.token!!)
+                        }
+                        is ResponseState.Error -> {
+                            isLoading(false)
+                            toast(response.message)
+                        }
                     }
                 }
             }

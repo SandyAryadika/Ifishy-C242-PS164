@@ -10,13 +10,14 @@ import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
 import com.ifishy.data.model.auth.response.SignUpResponse
 import com.ifishy.utils.ResponseState
+import com.ifishy.utils.SingleEvent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 interface AuthRepository {
-    suspend fun login(email: String, password: String): ResponseState<LoginResponse>
+    suspend fun login(userData: LoginRequest): SingleEvent<ResponseState<LoginResponse>>
     suspend fun signUp(username: String, email: String, password: String, confirmPassword: String): ResponseState<SignUpResponse>
 }
 
@@ -25,16 +26,16 @@ class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Application
 ) : AuthRepository {
 
-    override suspend fun login(email: String, password: String): ResponseState<LoginResponse> {
+    override suspend fun login(userData: LoginRequest): SingleEvent<ResponseState<LoginResponse>> {
         return try {
-            val response = apiService.login(LoginRequest(email, password))
-            ResponseState.Success(response)
+            val response = apiService.login(userData)
+            SingleEvent(ResponseState.Success(response))
         } catch (e: IOException) {
-            ResponseState.Error(context.getString(R.string.no_internet))
+            SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
             val errorResponse = e.response()?.errorBody()?.string()
             val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
-            ResponseState.Error(errorMessage.message!!)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }
     }
 
