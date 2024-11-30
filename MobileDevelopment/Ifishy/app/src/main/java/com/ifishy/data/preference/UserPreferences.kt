@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -18,9 +19,11 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(BuildConfi
 class UserPreferences @Inject constructor(private val context: Application) {
 
     private val TOKEN = stringPreferencesKey("user_token")
+    private val ALREADY_LOGIN = booleanPreferencesKey("already_login")
 
-    suspend fun saveToken(token:String){
-        context.dataStore.edit { userToken->
+    suspend fun saveToken(token:String) {
+        context.dataStore.edit { userToken ->
+            userToken[ALREADY_LOGIN] = true
             userToken[TOKEN] = token
         }
     }
@@ -28,6 +31,12 @@ class UserPreferences @Inject constructor(private val context: Application) {
     fun readToken(): Flow<String> {
         return context.dataStore.data.map { token->
             token[TOKEN] ?: ""
+        }
+    }
+
+    fun alreadyLogin(): Flow<Boolean>{
+        return context.dataStore.data.map { isAlreadyLogin->
+            isAlreadyLogin[ALREADY_LOGIN] ?: false
         }
     }
 
