@@ -81,4 +81,8 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    //SplashScreen
+    implementation(libs.androidx.core.splashscreen)
+
+
 }
