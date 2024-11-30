@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
         
         <ImageView
-            android:contentDescription="@string/foto_artikel"
+            android:contentDescription="@string/article_image"
             android:id="@+id/ivArticle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

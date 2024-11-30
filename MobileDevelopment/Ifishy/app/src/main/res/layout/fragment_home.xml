@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
-            android:text="@string/welcome_home"
+            tools:text="@string/welcome"
             android:textSize="@dimen/medium_text"
             android:textAlignment="textStart"
             app:layout_constraintTop_toTopOf="parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_bold"
             android:textAlignment="textStart"
-            android:text="@string/tools_author"
+            tools:text="@string/tools_author"
             android:textSize="@dimen/medium_text"
             app:layout_constraintTop_toBottomOf="@id/welcome_usname"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -41,7 +41,7 @@
             android:layout_height="@dimen/back_button"
             android:background="@drawable/image_button"
             android:backgroundTint="@color/secondary_light"
-            android:src="@drawable/ic_launcher_background"
+            tools:src="@drawable/ic_launcher_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -88,22 +88,9 @@
             android:includeFontPadding="false"
             android:textSize="@dimen/medium_text"
             android:textAlignment="textStart"
-            android:text="@string/tv_article"
+            android:text="@string/article"
             app:layout_constraintTop_toBottomOf="@id/rvArticle"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tvShowAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/poppins"
-            android:includeFontPadding="false"
-            android:textSize="@dimen/medium_text"
-            android:textAlignment="textEnd"
-            android:text="@string/tools_show"
-            app:layout_constraintTop_toBottomOf="@id/rvArticle"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvArticle2"

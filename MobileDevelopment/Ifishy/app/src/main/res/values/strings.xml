@@ -29,6 +29,7 @@
     <string name="bookmark">bookmark</string>
     <string name="share">share</string>
     <string name="back">back</string>
+    <string name="okay">Okay</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="judul_fragment_history">HISTORY</string>
@@ -49,5 +50,16 @@
     <string name="profile_menu">Profile</string>
     <string name="no_internet">No Internet Connection</string>
     <string name="already_have_an_account_login">Already have an account? <b>Login</b></string>
+    <string name="welcome">Welcome</string>
+    <string name="profile_picture">profile picture</string>
+    <string name="newest_article">Newest Article</string>
+    <string name="article">Article</string>
+    <string name="article_image">article_image</string>
+    <string name="internal_server_error">internal_server_error</string>
+    <string name="login_error">Error Login</string>
+    <string name="field_empty">Please fill information correctly</string>
+    <string name="signup_success">Success Sign Up</string>
+    <string name="sign_up_success_desc">Let\'s Login to start</string>
+    <string name="signup_error">Error Sign Up</string>
 
 </resources>
