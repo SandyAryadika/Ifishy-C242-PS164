@@ -7,7 +7,7 @@
     android:overScrollMode="never"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.detail_article.DetailArticleActivity"
+    tools:context=".ui.activity.detail_post.DetailPostActivity"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,18 +1,24 @@
-package com.ifishy.ui.adapter
+package com.ifishy.ui.adapter.community
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.ifishy.data.community.response.PostsItem
+import com.ifishy.data.model.community.response.PostsItem
 import com.ifishy.databinding.CommunityItemBinding
 import com.ifishy.utils.Date
 
-class CommunityAdapter(private val posts:List<PostsItem> ): RecyclerView.Adapter<CommunityAdapter.ViewHolder>() {
+class CommunityPostsAdapter(private val posts:List<PostsItem>): RecyclerView.Adapter<CommunityPostsAdapter.ViewHolder>() {
+
+    private lateinit var onItemClickListener: OnClick
+
+    fun onItemClicked(onItemClickListener: OnClick){
+        this.onItemClickListener = onItemClickListener
+    }
 
     inner class ViewHolder(private val binding: CommunityItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(item:PostsItem,context: Context){
+        fun bind(item: PostsItem, context: Context){
             binding.date.text = item.createdAt?.let { Date.format(it) }
             binding.user.text = item.username
             binding.commentsCount.text = item.comments?.size.toString()
@@ -35,6 +41,11 @@ class CommunityAdapter(private val posts:List<PostsItem> ): RecyclerView.Adapter
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = posts[position]
         holder.bind(post,holder.itemView.context)
+        holder.itemView.setOnClickListener{onItemClickListener.getDetail(post.id)}
+    }
+
+    interface OnClick{
+        fun getDetail(id: Int?)
     }
 
 }

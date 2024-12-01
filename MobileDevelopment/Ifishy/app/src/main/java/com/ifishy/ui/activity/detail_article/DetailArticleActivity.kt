@@ -1,4 +1,4 @@
-package com.ifishy.ui.activity.DetailPage
+package com.ifishy.ui.activity.detail_article
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -7,7 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 
-class Detail : AppCompatActivity() {
+class DetailArticleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
