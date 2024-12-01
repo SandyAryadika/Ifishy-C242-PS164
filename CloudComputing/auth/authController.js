@@ -9,6 +9,14 @@ const { JWT_SECRET } = require('../config/secrets');
 async function registerUser(req, res) {
   const { username, email, password, confirmPassword } = req.body;
 
+  // Validasi input: pastikan username dan email tidak kosong
+  if (!username || !email || !password || !confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username, email, password, and confirm password are required.',
+    });
+  }
+
   // Validasi password dan confirmPassword
   if (password !== confirmPassword) {
     return res.status(400).json({
