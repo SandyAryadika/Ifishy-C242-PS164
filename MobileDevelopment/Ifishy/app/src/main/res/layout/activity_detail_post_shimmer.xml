@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        app:shapeAppearanceOverlay="@style/Indicator.CornerRadius.Image"
+        android:background="@color/secondary_light"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/secondary_light"
+        android:textColor="@color/primary_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/secondary_light"
+        android:id="@+id/date_upload"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_light"
+        app:layout_constraintBottom_toBottomOf="@+id/author"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/author" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:scaleType="centerCrop"
+        android:background="@color/secondary_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/author"
+        app:shapeAppearanceOverlay="@style/Indicator.CornerRadius.Image" />
+
+    <TextView
+        android:id="@+id/description_article"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/secondary_light"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image" />
+    <TextView
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/secondary_light"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_article" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
