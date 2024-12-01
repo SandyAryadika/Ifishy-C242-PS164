@@ -1,20 +1,23 @@
-package com.ifishy.data.community.response
+package com.ifishy.data.model.community.response
 
 import com.google.gson.annotations.SerializedName
 
-data class CommuntyResponse(
+data class CommunityDetailResponse(
+
+	@field:SerializedName("post")
+	val post: Post,
 
 	@field:SerializedName("success")
-	val success: Boolean? = null,
-
-	@field:SerializedName("posts")
-	val posts: List<PostsItem>? = null
+	val success: Boolean? = null
 )
 
-data class PostsItem(
+data class Post(
+
+	@field:SerializedName("shareCount")
+	val shareCount: Int? = null,
 
 	@field:SerializedName("comments")
-	val comments: List<CommentsItem>? = null,
+	val comments: List<Comments?>? = null,
 
 	@field:SerializedName("user_id")
 	val userId: Int? = null,
@@ -24,6 +27,9 @@ data class PostsItem(
 
 	@field:SerializedName("created_at")
 	val createdAt: String? = null,
+
+	@field:SerializedName("likeCount")
+	val likeCount: Int? = null,
 
 	@field:SerializedName("id")
 	val id: Int? = null,
@@ -41,7 +47,7 @@ data class PostsItem(
 	val username: String? = null
 )
 
-data class CommentsItem(
+data class Comments(
 
 	@field:SerializedName("created_at")
 	val createdAt: String? = null,
