@@ -389,7 +389,6 @@ const createPost = async (req, res) => {
   }
 };
 
-// menampilkan postingan semua
 const getPosts = async (req, res) => {
   try {
     // Ambil semua postingan beserta username dari user yang mem-posting
@@ -401,8 +400,8 @@ const getPosts = async (req, res) => {
     `;
     const [posts] = await pool.query(sqlPosts);
 
-    // Ambil komentar untuk setiap postingan
-    const postsWithComments = await Promise.all(posts.map(async (post) => {
+    // Ambil komentar, jumlah likes, share, dan votes untuk setiap postingan
+    const postsWithDetails = await Promise.all(posts.map(async (post) => {
       // Ambil komentar berdasarkan post_id
       const sqlComments = `
         SELECT c.id, c.content, c.created_at, u.username
@@ -413,6 +412,33 @@ const getPosts = async (req, res) => {
       `;
       const [comments] = await pool.query(sqlComments, [post.id]);
 
+      // Hitung jumlah likes untuk setiap postingan
+      const sqlLikes = `
+        SELECT COUNT(*) AS like_count
+        FROM post_votes
+        WHERE post_id = ? AND vote_type = 'upvote'
+      `;
+      const [likeResult] = await pool.query(sqlLikes, [post.id]);
+      const likeCount = likeResult[0].like_count || 0;
+
+      // Hitung jumlah share untuk setiap postingan
+      const sqlShares = `
+        SELECT COUNT(*) AS share_count
+        FROM post_votes
+        WHERE post_id = ? AND vote_type = 'share'
+      `;
+      const [shareResult] = await pool.query(sqlShares, [post.id]);
+      const shareCount = shareResult[0].share_count || 0;
+
+      // Hitung jumlah votes untuk setiap postingan (upvote + downvote)
+      const sqlVotes = `
+        SELECT COUNT(*) AS vote_count
+        FROM post_votes
+        WHERE post_id = ?
+      `;
+      const [voteResult] = await pool.query(sqlVotes, [post.id]);
+      const voteCount = voteResult[0].vote_count || 0; // pastikan voteCount didefinisikan di sini
+
       // Hitung waktu sejak komentar
       const formattedComments = comments.map(comment => ({
         ...comment,
@@ -422,13 +448,16 @@ const getPosts = async (req, res) => {
       return {
         ...post,
         comments: formattedComments, // Menambahkan komentar ke setiap postingan
+        likeCount,                   // Menambahkan jumlah likes
+        shareCount,                  // Menambahkan jumlah share
+        voteCount,                   // Menambahkan jumlah votes
         timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
       };
     }));
 
     res.status(200).json({
       success: true,
-      posts: postsWithComments, // Mengirimkan postingan beserta komentar
+      posts: postsWithDetails, // Mengirimkan postingan beserta komentar, likes, shares, dan votes
     });
   } catch (error) {
     console.error('Error in getPosts:', error);
@@ -439,7 +468,6 @@ const getPosts = async (req, res) => {
   }
 };
 
-// Mendapatkan postingan berdasarkan ID
 const getPostById = async (req, res) => {
   const { id } = req.params;
 
@@ -472,6 +500,25 @@ const getPostById = async (req, res) => {
     `;
     const [comments] = await pool.query(sqlComments, [id]);
 
+    // Hitung jumlah likes untuk postingan tersebut
+    const sqlLikes = `
+      SELECT COUNT(*) AS like_count
+      FROM post_votes
+      WHERE post_id = ? AND vote_type = 'upvote'
+    `;
+    const [likeResult] = await pool.query(sqlLikes, [id]);
+    const likeCount = likeResult[0].like_count || 0;
+
+    // Hitung jumlah share untuk postingan tersebut
+    const sqlShares = `
+      SELECT COUNT(*) AS share_count
+      FROM post_votes
+      WHERE post_id = ?
+    `;
+    const [shareResult] = await pool.query(sqlShares, [id]);
+    const shareCount = shareResult[0].share_count || 0;
+
+    // Format komentar dan hitung waktu sejak komentar
     const formattedComments = comments.map(comment => ({
       ...comment,
       timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
@@ -482,6 +529,8 @@ const getPostById = async (req, res) => {
       post: {
         ...post,
         comments: formattedComments,
+        likeCount,     // Menambahkan jumlah likes
+        shareCount,    // Menambahkan jumlah share
         timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
       },
     });
@@ -490,6 +539,27 @@ const getPostById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to retrieve the post',
+    });
+  }
+};
+
+const addShareToPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Update jumlah share pada postingan
+    const updateShareCountQuery = 'UPDATE posts SET share_count = share_count + 1 WHERE id = ?';
+    await pool.query(updateShareCountQuery, [postId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Share added successfully',
+    });
+  } catch (error) {
+    console.error('Error adding share to post:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add share to post',
     });
   }
 };
@@ -787,24 +857,6 @@ const getLikedCommentsByUser = async (req, res) => {
   }
 };
 
-// Fungsi untuk memperbarui skor postingan berdasarkan upvote dan downvote
-// const updatePostScore = async (postId) => {
-//   try {
-//     const updateScoreQuery = `
-//       UPDATE posts
-//       SET score = (
-//         SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'upvote'
-//       ) - (
-//         SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'downvote'
-//       )
-//       WHERE id = ?
-//     `;
-//     await pool.query(updateScoreQuery, [postId, postId, postId]);
-//   } catch (error) {
-//     console.error('Error updating post score:', error);
-//   }
-// };
-
 // Menambahkan upvote pada postingan
 const addUpvoteToPost = async (req, res) => {
   try {
@@ -976,51 +1028,38 @@ const removeDownvoteFromPost = async (req, res) => {
   }
 };
 
-//retrieved vote status (all)
 const getAllVoteStatus = async (req, res) => {
   try {
-    // Ambil semua postingan beserta jumlah upvote dan downvote
-    const getVotesQuery = `
-      SELECT 
-        p.id AS post_id,
-        p.title,
-        p.content,
-        p.upvote_count,
-        p.downvote_count,
-        GROUP_CONCAT(
-          CASE 
-            WHEN pv.vote_type = 'upvote' THEN u.email
-            ELSE NULL
-          END
-        ) AS upvoters,
-        GROUP_CONCAT(
-          CASE 
-            WHEN pv.vote_type = 'downvote' THEN u.email
-            ELSE NULL
-          END
-        ) AS downvoters
-      FROM posts p
-      LEFT JOIN post_votes pv ON p.id = pv.post_id
-      LEFT JOIN users u ON pv.user_id = u.id
-      GROUP BY p.id
-      ORDER BY p.created_at DESC;
-    `;
+    // Ambil semua votes beserta info terkait postingan dan pengguna
+    const sqlPosts = `
+    SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username
+    FROM posts p
+    JOIN users u ON p.user_id = u.id
+    ORDER BY p.created_at DESC
+  `;  
+  const [posts] = await pool.query(sqlPosts);
+  console.log(posts); // Cek apakah hasil query sesuai  
 
-    const [posts] = await pool.query(getVotesQuery);
+    if (votes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No votes found',
+      });
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Fetched all votes for posts successfully',
-      data: posts,
+      votes,  // Mengirimkan semua vote yang ada
     });
   } catch (error) {
-    console.error('Error fetching votes for posts:', error);
+    console.error('Error in getAllVoteStatus:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch votes for posts',
+      message: 'Failed to retrieve votes',
     });
   }
 };
+
 
 // Mendapatkan artikel berdasarkan ID
 const getArticleById = async (req, res) => {
@@ -1083,6 +1122,7 @@ module.exports = {
   createPost,
   getPosts,
   getPostById,
+  addShareToPost,
   addComment,
   getComments,
   addReplyToComment,
