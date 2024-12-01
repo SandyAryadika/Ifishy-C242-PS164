@@ -5,57 +5,78 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentCommunityBinding
-import com.ifishy.ui.adapter.ArticleAdapter
-import com.ifishy.ui.viewmodel.ArticleViewModel
+import com.ifishy.ui.adapter.CommunityAdapter
+import com.ifishy.ui.viewmodel.CommunityViewModel
 import com.ifishy.utils.ResponseState
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class CommunityFragment : Fragment() {
 
-    private val articleViewModel: ArticleViewModel by viewModels()
-    private lateinit var binding: FragmentCommunityBinding
+    private val communityViewModel: CommunityViewModel by viewModels()
+    private val preferencesViewModel : PreferenceViewModel by viewModels()
+    private var _binding: FragmentCommunityBinding?=null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentCommunityBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentCommunityBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val token = "user_token"
-        val adapter = ArticleAdapter()
-        binding.rvCommunity.adapter = adapter
-        binding.rvCommunity.layoutManager = LinearLayoutManager(requireContext())
+        preferencesViewModel.token.observe(viewLifecycleOwner){token->
+            getALlPosts(token)
+        }
 
-        observeViewModel()
-
-        viewModel.fetchPosts(token)
     }
 
-    private fun observeViewModel() {
-        viewModel.CommunityResponse.observe(viewLifecycleOwner) { response ->
-            response.getContentIfNotHandled()?.let { state ->
-                when (state) {
+    private fun isLoading(loading:Boolean){
+        if (loading){
+            binding.apply {
+                this.laoding.visibility = View.VISIBLE
+                this.community.visibility = View.GONE
+            }
+        }else{
+            binding.apply {
+                this.laoding.visibility = View.GONE
+                this.community.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun getALlPosts(token: String) {
+        communityViewModel.getAllPosts(token).apply {
+            communityViewModel.posts.observe(viewLifecycleOwner){response->
+                when(response){
+                    is ResponseState.Loading -> {
+                        isLoading(true)
+                    }
                     is ResponseState.Success -> {
-
-
+                        isLoading(false)
+                        binding.community.apply {
+                            this.adapter = response.data.posts?.let { CommunityAdapter(it) }
+                            this.layoutManager = LinearLayoutManager(requireActivity())
+                        }
                     }
-
                     is ResponseState.Error -> {
-
+                        isLoading(false)
                     }
-
                 }
             }
-
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

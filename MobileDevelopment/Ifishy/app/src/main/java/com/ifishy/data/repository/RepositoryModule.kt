@@ -2,10 +2,10 @@ package com.ifishy.data.repository
 
 import android.app.Application
 import com.ifishy.api.ApiService
-import com.ifishy.data.repository.article.ArticleRepository
-import com.ifishy.data.repository.article.ArticleRepositoryImpl
 import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.data.repository.auth.AuthRepositoryImpl
+import com.ifishy.data.repository.community.CommunityRepository
+import com.ifishy.data.repository.community.CommunityRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +24,7 @@ object RepositoryModule {
 
     @Provides
     @Named("CommunityRepository")
-    fun provideCommunityRepo(apiService: ApiService): ArticleRepository{
-        return ArticleRepositoryImpl(apiService)
+    fun provideCommunityRepo(apiService: ApiService,context: Application): CommunityRepository{
+        return CommunityRepositoryImpl(apiService,context)
     }
 }
