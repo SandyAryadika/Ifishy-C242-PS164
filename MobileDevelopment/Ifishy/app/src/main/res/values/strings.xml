@@ -59,5 +59,9 @@
     <string name="signup_error">Error Sign Up</string>
     <string name="profile">Profile</string>
     <string name="comments">comments</string>
+    <string name="faq">FAQ</string>
+    <string name="tools_question">Question</string>
+    <string name="expand_tool_2">Expand tool</string>
+    <string name="answer">Answer</string>
 
 </resources>
