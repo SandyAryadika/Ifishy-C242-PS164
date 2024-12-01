@@ -21,10 +21,31 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemActiveIndicatorStyle="@android:color/transparent"
+        app:labelVisibilityMode="unlabeled"
+        app:itemIconSize="25dp"
+        app:itemIconTint="@color/bottom_navigation_icon_color"
+        android:layout_height="75dp"
+        app:backgroundTint="@color/bottom_navigation_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/botnav_menu" />
+        app:menu="@menu/botnav_menu"
+        android:clipChildren="false"
+        >
+
+        <ImageButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/scan_menu"
+            app:elevation="0dp"
+            android:src="@drawable/scan"
+            app:backgroundTint="@android:color/transparent"
+            />
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
