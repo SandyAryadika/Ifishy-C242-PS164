@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.get
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -12,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.ifishy.R
 import com.ifishy.databinding.ActivityMainBinding
 
+@Suppress("UNCHECKED_CAST")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -28,12 +30,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+
         val navController = findNavController(R.id.nav_host)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.home_fragment,
                 R.id.history_fragment,
-                R.id.scan_fragment,
                 R.id.community_fragment,
                 R.id.profile_fragment
             )
