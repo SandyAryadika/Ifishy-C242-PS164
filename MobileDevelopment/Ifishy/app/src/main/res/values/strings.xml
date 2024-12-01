@@ -33,7 +33,7 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="judul_fragment_history">HISTORY</string>
-    <string name="hint_search">search</string>
+    <string name="hint_search">Search</string>
     <string name="button_date_for_history">Button date for history</string>
     <string name="foto_preview_postingan">Foto preview postingan</string>
     <string name="community">COMMUNITY</string>
@@ -61,5 +61,6 @@
     <string name="signup_success">Success Sign Up</string>
     <string name="sign_up_success_desc">Let\'s Login to start</string>
     <string name="signup_error">Error Sign Up</string>
+    <string name="profile">Profile</string>
 
 </resources>

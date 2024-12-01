@@ -16,6 +16,7 @@ const {
     getUserProfile,
     createPost,
     getPosts,
+    getPostById,
     addComment,
     getComments,
     addReplyToComment,
@@ -25,7 +26,12 @@ const {
     getLikedCommentsByUser,
     addUpvoteToPost,
     addDownvoteToPost,
-    getVoteStatus } = require('./authController');
+    removeUpvoteFromPost,
+    removeDownvoteFromPost,
+    getVoteStatus,
+    getAllVoteStatus,
+    getArticleById,
+    getAllArticles } = require('./authController');
 const router = express.Router();
 
 // Validasi untuk registrasi
@@ -58,6 +64,7 @@ router.get('/dashboard/:email', authenticateToken, getDashboardData);
 router.get('/profile/:email', authenticateToken, getUserProfile);
 router.post('/community/posts', authenticateToken, upload.single('image'), createPost); 
 router.get('/community/posts', authenticateToken, getPosts); // Ambil semua posting
+router.get('/community/posts/:id', authenticateToken, getPostById); // Ambil postingan berdasarkan ID
 router.post('/community/posts/:postId/comments', authenticateToken, addComment); // Tambahkan komentar
 router.get('/community/posts/:postId/comments', authenticateToken, getComments); // Ambil komentar pada postingan
 router.post('/comments/:commentId/reply', authenticateToken, addReplyToComment); // Tambahkan reply ke komentar
@@ -67,7 +74,11 @@ router.delete('/comments/:commentId/like', authenticateToken, removeLikeFromComm
 router.get('/users/likes', authenticateToken, getLikedCommentsByUser);
 router.post('/community/posts/:postId/upvote', authenticateToken, addUpvoteToPost); // Route untuk melakukan upvote pada postingan
 router.post('/community/posts/:postId/downvote', authenticateToken, addDownvoteToPost); // Route untuk melakukan downvote pada postingan
-router.delete('/community/posts/:postId/downvote', authenticateToken, addDownvoteToPost);
+router.delete('/community/posts/:postId/upvote', authenticateToken, removeUpvoteFromPost);
+router.delete('/community/posts/:postId/downvote', authenticateToken, removeDownvoteFromPost);
 router.get('/community/posts/:postId/vote-status', authenticateToken, getVoteStatus);
+router.get('/community/posts/votes', authenticateToken, getAllVoteStatus);
+router.get('/articles', getAllArticles);
+router.get('/articles/:id', getArticleById);
 
 module.exports = router;
