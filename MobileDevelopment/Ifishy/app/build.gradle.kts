@@ -65,6 +65,9 @@ dependencies {
     //Lottie
     implementation(libs.lottie)
 
+    //Shimmer
+    implementation(libs.shimmer)
+
     //Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.androidx.navigation.ui)

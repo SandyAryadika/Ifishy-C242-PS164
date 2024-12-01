@@ -44,12 +44,15 @@ class CommunityFragment : Fragment() {
     private fun isLoading(loading:Boolean){
         if (loading){
             binding.apply {
-                this.laoding.visibility = View.VISIBLE
+                this.loading.visibility = View.VISIBLE
+                this.loading.startShimmer()
                 this.community.visibility = View.GONE
+                this.error.visibility = View.GONE
             }
         }else{
             binding.apply {
-                this.laoding.visibility = View.GONE
+                this.loading.stopShimmer()
+                this.loading.visibility = View.GONE
                 this.community.visibility = View.VISIBLE
             }
         }
@@ -80,6 +83,10 @@ class CommunityFragment : Fragment() {
                     }
                     is ResponseState.Error -> {
                         isLoading(false)
+                        binding.error.apply {
+                            this.text = response.message
+                            this.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
