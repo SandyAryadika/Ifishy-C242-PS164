@@ -23,8 +23,8 @@ class CommunityPostsAdapter(private val posts:List<PostsItem>): RecyclerView.Ada
             binding.user.text = item.username
             binding.commentsCount.text = item.comments?.size.toString()
             binding.title.text = item.title
-            binding.shareCount.text = String.format(0.toString())
-            binding.voteCount.text = String.format(0.toString())
+            binding.shareCount.text = item.shareCount.toString()
+            binding.voteCount.text = item.voteCount.toString()
             Glide.with(context)
                 .load(item.imageUrl)
                 .into(binding.image)
