@@ -61,5 +61,6 @@
     <string name="signup_success">Success Sign Up</string>
     <string name="sign_up_success_desc">Let\'s Login to start</string>
     <string name="signup_error">Error Sign Up</string>
+    <string name="profile">Profile</string>
 
 </resources>
