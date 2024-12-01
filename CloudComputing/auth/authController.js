@@ -439,6 +439,60 @@ const getPosts = async (req, res) => {
   }
 };
 
+// Mendapatkan postingan berdasarkan ID
+const getPostById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Ambil postingan berdasarkan ID
+    const sqlPost = `
+      SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username
+      FROM posts p
+      JOIN users u ON p.user_id = u.id
+      WHERE p.id = ?
+    `;
+    const [postResult] = await pool.query(sqlPost, [id]);
+
+    if (postResult.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found',
+      });
+    }
+
+    const post = postResult[0];
+
+    // Ambil komentar untuk postingan tersebut
+    const sqlComments = `
+      SELECT c.id, c.content, c.created_at, u.username
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.post_id = ?
+      ORDER BY c.created_at ASC
+    `;
+    const [comments] = await pool.query(sqlComments, [id]);
+
+    const formattedComments = comments.map(comment => ({
+      ...comment,
+      timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
+    }));
+
+    res.status(200).json({
+      success: true,
+      post: {
+        ...post,
+        comments: formattedComments,
+        timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
+      },
+    });
+  } catch (error) {
+    console.error('Error in getPostById:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve the post',
+    });
+  }
+};
 
 //User dapat berkomentar pada postingan
 const addComment = async (req, res) => {
@@ -734,24 +788,24 @@ const getLikedCommentsByUser = async (req, res) => {
 };
 
 // Fungsi untuk memperbarui skor postingan berdasarkan upvote dan downvote
-const updatePostScore = async (postId) => {
-  try {
-    const updateScoreQuery = `
-      UPDATE posts
-      SET score = (
-        SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'upvote'
-      ) - (
-        SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'downvote'
-      )
-      WHERE id = ?
-    `;
-    await pool.query(updateScoreQuery, [postId, postId, postId]);
-  } catch (error) {
-    console.error('Error updating post score:', error);
-  }
-};
+// const updatePostScore = async (postId) => {
+//   try {
+//     const updateScoreQuery = `
+//       UPDATE posts
+//       SET score = (
+//         SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'upvote'
+//       ) - (
+//         SELECT COUNT(*) FROM post_votes WHERE post_id = ? AND vote_type = 'downvote'
+//       )
+//       WHERE id = ?
+//     `;
+//     await pool.query(updateScoreQuery, [postId, postId, postId]);
+//   } catch (error) {
+//     console.error('Error updating post score:', error);
+//   }
+// };
 
-// Endpoint untuk upvote postingan
+// Menambahkan upvote pada postingan
 const addUpvoteToPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -763,144 +817,56 @@ const addUpvoteToPost = async (req, res) => {
 
     if (existingVote.length > 0) {
       if (existingVote[0].vote_type === 'upvote') {
-        return res.status(400).json({
-          success: false,
-          message: 'You have already upvoted this post',
-        });
+        return res.status(400).json({ success: false, message: 'You have already upvoted this post' });
+      } else if (existingVote[0].vote_type === 'downvote') {
+        // Hapus downvote dan tambahkan upvote
+        await pool.query('DELETE FROM post_votes WHERE post_id = ? AND user_id = ?', [postId, userId]);
       }
-      if (existingVote[0].vote_type === 'downvote') {
-        // Hapus downvote jika ada, kemudian tambahkan upvote
-        const removeVoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
-        await pool.query(removeVoteQuery, [postId, userId]);
-
-        const addUpvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
-        await pool.query(addUpvoteQuery, [postId, userId, 'upvote']);
-
-        // Update jumlah upvote di postingan
-        const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?';
-        await pool.query(updateUpvoteCountQuery, [postId]);
-
-        return res.status(200).json({
-          success: true,
-          message: 'Upvote added successfully',
-        });
-      }
-    } else {
-      // Jika belum ada vote, tambahkan upvote
-      const addUpvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
-      await pool.query(addUpvoteQuery, [postId, userId, 'upvote']);
-
-      // Update jumlah upvote di postingan
-      const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?';
-      await pool.query(updateUpvoteCountQuery, [postId]);
-
-      res.status(200).json({
-        success: true,
-        message: 'Upvote added successfully',
-      });
     }
+
+    // Tambahkan upvote
+    await pool.query('INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)', [postId, userId, 'upvote']);
+    await pool.query('UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?', [postId]);
+
+    res.status(200).json({ success: true, message: 'Upvote added successfully' });
   } catch (error) {
     console.error('Error adding upvote:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to add upvote',
-    });
+    res.status(500).json({ success: false, message: 'Failed to add upvote' });
   }
 };
 
+// Menambahkan downvote pada postingan
 const addDownvoteToPost = async (req, res) => {
   try {
     const { postId } = req.params;
     const userId = req.user.id; // Mendapatkan userId dari token JWT
 
-    // Cek apakah user sudah memberikan vote
+    // Cek apakah pengguna sudah memberikan vote sebelumnya
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
     if (existingVote.length > 0) {
       if (existingVote[0].vote_type === 'downvote') {
-        return res.status(400).json({
-          success: false,
-          message: 'You have already downvoted this post',
-        });
+        return res.status(400).json({ success: false, message: 'You have already downvoted this post' });
       } else if (existingVote[0].vote_type === 'upvote') {
-        // Menghapus upvote dan memberi downvote
-        const removeUpvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
-        await pool.query(removeUpvoteQuery, [postId, userId]);
-
-        // Menambahkan downvote
-        const addDownvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
-        await pool.query(addDownvoteQuery, [postId, userId, 'downvote']);
-
-        // Update jumlah downvote pada post
-        const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?';
-        await pool.query(updateDownvoteCountQuery, [postId]);
-
-        return res.status(200).json({
-          success: true,
-          message: 'Downvote added to post successfully',
-        });
+        // Hapus upvote dan tambahkan downvote
+        await pool.query('DELETE FROM post_votes WHERE post_id = ? AND user_id = ?', [postId, userId]);
+        await pool.query('UPDATE posts SET upvote_count = upvote_count - 1 WHERE id = ?', [postId]);
       }
-    } else {
-      // Jika belum ada vote, langsung downvote
-      const addDownvoteQuery = 'INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)';
-      await pool.query(addDownvoteQuery, [postId, userId, 'downvote']);
-
-      // Update jumlah downvote pada post
-      const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?';
-      await pool.query(updateDownvoteCountQuery, [postId]);
-
-      res.status(200).json({
-        success: true,
-        message: 'Downvote added to post successfully',
-      });
     }
+
+    // Tambahkan downvote
+    await pool.query('INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)', [postId, userId, 'downvote']);
+    await pool.query('UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?', [postId]);
+
+    res.status(200).json({ success: true, message: 'Downvote added successfully' });
   } catch (error) {
-    console.error('Error adding downvote to post:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to add downvote to post',
-    });
+    console.error('Error adding downvote:', error);
+    res.status(500).json({ success: false, message: 'Failed to add downvote' });
   }
 };
 
-const removeDownvoteFromPost = async (req, res) => {
-  try {
-    const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
-
-    // Cek apakah user sudah memberikan downvote
-    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
-    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
-
-    if (existingVote.length === 0 || existingVote[0].vote_type !== 'downvote') {
-      return res.status(400).json({
-        success: false,
-        message: 'You have not downvoted this post yet',
-      });
-    }
-
-    // Hapus downvote dari tabel post_votes
-    const removeDownvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
-    await pool.query(removeDownvoteQuery, [postId, userId]);
-
-    // Update jumlah downvote pada post
-    const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count - 1 WHERE id = ?';
-    await pool.query(updateDownvoteCountQuery, [postId]);
-
-    res.status(200).json({
-      success: true,
-      message: 'Downvote removed from post successfully',
-    });
-  } catch (error) {
-    console.error('Error removing downvote from post:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to remove downvote from post',
-    });
-  }
-};
-
+//retrieved vote status (single)
 const getVoteStatus = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -934,6 +900,176 @@ const getVoteStatus = async (req, res) => {
   }
 };
 
+// Hapus Upvote dari Postingan
+const removeUpvoteFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Cek apakah user sudah memberikan upvote
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length === 0 || existingVote[0].vote_type !== 'upvote') {
+      return res.status(400).json({
+        success: false,
+        message: 'You have not upvoted this post yet',
+      });
+    }
+
+    // Hapus upvote dari tabel post_votes
+    const removeUpvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
+    await pool.query(removeUpvoteQuery, [postId, userId]);
+
+    // Update jumlah upvote pada post
+    const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count - 1 WHERE id = ?';
+    await pool.query(updateUpvoteCountQuery, [postId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Upvote removed from post successfully',
+    });
+  } catch (error) {
+    console.error('Error removing upvote:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove upvote',
+    });
+  }
+};
+
+// Hapus Downvote dari Postingan
+const removeDownvoteFromPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id; // Mendapatkan userId dari token JWT
+
+    // Cek apakah user sudah memberikan downvote
+    const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
+    const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
+
+    if (existingVote.length === 0 || existingVote[0].vote_type !== 'downvote') {
+      return res.status(400).json({
+        success: false,
+        message: 'You have not downvoted this post yet',
+      });
+    }
+
+    // Hapus downvote dari tabel post_votes
+    const removeDownvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
+    await pool.query(removeDownvoteQuery, [postId, userId]);
+
+    // Update jumlah downvote pada post
+    const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count - 1 WHERE id = ?';
+    await pool.query(updateDownvoteCountQuery, [postId]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Downvote removed from post successfully',
+    });
+  } catch (error) {
+    console.error('Error removing downvote:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove downvote',
+    });
+  }
+};
+
+//retrieved vote status (all)
+const getAllVoteStatus = async (req, res) => {
+  try {
+    // Ambil semua postingan beserta jumlah upvote dan downvote
+    const getVotesQuery = `
+      SELECT 
+        p.id AS post_id,
+        p.title,
+        p.content,
+        p.upvote_count,
+        p.downvote_count,
+        GROUP_CONCAT(
+          CASE 
+            WHEN pv.vote_type = 'upvote' THEN u.email
+            ELSE NULL
+          END
+        ) AS upvoters,
+        GROUP_CONCAT(
+          CASE 
+            WHEN pv.vote_type = 'downvote' THEN u.email
+            ELSE NULL
+          END
+        ) AS downvoters
+      FROM posts p
+      LEFT JOIN post_votes pv ON p.id = pv.post_id
+      LEFT JOIN users u ON pv.user_id = u.id
+      GROUP BY p.id
+      ORDER BY p.created_at DESC;
+    `;
+
+    const [posts] = await pool.query(getVotesQuery);
+
+    res.status(200).json({
+      success: true,
+      message: 'Fetched all votes for posts successfully',
+      data: posts,
+    });
+  } catch (error) {
+    console.error('Error fetching votes for posts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch votes for posts',
+    });
+  }
+};
+
+// Mendapatkan artikel berdasarkan ID
+const getArticleById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = 'SELECT * FROM articles WHERE id = ?';
+    const [article] = await pool.query(sql, [id]);
+
+    if (article.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Article not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Article fetched successfully',
+      data: article[0],
+    });
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch article',
+    });
+  }
+};
+
+// Mendapatkan semua artikel
+const getAllArticles = async (req, res) => {
+  try {
+    const sql = 'SELECT * FROM articles ORDER BY published_at DESC';
+    const [articles] = await pool.query(sql);
+
+    res.status(200).json({
+      success: true,
+      message: 'Articles fetched successfully',
+      data: articles,
+    });
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch articles',
+    });
+  }
+};
+
 module.exports = { 
   registerUser, 
   loginUser, 
@@ -946,6 +1082,7 @@ module.exports = {
   getUserProfile,
   createPost,
   getPosts,
+  getPostById,
   addComment,
   getComments,
   addReplyToComment,
@@ -955,5 +1092,9 @@ module.exports = {
   getLikedCommentsByUser,
   addUpvoteToPost,
   addDownvoteToPost,
+  removeUpvoteFromPost,
   removeDownvoteFromPost,
-  getVoteStatus };
+  getVoteStatus,
+  getAllVoteStatus,
+  getArticleById,
+  getAllArticles };
