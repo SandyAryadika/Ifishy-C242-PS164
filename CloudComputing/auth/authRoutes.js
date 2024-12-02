@@ -19,6 +19,7 @@ const {
     getPosts,
     getPostById,
     addComment,
+    getCommentsById,
     getComments,
     addReplyToComment,
     getCommentsWithReplies,
@@ -30,7 +31,6 @@ const {
     removeUpvoteFromPost,
     removeDownvoteFromPost,
     getVoteStatus,
-    getAllVoteStatus,
     getArticleById,
     getAllArticles } = require('./authController');
 const router = express.Router();
@@ -69,6 +69,7 @@ router.get('/community/posts/:id', authenticateToken, getPostById); // Ambil pos
 router.post('/community/posts/:postId/share', authenticateToken, addShareToPost); // Route untuk menambahkan share ke postingan
 router.post('/community/posts/:postId/comments', authenticateToken, addComment); // Tambahkan komentar
 router.get('/community/posts/:postId/comments', authenticateToken, getComments); // Ambil komentar pada postingan
+router.get('/community/comments/:commentId', authenticateToken, getCommentsById); // Ambil komentar pada postingan melalui id postingan
 router.post('/comments/:commentId/reply', authenticateToken, addReplyToComment); // Tambahkan reply ke komentar
 router.get('/community/posts/:postId/comments', authenticateToken, getCommentsWithReplies); // Dapatkan semua komentar beserta balasannya
 router.post('/comments/:commentId/like', authenticateToken, addLikeToComment); // Tambahkan like pada komentar
@@ -79,7 +80,6 @@ router.post('/community/posts/:postId/downvote', authenticateToken, addDownvoteT
 router.delete('/community/posts/:postId/upvote', authenticateToken, removeUpvoteFromPost);
 router.delete('/community/posts/:postId/downvote', authenticateToken, removeDownvoteFromPost);
 router.get('/community/posts/:postId/vote-status', authenticateToken, getVoteStatus);
-router.get('/community/posts/votes', authenticateToken, getAllVoteStatus);
 router.get('/articles', getAllArticles);
 router.get('/articles/:id', getArticleById);
 
