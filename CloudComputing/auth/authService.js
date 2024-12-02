@@ -17,6 +17,6 @@ module.exports = {
         if (!isValidPassword) {
             throw new Error('Invalid password');
         }
-        return jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '1d' });
+        return jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, {expiresIn : "2d"});
     },
 };

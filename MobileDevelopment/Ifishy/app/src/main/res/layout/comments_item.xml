@@ -3,10 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_marginBottom="20dp"
+    android:layout_marginBottom="25dp"
     android:layout_height="wrap_content">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_picture"
+        android:src="@drawable/user_placeholder"
+        android:layout_width="25dp"
+        app:shapeAppearanceOverlay="@style/Indicator.CornerRadius"
+        android:layout_height="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <TextView
+        android:layout_marginStart="5dp"
         android:includeFontPadding="false"
         android:id="@+id/username"
         android:layout_width="wrap_content"
@@ -16,8 +27,9 @@
         app:layout_constraintEnd_toStartOf="@+id/date"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/profile_picture"
+        app:layout_constraintTop_toTopOf="@id/profile_picture"
+        app:layout_constraintBottom_toBottomOf="@id/profile_picture"
         tools:text="@string/username" />
 
     <TextView
@@ -62,7 +74,7 @@
 
     <ImageButton
         android:layout_width="wrap_content"
-        android:layout_marginEnd="2dp"
+        android:layout_marginEnd="3dp"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:src="@drawable/like"
@@ -79,8 +91,8 @@
         app:layout_constraintBottom_toBottomOf="@id/reply"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="12"
-        android:textSize="@dimen/medium_text"
-        android:fontFamily="@font/poppins_medium"
+        android:textSize="@dimen/small_text"
+        android:fontFamily="@font/poppins"
         />
 
 

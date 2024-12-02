@@ -1,14 +1,20 @@
 package com.ifishy.ui.fragment.community
 
+import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
@@ -38,6 +44,11 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val behavior = BottomSheetBehavior.from(bottomSheet!!)
+
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         preferenceViewModel.token.observe(viewLifecycleOwner){token->
             getAllComments(token,arguments?.getInt("ID")!!)
