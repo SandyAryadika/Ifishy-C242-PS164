@@ -25,11 +25,11 @@ android {
     buildTypes {
         debug{
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
-            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/\"")
+            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/\"")
         }
         release {
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
-            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/\"")
+            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

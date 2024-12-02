@@ -8,10 +8,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.commit
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivityDetailPostBinding
+import com.ifishy.ui.fragment.community.CommentsModalFragment
 import com.ifishy.ui.viewmodel.CommunityViewModel
 import com.ifishy.utils.Date
 import com.ifishy.utils.ResponseState
@@ -23,6 +26,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding:ActivityDetailPostBinding
     private val communityViewModel : CommunityViewModel by viewModels()
     private val preferencesViewModel: PreferenceViewModel by viewModels()
+    private var id:Int?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +41,11 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         binding.back.setOnClickListener(this)
+        binding.comments.setOnClickListener(this)
 
-        val id = intent.getIntExtra(POST_ID,0)
+        id = intent.getIntExtra(POST_ID,0)
         preferencesViewModel.token.observe(this@DetailPostActivity){token->
-            getDetail(token,id)
+            id?.let { getDetail(token,it) }
         }
 
     }
@@ -50,7 +55,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
             binding.apply {
                 this.loading.visibility = View.VISIBLE
                 this.postsContent.visibility = View.GONE
-                binding.error.visibility = View.GONE
+                this.error.visibility = View.GONE
             }
         }else{
             binding.apply {
@@ -81,11 +86,11 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     is ResponseState.Error -> {
                         isLoading(false)
+                        binding.postsContent.visibility = View.GONE
                         binding.error.apply {
                             this.visibility = View.VISIBLE
                             this.text = response.message
                         }
-                        Toast.makeText(applicationContext,response.message,Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -100,6 +105,13 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         when(v){
             binding.back->{
                 finish()
+            }
+            binding.comments->{
+                val modal = CommentsModalFragment()
+                val bundle = Bundle()
+                id?.let { bundle.putInt("ID",it)}
+                modal.arguments = bundle
+                modal.show(supportFragmentManager,modal::class.java.simpleName)
             }
         }
     }

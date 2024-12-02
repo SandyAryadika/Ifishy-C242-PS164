@@ -49,7 +49,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/welcome_usname"
             app:shapeAppearanceOverlay="@style/Indicator.CornerRadius"
-            tools:src="@drawable/placeholder" />
+            tools:src="@drawable/user_placeholder" />
 
         <com.ifishy.ui.custom.CustomSearchBar
             android:id="@+id/searchviewhome"
