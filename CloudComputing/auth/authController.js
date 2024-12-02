@@ -400,86 +400,49 @@ const createPost = async (req, res) => {
 // Fungsi untuk mendapatkan semua postingan
 const getPosts = async (req, res) => {
   try {
-    // Ambil user_id dari token JWT yang di-decode (dalam implementasi Anda, pastikan ini sudah tersedia)
-    const userId = req.user.id; // Pastikan middleware auth sudah menambahkan req.user
+    const userId = req.user.id; // User ID dari JWT Token
 
-    // Ambil semua postingan beserta username dari user yang mem-posting
+    // Query untuk mendapatkan postingan dan semua data terkait (komentar, like, share, vote)
     const sqlPosts = `
-      SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username
+      SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username,
+             (SELECT COUNT(*) FROM post_votes WHERE post_id = p.id AND vote_type = 'upvote') AS likeCount,
+             (SELECT COUNT(*) FROM shares WHERE post_id = p.id) AS shareCount,
+             (SELECT COUNT(*) FROM post_votes WHERE post_id = p.id) AS voteCount,
+             (SELECT vote_type FROM post_votes WHERE post_id = p.id AND user_id = ?) AS voteStatus
       FROM posts p
       JOIN users u ON p.user_id = u.id
       ORDER BY p.created_at DESC
     `;
-    const [posts] = await pool.query(sqlPosts);
+    const [posts] = await pool.query(sqlPosts, [userId]);
 
-    // Ambil komentar, jumlah likes, jumlah share, jumlah vote, dan status vote untuk setiap postingan
-    const postsWithDetails = await Promise.all(posts.map(async (post) => {
-      // Ambil komentar berdasarkan post_id
-      const sqlComments = `
-        SELECT c.id, c.content, c.created_at, u.username
-        FROM comments c
-        JOIN users u ON c.user_id = u.id
-        WHERE c.post_id = ?
-        ORDER BY c.created_at ASC
-      `;
-      const [comments] = await pool.query(sqlComments, [post.id]);
+    // Query untuk mendapatkan komentar untuk setiap postingan
+    const sqlComments = `
+      SELECT c.id, c.content, c.created_at, u.username, c.post_id
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      ORDER BY c.created_at ASC
+    `;
+    const [comments] = await pool.query(sqlComments);
 
-      // Hitung jumlah likes untuk setiap postingan
-      const sqlLikes = `
-        SELECT COUNT(*) AS like_count
-        FROM post_votes
-        WHERE post_id = ? AND vote_type = 'upvote'
-      `;
-      const [likeResult] = await pool.query(sqlLikes, [post.id]);
-      const likeCount = likeResult[0].like_count || 0;
-
-      // Hitung jumlah share untuk setiap postingan (anggap `share` dicatat sebagai vote atau event lain)
-      const sqlShares = `
-        SELECT COUNT(*) AS share_count
-        FROM post_votes
-        WHERE post_id = ?
-      `;
-      const [shareResult] = await pool.query(sqlShares, [post.id]);
-      const shareCount = shareResult[0].share_count || 0;
-
-      // Hitung jumlah vote untuk setiap postingan
-      const sqlVoteCount = `
-        SELECT COUNT(*) AS vote_count
-        FROM post_votes
-        WHERE post_id = ?
-      `;
-      const [voteResult] = await pool.query(sqlVoteCount, [post.id]);
-      const voteCount = voteResult[0].vote_count || 0;
-
-      // Ambil status vote untuk user tertentu (upvote/downvote)
-      const sqlVoteStatus = `
-        SELECT vote_type
-        FROM post_votes
-        WHERE post_id = ? AND user_id = ?
-      `;
-      const [voteStatusResult] = await pool.query(sqlVoteStatus, [post.id, userId]);
-      const voteStatus = voteStatusResult.length > 0 ? voteStatusResult[0].vote_type : null;
-
-      // Hitung waktu sejak komentar
-      const formattedComments = comments.map(comment => ({
-        ...comment,
-        timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
-      }));
+    // Menggabungkan komentar dengan postingan
+    const postsWithDetails = posts.map(post => {
+      // Filter komentar berdasarkan post_id
+      const postComments = comments.filter(comment => comment.post_id === post.id)
+        .map(comment => ({
+          ...comment,
+          timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
+        }));
 
       return {
         ...post,
-        comments: formattedComments, // Menambahkan komentar ke setiap postingan
-        likeCount,                   // Menambahkan jumlah likes
-        shareCount,                  // Menambahkan jumlah share
-        voteCount,                   // Menambahkan jumlah vote
-        voteStatus,                  // Menambahkan status vote (upvote/downvote/null)
+        comments: postComments, // Menambahkan komentar ke setiap postingan
         timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
       };
-    }));
+    });
 
     res.status(200).json({
       success: true,
-      posts: postsWithDetails, // Mengirimkan postingan beserta komentar, likes, shares, dan vote status
+      posts: postsWithDetails,
     });
   } catch (error) {
     console.error('Error in getPosts:', error);
@@ -568,20 +531,32 @@ const getPostById = async (req, res) => {
 const addShareToPost = async (req, res) => {
   try {
     const { postId } = req.params;
+    const userId = req.user.id; // Asumsikan userId berasal dari JWT token
 
-    // Update jumlah share pada postingan
-    const updateShareCountQuery = 'UPDATE posts SET share_count = share_count + 1 WHERE id = ?';
-    await pool.query(updateShareCountQuery, [postId]);
+    // Cek apakah user sudah membagikan postingan ini sebelumnya
+    const checkShareQuery = `SELECT * FROM shares WHERE post_id = ? AND user_id = ?`;
+    const [existingShare] = await pool.query(checkShareQuery, [postId, userId]);
 
-    res.status(200).json({
+    if (existingShare.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'You have already shared this post',
+      });
+    }
+
+    // Tambahkan share baru ke dalam tabel shares
+    const insertShareQuery = `INSERT INTO shares (post_id, user_id) VALUES (?, ?)`;
+    await pool.query(insertShareQuery, [postId, userId]);
+
+    res.status(201).json({
       success: true,
-      message: 'Share added successfully',
+      message: 'Post successfully shared!',
     });
   } catch (error) {
     console.error('Error adding share to post:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to add share to post',
+      message: 'Failed to share post',
     });
   }
 };
@@ -624,14 +599,37 @@ const addComment = async (req, res) => {
   }
 };
 
-const getProfilePictureUrl = (username) => {
-  return `https://storage.googleapis.com/${bucketName}/${profileFolder}/${username}.jpg`;
+// Fungsi untuk mendapatkan URL foto profil dari GCS berdasarkan username
+const getProfilePictureUrl = async (username) => {
+  try {
+    const [files] = await storage.bucket(bucketName).getFiles({
+      prefix: `${profileFolder}/`,
+    });
+
+    // Cari file yang cocok dengan username
+    const profileFile = files.find((file) => file.name.includes(username));
+
+    if (!profileFile) {
+      return null;
+    }
+
+    const [url] = await profileFile.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2026', // URL kadaluwarsa dalam waktu tertentu
+    });
+
+    return url;
+  } catch (error) {
+    console.error(`Failed to get profile picture for ${username}:`, error);
+    return null;
+  }
 };
 
 // Menampilkan semua komentar pada sebuah postingan
 const getComments = async (req, res) => {
   try {
     const { postId } = req.params;
+    const userId = req.user.id; // Ambil user_id dari token JWT yang di-decode
 
     // Query untuk mendapatkan semua komentar terkait postingan
     const commentsSql = `
@@ -653,54 +651,51 @@ const getComments = async (req, res) => {
     `;
     const [replies] = await pool.query(repliesSql, [postId]);
 
-    // Ambil URL foto profil dari GCS untuk setiap pengguna dalam komentar
-    const getProfilePictureUrl = async (username) => {
-      try {
-        const [files] = await storage.bucket(bucketName).getFiles({
-          prefix: `${profileFolder}/`,
-        });
-
-        // Cari file yang cocok dengan username
-        const profileFile = files.find((file) =>
-          file.name.includes(username)
-        );
-
-        if (!profileFile) {
-          return null;
-        }
-
-        const [url] = await profileFile.getSignedUrl({
-          action: 'read',
-          expires: '03-01-2025', // URL kadaluwarsa dalam waktu tertentu
-        });
-
-        return url;
-      } catch (error) {
-        console.error(`Failed to get profile picture for ${username}:`, error);
-        return null;
-      }
-    };
-
     // Gabungkan komentar dengan balasannya dalam struktur nested
     const formattedComments = await Promise.all(
       comments.map(async (comment) => {
-        const commentReplies = replies
-          .filter((reply) => reply.parent_comment_id === comment.id)
-          .map((reply) => ({
-            id: reply.id,
-            content: reply.content,
-            created_at: reply.created_at,
-            username: reply.username,
-            timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
-          }));
+        // Ambil jumlah like untuk komentar ini
+        const likeCountSql = `
+          SELECT COUNT(*) AS like_count
+          FROM likes
+          WHERE comment_id = ?
+        `;
+        const [likeCountResult] = await pool.query(likeCountSql, [comment.id]);
+        const likeCount = likeCountResult[0].like_count || 0;
 
+        // Periksa apakah user saat ini telah memberikan like pada komentar ini
+        const userLikeSql = `
+          SELECT id
+          FROM likes
+          WHERE comment_id = ? AND user_id = ?
+        `;
+        const [userLikeResult] = await pool.query(userLikeSql, [comment.id, userId]);
+        const userLiked = userLikeResult.length > 0;
+
+        // Ambil URL foto profil dari GCS untuk komentar utama
         const profilePictureUrl = await getProfilePictureUrl(comment.username);
+
+        // Ambil URL foto profil dari GCS untuk setiap reply
+        const commentReplies = await Promise.all(
+          replies
+            .filter((reply) => reply.parent_comment_id === comment.id)
+            .map(async (reply) => ({
+              id: reply.id,
+              content: reply.content,
+              created_at: reply.created_at,
+              username: reply.username,
+              profilePicture: await getProfilePictureUrl(reply.username), // Ambil URL foto profil reply
+              timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
+            }))
+        );
 
         return {
           ...comment,
           profilePicture: profilePictureUrl, // Tambahkan URL foto profil ke komentar
           timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
-          replies: commentReplies, // Tambahkan array replies ke setiap komentar
+          likeCount,                           // Tambahkan jumlah likes
+          userLiked,                           // Tambahkan apakah user telah memberikan like
+          replies: commentReplies,             // Tambahkan array replies ke setiap komentar
         };
       })
     );
@@ -722,6 +717,7 @@ const getComments = async (req, res) => {
 const getCommentsById = async (req, res) => {
   try {
     const { commentId } = req.params;
+    const userId = req.user.id; // Ambil user_id dari token JWT yang di-decode
 
     // Query untuk mendapatkan komentar berdasarkan commentId
     const commentSql = `
@@ -751,31 +747,23 @@ const getCommentsById = async (req, res) => {
     `;
     const [replies] = await pool.query(repliesSql, [commentId]);
 
-    // Fungsi untuk mendapatkan URL foto profil dari GCS
-    const getProfilePictureUrl = async (username) => {
-      try {
-        const [files] = await storage.bucket(bucketName).getFiles({
-          prefix: `${profileFolder}/`,
-        });
+    // Query untuk menghitung jumlah like pada komentar utama
+    const likeCountCommentSql = `
+      SELECT COUNT(*) AS like_count
+      FROM likes
+      WHERE comment_id = ?
+    `;
+    const [likeCountCommentResult] = await pool.query(likeCountCommentSql, [commentId]);
+    const likeCountComment = likeCountCommentResult[0].like_count || 0;
 
-        // Cari file yang cocok dengan username di dalam folder profil
-        const profileFile = files.find((file) => file.name.includes(username));
-
-        if (!profileFile) {
-          return null;
-        }
-
-        const [url] = await profileFile.getSignedUrl({
-          action: 'read',
-          expires: '03-01-2025', // URL kadaluwarsa
-        });
-
-        return url;
-      } catch (error) {
-        console.error(`Failed to get profile picture for ${username}:`, error);
-        return null;
-      }
-    };
+    // Query untuk memeriksa apakah user telah memberi like pada komentar utama
+    const userLikeCommentSql = `
+      SELECT id
+      FROM likes
+      WHERE comment_id = ? AND user_id = ?
+    `;
+    const [userLikeCommentResult] = await pool.query(userLikeCommentSql, [commentId, userId]);
+    const userLikedComment = userLikeCommentResult.length > 0;
 
     // Dapatkan URL foto profil untuk komentar utama
     const profilePictureUrlComment = await getProfilePictureUrl(comment.username);
@@ -788,9 +776,31 @@ const getCommentsById = async (req, res) => {
       username: comment.username,
       profilePicture: profilePictureUrlComment,
       timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
+      likeCount: likeCountComment,
+      userLiked: userLikedComment,
       replies: await Promise.all(
         replies.map(async (reply) => {
+          // Query untuk menghitung jumlah like pada balasan, hitung berdasarkan comment_id (parent comment)
+          const likeCountReplySql = `
+            SELECT COUNT(*) AS like_count
+            FROM likes
+            WHERE comment_id = ?
+          `;
+          const [likeCountReplyResult] = await pool.query(likeCountReplySql, [commentId]);
+          const likeCountReply = likeCountReplyResult[0].like_count || 0;
+
+          // Query untuk memeriksa apakah user telah memberi like pada balasan, menggunakan comment_id sebagai parent
+          const userLikeReplySql = `
+            SELECT id
+            FROM likes
+            WHERE comment_id = ? AND user_id = ?
+          `;
+          const [userLikeReplyResult] = await pool.query(userLikeReplySql, [commentId, userId]);
+          const userLikedReply = userLikeReplyResult.length > 0;
+
+          // Dapatkan URL foto profil untuk balasan
           const profilePictureUrlReply = await getProfilePictureUrl(reply.username);
+
           return {
             id: reply.id,
             content: reply.content,
@@ -798,6 +808,8 @@ const getCommentsById = async (req, res) => {
             username: reply.username,
             profilePicture: profilePictureUrlReply,
             timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
+            likeCount: likeCountReply,
+            userLiked: userLikedReply,
           };
         })
       ),

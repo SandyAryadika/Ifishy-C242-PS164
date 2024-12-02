@@ -1,11 +1,13 @@
 package com.ifishy.ui.fragment.profile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ifishy.R
+import com.ifishy.ui.activity.setting.Setting
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,8 +36,16 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+
+        // Find ImageButton and set click listener
+        val btnSettings: View = view.findViewById(R.id.back)
+        btnSettings.setOnClickListener {
+            val intent = Intent(activity, Setting::class.java)
+            startActivity(intent)
+        }
+
+        return view
     }
 
     companion object {
