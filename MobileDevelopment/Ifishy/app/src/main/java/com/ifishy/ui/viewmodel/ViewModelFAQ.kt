@@ -14,7 +14,8 @@ class FaqItem (
 class ViewModelFAQ: ViewModel() {
 
     private val _faqlist = MutableLiveData<MutableList<FaqItem>>()
-    val faqlist: LiveData<MutableList<FaqItem>> = _faqlist
+    val faqlist: MutableLiveData<MutableList<FaqItem>> = _faqlist
+
 
     init {
         _faqlist.value = mutableListOf(
@@ -34,8 +35,9 @@ class ViewModelFAQ: ViewModel() {
 
     fun toggleFaqExpansion(index: Int) {
         _faqlist.value?.let { list ->
-            list[index].isExpanded = !list[index].isExpanded
-            _faqlist.value = list
+            val updatedList = list.toMutableList()
+            updatedList[index].isExpanded = !updatedList[index].isExpanded
+            _faqlist.value = updatedList
         }
     }
 }

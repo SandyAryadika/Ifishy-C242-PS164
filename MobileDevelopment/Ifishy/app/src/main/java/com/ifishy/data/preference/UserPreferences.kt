@@ -18,9 +18,15 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(BuildConfi
 
 class UserPreferences @Inject constructor(private val context: Application) {
 
+
     private val TOKEN = stringPreferencesKey("user_token")
     private val ALREADY_LOGIN = booleanPreferencesKey("already_login")
     private val EMAIL = stringPreferencesKey("user_email")
+
+
+    private val LANGUAGE = stringPreferencesKey("user_language")
+    private val NOTIFICATION_ENABLED = booleanPreferencesKey("notification_enabled")
+    private val THEME_DARK = booleanPreferencesKey("theme_dark")
 
     suspend fun saveToken(token:String,email: String) {
         context.dataStore.edit { userToken ->
@@ -48,4 +54,29 @@ class UserPreferences @Inject constructor(private val context: Application) {
         }
     }
 
+    suspend fun saveSettings(language: String, notificationEnabled: Boolean, themeDark: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[LANGUAGE] = language
+            preferences[NOTIFICATION_ENABLED] = notificationEnabled
+            preferences[THEME_DARK] = themeDark
+        }
+    }
+
+    fun getLanguage(): Flow<String> {
+        return context.dataStore.data.map { preferences ->
+            preferences[LANGUAGE] ?: "EN(US)"
+        }
+    }
+
+    fun isNotificationEnabled(): Flow<Boolean> {
+        return context.dataStore.data.map { preferences ->
+            preferences[NOTIFICATION_ENABLED] ?: true
+        }
+    }
+
+    fun isThemeDark(): Flow<Boolean> {
+        return context.dataStore.data.map { preferences ->
+            preferences[THEME_DARK] ?: false
+        }
+    }
 }
