@@ -86,7 +86,7 @@ async function loginUser(req, res) {
       throw new Error("JWT_SECRET is missing");
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: "2d" });
 
 
     res.status(200).json({
