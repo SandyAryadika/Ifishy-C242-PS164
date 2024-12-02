@@ -3,6 +3,7 @@ package com.ifishy.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ifishy.data.model.comments.CommentsResponse
 import com.ifishy.data.model.community.response.CommunityDetailResponse
 import com.ifishy.data.model.community.response.CommunityResponse
 import com.ifishy.data.repository.community.CommunityRepository
@@ -17,6 +18,7 @@ class CommunityViewModel @Inject constructor(@Named ("CommunityRepository") priv
 
     val posts: MutableLiveData<ResponseState<CommunityResponse>> = MutableLiveData()
     val postById: MutableLiveData<ResponseState<CommunityDetailResponse>> = MutableLiveData()
+    val comments: MutableLiveData<ResponseState<CommentsResponse>> = MutableLiveData()
 
     fun getAllPosts(token: String) {
         viewModelScope.launch {
@@ -34,6 +36,15 @@ class CommunityViewModel @Inject constructor(@Named ("CommunityRepository") priv
 
             val response = communityRepository.getPostById(token,id)
             postById.postValue(response)
+        }
+    }
+
+    fun getAllComments(token: String,id: Int){
+        viewModelScope.launch {
+            comments.value = ResponseState.Loading
+
+            val response = communityRepository.getAllComments(token,id)
+            comments.postValue(response)
         }
     }
 

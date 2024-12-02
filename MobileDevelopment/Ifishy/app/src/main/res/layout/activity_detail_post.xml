@@ -163,6 +163,22 @@
 
         </com.facebook.shimmer.ShimmerFrameLayout>
 
+        <Button
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_button"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/comments"
+            android:paddingHorizontal="40dp"
+            android:textSize="@dimen/medium_text"
+            app:backgroundTint="@color/primary_light"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:drawableTint="@color/white"
+            android:drawableLeft="@drawable/comments"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

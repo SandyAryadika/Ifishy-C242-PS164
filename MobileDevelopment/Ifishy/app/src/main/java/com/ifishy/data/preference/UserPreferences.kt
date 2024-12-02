@@ -20,10 +20,12 @@ class UserPreferences @Inject constructor(private val context: Application) {
 
     private val TOKEN = stringPreferencesKey("user_token")
     private val ALREADY_LOGIN = booleanPreferencesKey("already_login")
+    private val EMAIL = stringPreferencesKey("user_email")
 
-    suspend fun saveToken(token:String) {
+    suspend fun saveToken(token:String,email: String) {
         context.dataStore.edit { userToken ->
             userToken[ALREADY_LOGIN] = true
+            userToken[EMAIL] = email
             userToken[TOKEN] = token
         }
     }
@@ -31,6 +33,12 @@ class UserPreferences @Inject constructor(private val context: Application) {
     fun readToken(): Flow<String> {
         return context.dataStore.data.map { token->
             token[TOKEN] ?: ""
+        }
+    }
+
+    fun getUserEmail(): Flow<String>{
+        return context.dataStore.data.map { email->
+            email[EMAIL] ?: ""
         }
     }
 

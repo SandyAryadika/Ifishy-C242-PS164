@@ -6,6 +6,8 @@ import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.data.repository.auth.AuthRepositoryImpl
 import com.ifishy.data.repository.community.CommunityRepository
 import com.ifishy.data.repository.community.CommunityRepositoryImpl
+import com.ifishy.data.repository.profile.ProfileRepository
+import com.ifishy.data.repository.profile.ProfileRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,5 +28,11 @@ object RepositoryModule {
     @Named("CommunityRepository")
     fun provideCommunityRepo(apiService: ApiService,context: Application): CommunityRepository{
         return CommunityRepositoryImpl(apiService,context)
+    }
+
+    @Provides
+    @Named("ProfileRepository")
+    fun provideProfileRepo(apiService: ApiService,context: Application): ProfileRepository{
+        return ProfileRepositoryImpl(apiService,context)
     }
 }

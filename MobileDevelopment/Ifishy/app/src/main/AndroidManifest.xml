@@ -20,7 +20,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.activity.detail_post.DetailPostActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity
             android:name=".SplashActivity"
             android:exported="true"

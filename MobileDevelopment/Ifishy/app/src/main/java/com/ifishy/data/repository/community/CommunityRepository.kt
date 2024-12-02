@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.ifishy.R
 import com.ifishy.api.ApiService
 import com.ifishy.data.model.auth.ErrorResponse
+import com.ifishy.data.model.comments.CommentsResponse
 import com.ifishy.data.model.community.response.CommunityDetailResponse
 import com.ifishy.data.model.community.response.CommunityResponse
 import com.ifishy.utils.ResponseState
@@ -16,6 +17,7 @@ import javax.inject.Inject
 interface CommunityRepository {
     suspend fun getAllPosts(token: String): ResponseState<CommunityResponse>
     suspend fun getPostById(token: String,id:Int): ResponseState<CommunityDetailResponse>
+    suspend fun getAllComments(token: String,id: Int): ResponseState<CommentsResponse>
 }
 
 class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiService,@ApplicationContext private val context: Application) : CommunityRepository {
@@ -38,6 +40,21 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
     override suspend fun getPostById(token: String, id: Int): ResponseState<CommunityDetailResponse> {
         return try {
             val response = apiService.getPostById("Bearer $token", id)
+            ResponseState.Success(response)
+        }catch (e: IOException) {
+            ResponseState.Error(context.getString(R.string.no_internet))
+        } catch (e: HttpException) {
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            ResponseState.Error(errorMessage.message!!)
+        }catch (e: IllegalStateException){
+            ResponseState.Error(context.getString(R.string.internal_server_error))
+        }
+    }
+
+    override suspend fun getAllComments(token: String, id: Int): ResponseState<CommentsResponse> {
+        return try {
+            val response = apiService.getAllComments("Bearer $token",id)
             ResponseState.Success(response)
         }catch (e: IOException) {
             ResponseState.Error(context.getString(R.string.no_internet))

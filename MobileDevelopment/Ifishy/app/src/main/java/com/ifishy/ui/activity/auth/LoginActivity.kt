@@ -77,7 +77,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         is ResponseState.Success -> {
                             isLoading(false)
-                            preferencesViewModel.saveToken(response.data.token!!)
+                            preferencesViewModel.saveToken(response.data.token!!,
+                                binding.email.text.toString()
+                            )
                             goTo(MainActivity::class.java)
                         }
                         is ResponseState.Error -> {

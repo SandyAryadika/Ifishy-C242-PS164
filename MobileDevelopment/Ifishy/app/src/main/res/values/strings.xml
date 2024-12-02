@@ -63,5 +63,7 @@
     <string name="tools_question">Question</string>
     <string name="expand_tool_2">Expand tool</string>
     <string name="answer">Answer</string>
+    <string name="comments">Comments</string>
+    <string name="reply">%1$d Reply</string>
 
 </resources>

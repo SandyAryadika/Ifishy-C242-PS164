@@ -73,7 +73,6 @@ class CommunityFragment : Fragment() {
                                     .putExtra(DetailPostActivity.POST_ID,id)
                                 )
                             }
-
                         })
                         isLoading(false)
                         binding.community.apply {
@@ -83,6 +82,7 @@ class CommunityFragment : Fragment() {
                     }
                     is ResponseState.Error -> {
                         isLoading(false)
+                        binding.community.visibility = View.GONE
                         binding.error.apply {
                             this.text = response.message
                             this.visibility = View.VISIBLE

@@ -13,10 +13,11 @@ class PreferenceViewModel @Inject constructor(private val userPreferences: UserP
 
     val token: LiveData<String> = userPreferences.readToken().asLiveData()
     val isAlreadyLogin: LiveData<Boolean> = userPreferences.alreadyLogin().asLiveData()
+    val email: LiveData<String> = userPreferences.getUserEmail().asLiveData()
 
-    fun saveToken(token:String){
+    fun saveToken(token:String,email: String){
         viewModelScope.launch {
-            userPreferences.saveToken(token)
+            userPreferences.saveToken(token,email)
         }
     }
 
