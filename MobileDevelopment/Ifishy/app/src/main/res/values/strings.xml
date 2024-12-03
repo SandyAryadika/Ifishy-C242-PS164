@@ -62,7 +62,7 @@
     <string name="tools_question">Question</string>
     <string name="expand_tool_2">Expand tool</string>
     <string name="answer">Answer</string>
-    <string name="comments1">Comments</string>
+    <string name="comments">Comments</string>
     <string name="reply">%1$d Reply</string>
     <string name="tool_settings">Settings</string>
     <string name="settings_nightmode">Night Mode</string>
@@ -70,5 +70,6 @@
     <string name="contact_us">Contact Us</string>
     <string name="tools_email">tertawatapiterluka@gmail.com</string>
     <string name="notification">Notification</string>
+    <string name="error_comments">Error while adding comment</string>
 
 </resources>

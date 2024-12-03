@@ -3,8 +3,10 @@ package com.ifishy.ui.adapter.community
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ifishy.R
 import com.ifishy.data.model.community.response.PostsItem
 import com.ifishy.databinding.CommunityItemBinding
 import com.ifishy.utils.Date
@@ -25,6 +27,9 @@ class CommunityPostsAdapter(private val posts:List<PostsItem>): RecyclerView.Ada
             binding.title.text = item.title
             binding.shareCount.text = item.shareCount.toString()
             binding.voteCount.text = item.voteCount.toString()
+            binding.upvote.setImageDrawable(if (item.voteStatus == "upvote") ContextCompat.getDrawable(context,
+                R.drawable.vote_fill
+            )else ContextCompat.getDrawable(context,R.drawable.vote_false) )
             Glide.with(context)
                 .load(item.imageUrl)
                 .into(binding.image)
