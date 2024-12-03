@@ -2,6 +2,7 @@ package com.ifishy.data.preference
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -59,6 +60,13 @@ class UserPreferences @Inject constructor(private val context: Application) {
             preferences[LANGUAGE] = language
             preferences[NOTIFICATION_ENABLED] = notificationEnabled
             preferences[THEME_DARK] = themeDark
+        }
+        Log.d("UserPreferences", "Settings saved: language=$language, notificationEnabled=$notificationEnabled, themeDark=$themeDark")
+    }
+
+    suspend fun clearSession(){
+        context.dataStore.edit {
+            it.clear()
         }
     }
 

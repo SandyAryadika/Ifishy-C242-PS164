@@ -8,10 +8,12 @@ import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.databinding.ActivitySettingBinding
+import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.faq.FrequentlyAskMenu
 import com.ifishy.ui.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,14 +26,32 @@ class Setting : AppCompatActivity() {
 
 
     private val languages = listOf("EN(US)", "ID", "EN(UK)")
+    private var isUpdatingNightMode = false
+
+    private fun logout(){
+        viewModel.clearSession()
+
+        val intent = Intent(this@Setting, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val isDarkModeEnabled = viewModel.themeDark.value ?: false
+
         supportActionBar?.hide()
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         observeSettings()
+
+
+        binding.settingsLogout.setOnClickListener {
+            logout()
+        }
 
         binding.expandButton.setOnClickListener {
             val intent = Intent(this, FrequentlyAskMenu::class.java)
@@ -42,17 +62,24 @@ class Setting : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.languageSpinner.adapter = adapter
 
-        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedLanguage = languages[position]
-                viewModel.saveSettings(
-                    language = selectedLanguage,
-                    notificationEnabled = binding.switchNotif.isChecked,
-                    themeDark = binding.switchNight.isChecked
-                )
+        binding.languageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedLanguage = languages[position]
+                    viewModel.saveSettings(
+                        language = selectedLanguage,
+                        notificationEnabled = binding.switchNotif.isChecked,
+                        themeDark = binding.switchNight.isChecked
+                    )
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
 
         binding.switchNotif.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveSettings(
@@ -62,16 +89,24 @@ class Setting : AppCompatActivity() {
             )
         }
 
+
         binding.switchNight.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.saveSettings(
-                language = binding.languageSpinner.selectedItem.toString(),
-                notificationEnabled = binding.switchNotif.isChecked,
-                themeDark = isChecked
-            )
+            if (!isUpdatingNightMode && viewModel.themeDark.value != isChecked) { // Validasi loop
+                viewModel.saveSettings(
+                    language = binding.languageSpinner.selectedItem.toString(),
+                    notificationEnabled = binding.switchNotif.isChecked,
+                    themeDark = isChecked
+                )
+
+                AppCompatDelegate.setDefaultNightMode(
+                    if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
+                    else AppCompatDelegate.MODE_NIGHT_NO
+                )
+            }
         }
     }
 
-    private fun observeSettings() {
+        private fun observeSettings() {
         viewModel.language.observe(this) { language ->
             if (language != null) {
                 binding.languageSpinner.setSelection(getLanguagePosition(language))
@@ -84,17 +119,14 @@ class Setting : AppCompatActivity() {
             binding.switchNotif.isChecked = isEnabled
         }
 
-        viewModel.themeDark.observe(this) { isDark ->
-            binding.switchNight.isChecked = isDark
-        }
+            viewModel.themeDark.observe(this) { isDark ->
+                binding.switchNight.isChecked = isDark
+            }
     }
 
     private fun getLanguagePosition(language: String): Int {
         return languages.indexOf(language)
     }
 
-    private fun getLanguageFromPosition(position: Int): String {
-        return languages[position]
-    }
 
 }

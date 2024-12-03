@@ -23,4 +23,11 @@ class SettingsViewModel @Inject constructor(
             userPreferences.saveSettings(language, notificationEnabled, themeDark)
         }
     }
+
+    fun clearSession(){
+        viewModelScope.launch {
+            userPreferences.clearSession()
+        }
+
+    }
 }
