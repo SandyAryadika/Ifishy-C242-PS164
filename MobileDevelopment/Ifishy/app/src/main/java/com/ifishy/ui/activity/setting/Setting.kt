@@ -40,7 +40,6 @@ class Setting : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val isDarkModeEnabled = viewModel.themeDark.value ?: false
 
         supportActionBar?.hide()
         binding = ActivitySettingBinding.inflate(layoutInflater)
@@ -73,7 +72,6 @@ class Setting : AppCompatActivity() {
                     val selectedLanguage = languages[position]
                     viewModel.saveSettings(
                         language = selectedLanguage,
-                        notificationEnabled = binding.switchNotif.isChecked,
                         themeDark = binding.switchNight.isChecked
                     )
                 }
@@ -81,20 +79,12 @@ class Setting : AppCompatActivity() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
 
-        binding.switchNotif.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.saveSettings(
-                language = binding.languageSpinner.selectedItem.toString(),
-                notificationEnabled = isChecked,
-                themeDark = binding.switchNight.isChecked
-            )
-        }
 
 
         binding.switchNight.setOnCheckedChangeListener { _, isChecked ->
-            if (!isUpdatingNightMode && viewModel.themeDark.value != isChecked) { // Validasi loop
+            if (!isUpdatingNightMode && viewModel.themeDark.value != isChecked) {
                 viewModel.saveSettings(
                     language = binding.languageSpinner.selectedItem.toString(),
-                    notificationEnabled = binding.switchNotif.isChecked,
                     themeDark = isChecked
                 )
 
@@ -115,10 +105,6 @@ class Setting : AppCompatActivity() {
             }
         }
 
-        viewModel.notificationEnabled.observe(this) { isEnabled ->
-            binding.switchNotif.isChecked = isEnabled
-        }
-
             viewModel.themeDark.observe(this) { isDark ->
                 binding.switchNight.isChecked = isDark
             }
@@ -127,6 +113,5 @@ class Setting : AppCompatActivity() {
     private fun getLanguagePosition(language: String): Int {
         return languages.indexOf(language)
     }
-
 
 }

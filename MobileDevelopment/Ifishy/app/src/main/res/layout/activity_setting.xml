@@ -102,24 +102,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_notif"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
-            android:padding="10dp"
-            android:background="@drawable/search_bar"
-            android:backgroundTint="@color/edit_text_background"
-            android:text="@string/notification"
-            android:fontFamily="@font/poppins_medium"
-            android:textSize="20sp"
-            android:textColor="@color/primary_light"
-            android:textAlignment="textStart"
-            app:layout_constraintTop_toBottomOf="@id/switch_night"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
         <TextView
             android:id="@+id/settings_logout"
             android:layout_width="match_parent"
@@ -134,7 +116,7 @@
             android:textSize="20sp"
             android:textColor="@color/logout_teks"
             android:textAlignment="textStart"
-            app:layout_constraintTop_toBottomOf="@id/switch_notif"
+            app:layout_constraintTop_toBottomOf="@id/switch_night"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView

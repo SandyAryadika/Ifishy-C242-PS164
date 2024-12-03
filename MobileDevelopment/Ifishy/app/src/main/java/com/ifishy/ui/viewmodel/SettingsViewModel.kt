@@ -15,12 +15,11 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val language: LiveData<String> = userPreferences.getLanguage().asLiveData()
-    val notificationEnabled: LiveData<Boolean> = userPreferences.isNotificationEnabled().asLiveData()
     val themeDark: LiveData<Boolean> = userPreferences.isThemeDark().asLiveData()
 
-    fun saveSettings(language: String, notificationEnabled: Boolean, themeDark: Boolean) {
+    fun saveSettings(language: String,  themeDark: Boolean) {
         viewModelScope.launch {
-            userPreferences.saveSettings(language, notificationEnabled, themeDark)
+            userPreferences.saveSettings(language, themeDark)
         }
     }
 
