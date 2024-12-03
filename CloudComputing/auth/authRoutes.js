@@ -30,9 +30,14 @@ const {
     addDownvoteToPost,
     removeUpvoteFromPost,
     removeDownvoteFromPost,
-    getVoteStatus,
+    getVoteStatusById,
     getArticleById,
-    getAllArticles } = require('./authController');
+    getAllArticles,
+    getArticleFromUrl,
+    addBookmark,
+    removeBookmark,
+    getBookmarks,
+    getBookmarkById } = require('./authController');
 const router = express.Router();
 
 // Validasi untuk registrasi
@@ -79,8 +84,13 @@ router.post('/community/posts/:postId/upvote', authenticateToken, addUpvoteToPos
 router.post('/community/posts/:postId/downvote', authenticateToken, addDownvoteToPost); // Route untuk melakukan downvote pada postingan
 router.delete('/community/posts/:postId/upvote', authenticateToken, removeUpvoteFromPost);
 router.delete('/community/posts/:postId/downvote', authenticateToken, removeDownvoteFromPost);
-router.get('/community/posts/:postId/vote-status', authenticateToken, getVoteStatus);
+router.get('/community/posts/:postId/vote-status', authenticateToken, getVoteStatusById);
 router.get('/articles', getAllArticles);
 router.get('/articles/:id', getArticleById);
+router.get('/article/scrape/:url', getArticleFromUrl);
+router.post('/bookmark', authenticateToken, addBookmark);  // Menambahkan bookmark
+router.delete('/bookmark', authenticateToken, removeBookmark);  // Menghapus bookmark
+router.get('/bookmarks', authenticateToken, getBookmarks);  // Mendapatkan semua bookmark
+router.get('/bookmark/:id', authenticateToken, getBookmarkById);
 
 module.exports = router;

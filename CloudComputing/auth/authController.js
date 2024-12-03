@@ -2,6 +2,9 @@ const pool = require('../config/dbConfig');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Storage } = require('@google-cloud/storage');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 const path = require('path');
 const { JWT_SECRET } = require('../config/secrets');
 
@@ -832,7 +835,8 @@ const getCommentsById = async (req, res) => {
 const addReplyToComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const { userId, content } = req.body; // userId dan content harus dikirimkan dari client
+    const { content } = req.body; // userId dan content harus dikirimkan dari client
+    const userId = req.user.id
 
     if (!content) {
       return res.status(400).json({
@@ -1088,7 +1092,7 @@ const addDownvoteToPost = async (req, res) => {
 };
 
 //retrieved vote status (single)
-const getVoteStatus = async (req, res) => {
+const getVoteStatusById = async (req, res) => {
   try {
     const { postId } = req.params;
     const userId = req.user.id; // Mendapatkan userId dari token JWT
@@ -1245,6 +1249,283 @@ const getAllArticles = async (req, res) => {
   }
 };
 
+// Fungsi untuk men-scrape artikel dari URL
+const scrapeArticle = async (url) => {
+  try {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+
+    // Ambil data setelah halaman sepenuhnya dimuat
+    const result = await page.evaluate(() => {
+      const title = document.querySelector('h1')?.innerText || '';
+      const author = document.querySelector('.author-name')?.innerText || '';
+      const content = document.querySelector('.content-body')?.innerHTML || '';
+      const coverImage = document.querySelector('.lazyloaded')?.src || '';
+
+      // Ambil tanggal publikasi
+      const publicationTime = document.querySelector('time[itemprop="datePublished"]')?.getAttribute('datetime') || 'Unknown publication date';
+
+      // Mengambil semua gambar dengan class lazyloaded
+      const images = [];
+      document.querySelectorAll('.placeholder-container').forEach((img) => {
+        let imageUrl = img.getAttribute('data-src');
+        
+        if (!imageUrl) {
+          const srcset = img.getAttribute('srcset');
+          if (srcset) {
+            const srcsetArray = srcset.split(',').map(item => item.trim());
+            const highestResolution = srcsetArray[srcsetArray.length - 1];
+            imageUrl = highestResolution.split(' ')[0];
+          }
+        }
+
+        if (!imageUrl) {
+          imageUrl = img.getAttribute('src');
+        }
+
+        const description = img.getAttribute('alt') || 'No description';
+
+        if (imageUrl) {
+          images.push({ imageUrl, description });
+        }
+      });
+
+      return { title, content, author, coverImage, images, publicationTime };
+    });
+
+    await browser.close();
+    return {
+      ...result,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error scraping article:', error);
+    return {
+      success: false,
+      message: 'Failed to scrape article',
+    };
+  }
+};
+
+// Fungsi untuk mengambil artikel dan menyimpannya ke database
+const getArticleFromUrl = async (req, res) => {
+  try {
+    const { url } = req.params;
+
+    if (!url) {
+      return res.status(400).json({
+        success: false,
+        message: 'URL parameter is required',
+      });
+    }
+
+    let fullUrl = url;
+    if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+      fullUrl = 'https://' + fullUrl;
+    }
+
+    const result = await scrapeArticle(fullUrl);
+
+    if (result.success) {
+      // Simpan artikel ke database
+      const { title, content, author, coverImage, publicationTime } = result;
+
+      // Konversi publicationTime ke format MySQL (YYYY-MM-DD HH:MM:SS)
+      const formattedPublicationTime = new Date(publicationTime)
+        .toISOString()
+        .slice(0, 19)
+        .replace('T', ' ');
+
+      const insertArticleSql = `
+        INSERT INTO articles (title, content, author, published_at, cover_image)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+
+      const [insertResult] = await pool.query(insertArticleSql, [
+        title,
+        content,
+        author,
+        formattedPublicationTime,
+        coverImage,
+      ]);
+
+      res.status(200).json({
+        success: true,
+        message: 'Article scraped and saved successfully',
+        articleId: insertResult.insertId,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: result.message,
+      });
+    }
+  } catch (error) {
+    console.error('Error scraping and saving article:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to scrape and save article',
+    });
+  }
+};
+
+// Menambahkan bookmark untuk postingan atau artikel
+const addBookmark = async (req, res) => {
+  try {
+    const { itemId, type } = req.body;
+    const userId = req.user.id; // Ambil user_id dari token JWT
+
+    // Validasi input
+    if (!itemId || !type || !['post', 'article'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input data',
+      });
+    }
+
+    // Periksa apakah bookmark sudah ada
+    const checkBookmarkSql = `
+      SELECT id FROM bookmarks WHERE user_id = ? AND item_id = ? AND type = ?
+    `;
+    const [existingBookmark] = await pool.query(checkBookmarkSql, [userId, itemId, type]);
+
+    if (existingBookmark.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Bookmark already exists',
+      });
+    }
+
+    // Tambahkan bookmark
+    const addBookmarkSql = `
+      INSERT INTO bookmarks (user_id, type, item_id)
+      VALUES (?, ?, ?)
+    `;
+    await pool.query(addBookmarkSql, [userId, type, itemId]);
+
+    res.status(201).json({
+      success: true,
+      message: 'Bookmark added successfully',
+    });
+  } catch (error) {
+    console.error('Error adding bookmark:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add bookmark',
+    });
+  }
+};
+
+// Menghapus bookmark
+const removeBookmark = async (req, res) => {
+  try {
+    const { itemId, type } = req.body;
+    const userId = req.user.id; // Ambil user_id dari token JWT
+
+    if (!itemId || !type || !['post', 'article'].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid input data',
+      });
+    }
+
+    const removeBookmarkSql = `
+      DELETE FROM bookmarks WHERE user_id = ? AND item_id = ? AND type = ?
+    `;
+    await pool.query(removeBookmarkSql, [userId, itemId, type]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Bookmark removed successfully',
+    });
+  } catch (error) {
+    console.error('Error removing bookmark:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove bookmark',
+    });
+  }
+};
+
+// Mendapatkan semua bookmark milik user
+const getBookmarks = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const getBookmarksSql = `
+      SELECT b.id, b.type, b.item_id, 
+        CASE 
+          WHEN b.type = 'post' THEN (SELECT title FROM posts WHERE id = b.item_id)
+          WHEN b.type = 'article' THEN (SELECT title FROM articles WHERE id = b.item_id)
+        END AS title,
+        b.created_at
+      FROM bookmarks b
+      WHERE b.user_id = ?
+      ORDER BY b.created_at DESC
+    `;
+    const [bookmarks] = await pool.query(getBookmarksSql, [userId]);
+
+    res.status(200).json({
+      success: true,
+      bookmarks,
+    });
+  } catch (error) {
+    console.error('Error fetching bookmarks:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve bookmarks',
+    });
+  }
+};
+
+// Mendapatkan bookmark berdasarkan ID milik user
+const getBookmarkById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params; // Mengambil ID dari parameter URL
+
+    // Validasi input ID
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bookmark ID is required',
+      });
+    }
+
+    const getBookmarkSql = `
+      SELECT b.id, b.type, b.item_id, 
+        CASE 
+          WHEN b.type = 'post' THEN (SELECT title FROM posts WHERE id = b.item_id)
+          WHEN b.type = 'article' THEN (SELECT title FROM articles WHERE id = b.item_id)
+        END AS title,
+        b.created_at
+      FROM bookmarks b
+      WHERE b.user_id = ? AND b.id = ?
+    `;
+
+    const [bookmark] = await pool.query(getBookmarkSql, [userId, id]);
+
+    if (bookmark.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bookmark not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      bookmark: bookmark[0],
+    });
+  } catch (error) {
+    console.error('Error fetching bookmark:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve bookmark',
+    });
+  }
+};
+
 module.exports = { 
   registerUser, 
   loginUser, 
@@ -1271,6 +1552,11 @@ module.exports = {
   addDownvoteToPost,
   removeUpvoteFromPost,
   removeDownvoteFromPost,
-  getVoteStatus,
+  getVoteStatusById,
   getArticleById,
-  getAllArticles };
+  getAllArticles,
+  getArticleFromUrl,
+  addBookmark,
+  removeBookmark,
+  getBookmarks,
+  getBookmarkById };
