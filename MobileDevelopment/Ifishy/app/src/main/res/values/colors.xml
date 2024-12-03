@@ -11,4 +11,7 @@
     <color name="bottom_navigation_icon_color">@color/primary_light</color>
     <color name="bottom_navigation_background">@color/white</color>
     <color name="faq_answer">#889EC8</color>
+    <color name="logout">#F7BFC0</color>
+    <color name="logout_teks">#FF0000</color>
+    <color name="contact">#AAAAAA</color>
 </resources>

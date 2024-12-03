@@ -16,20 +16,21 @@
         android:theme="@style/Theme.Ifishy"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.setting.Setting"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.faq.FrequentlyAskMenu"
             android:exported="false" />
         <activity
             android:name=".ui.activity.detail_post.DetailPostActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"
-            />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -49,11 +50,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.activity.onboarding.OnBoardingActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".ui.activity.main.MainActivity"
             android:exported="false" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
