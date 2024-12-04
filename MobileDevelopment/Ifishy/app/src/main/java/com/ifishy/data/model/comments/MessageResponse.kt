@@ -2,7 +2,7 @@ package com.ifishy.data.model.comments
 
 import com.google.gson.annotations.SerializedName
 
-data class AddCommentResponse(
+data class MessageResponse(
 
 	@field:SerializedName("success")
 	val success: Boolean? = null,

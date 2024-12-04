@@ -228,6 +228,7 @@
             app:shapeAppearanceOverlay="@style/Indicator.CornerRadius"
             tools:src="@drawable/user_placeholder" />
 
+
         <ImageButton
             android:id="@+id/send"
             android:layout_width="45dp"
@@ -238,6 +239,18 @@
             app:layout_constraintBottom_toBottomOf="@+id/comments_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/comments_content" />
+
+        <ProgressBar
+            android:id="@+id/loading_upload"
+            android:visibility="gone"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintTop_toTopOf="@id/send"
+            app:layout_constraintBottom_toBottomOf="@id/send"
+            app:layout_constraintEnd_toEndOf="@id/send"
+            app:layout_constraintStart_toStartOf="@id/send"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

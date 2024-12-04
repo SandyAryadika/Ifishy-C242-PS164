@@ -136,6 +136,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
         if (loading) {
             binding.loading.visibility = View.VISIBLE
             binding.comments.visibility = View.INVISIBLE
+            binding.error.visibility = View.GONE
         } else {
             binding.loading.visibility = View.GONE
             binding.comments.visibility = View.VISIBLE
@@ -152,29 +153,72 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
 
                     is ResponseState.Success -> {
                         isLoading(false)
-                        commentsAdapter = response.data.comments?.let { PostsCommentsAdapter(it) }!!
-                        binding.comments.apply {
-                            this.adapter = commentsAdapter
-                            this.layoutManager = LinearLayoutManager(requireActivity())
-                            commentsAdapter.onItemClicked(object : PostsCommentsAdapter.OnClick {
-                                override fun onClickedItem(id: Int) {
-                                    val bundle = Bundle()
-                                    bundle.putInt("ID", id)
-                                    val replyDialog = ReplyModalFragment()
-                                    replyDialog.arguments = bundle
-                                    parentFragmentManager.commit {
-                                        add(replyDialog,replyDialog::class.java.simpleName)
-                                        addToBackStack(null)
+                        if (response.data.comments?.isEmpty() == true){
+                            binding.comments.visibility = View.GONE
+                            binding.error.apply {
+                                this.visibility = View.VISIBLE
+                                this.text = context.getString(R.string.no_comments_yet)
+                            }
+                        }else{
+                            binding.comments.visibility = View.VISIBLE
+                            binding.error.apply {
+                                this.visibility = View.GONE
+                                this.text = ""
+                            }
+                            commentsAdapter = response.data.comments?.let { PostsCommentsAdapter(it) }!!
+                            binding.comments.apply {
+                                this.adapter = commentsAdapter
+                                this.layoutManager = LinearLayoutManager(requireActivity())
+                                commentsAdapter.onItemClicked(object : PostsCommentsAdapter.OnClick {
+                                    override fun onClickedItem(id: Int) {
+                                        val bundle = Bundle()
+                                        bundle.putInt("ID", id)
+                                        val replyDialog = ReplyModalFragment()
+                                        replyDialog.arguments = bundle
+                                        parentFragmentManager.commit {
+                                            add(replyDialog,replyDialog::class.java.simpleName)
+                                            addToBackStack(null)
+                                        }
                                     }
-                                }
-                            })
+
+                                    override fun like(id: Int) {
+                                        like(token,id)
+                                    }
+
+                                    override fun unLike(id: Int) {
+                                        unLike(token,id)
+                                    }
+                                })
+                            }
                         }
+
                     }
 
                     is ResponseState.Error -> {
                         isLoading(false)
+                        binding.comments.visibility = View.GONE
+                        binding.error.apply {
+                            this.visibility = View.VISIBLE
+                            this.text = response.message
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private fun isUploadLoading(loading: Boolean){
+        if (loading){
+            binding.loadingUpload.visibility = View.VISIBLE
+            binding.send.apply {
+                this.setImageDrawable(null)
+                this.isEnabled = false
+            }
+        }else{
+            binding.loadingUpload.visibility = View.GONE
+            binding.send.apply {
+                this.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.send))
+                this.isEnabled = true
             }
         }
     }
@@ -185,10 +229,11 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                 event.getContentIfNotHandled()?.let { response ->
                     when (response) {
                         ResponseState.Loading -> {
-
+                            isUploadLoading(true)
                         }
 
                         is ResponseState.Success -> {
+                            isUploadLoading(false)
                             Toast.makeText(
                                 requireActivity(),
                                 response.data.message.toString(),
@@ -200,6 +245,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                         }
 
                         is ResponseState.Error -> {
+                            isUploadLoading(false)
                             Toast.makeText(
                                 requireActivity(),
                                 getString(R.string.error_comments),
@@ -208,6 +254,22 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun like(token: String,id: Int){
+        communityViewModel.likePost(token,id).apply {
+            communityViewModel.likePost.observe(viewLifecycleOwner){event->
+                event.getContentIfNotHandled()
+            }
+        }
+    }
+
+    private fun unLike(token: String,id: Int){
+        communityViewModel.unLikePost(token,id).apply{
+            communityViewModel.unLikePost.observe(viewLifecycleOwner){event->
+                event.getContentIfNotHandled()
             }
         }
     }

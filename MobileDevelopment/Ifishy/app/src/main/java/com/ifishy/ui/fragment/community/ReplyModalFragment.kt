@@ -1,27 +1,20 @@
 package com.ifishy.ui.fragment.community
 
-import android.content.Context
-import android.content.res.Resources
+
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
-import com.ifishy.databinding.FragmentCommentsModalBinding
 import com.ifishy.databinding.FragmentReplyModalBinding
-import com.ifishy.ui.adapter.community.PostsCommentsAdapter
 import com.ifishy.ui.adapter.community.ReplyCommentsAdapter
 import com.ifishy.ui.viewmodel.CommunityViewModel
 import com.ifishy.ui.viewmodel.ProfileViewModel
@@ -138,15 +131,32 @@ class ReplyModalFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun isUploadLoading(loading: Boolean){
+        if (loading){
+            binding.loadingUpload.visibility = View.VISIBLE
+            binding.send.apply {
+                this.setImageDrawable(null)
+                this.isEnabled = false
+            }
+        }else{
+            binding.loadingUpload.visibility = View.GONE
+            binding.send.apply {
+                this.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.send))
+                this.isEnabled = true
+            }
+        }
+    }
+
     private fun addReply(token: String,id: Int,content : String){
         communityViewModel.addReply(token,id,content).apply {
             communityViewModel.addReply.observe(viewLifecycleOwner){event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
                         is ResponseState.Loading -> {
-
+                            isUploadLoading(true)
                         }
                         is ResponseState.Success -> {
+                            isUploadLoading(false)
                             Toast.makeText(
                                 requireActivity(),
                                 response.data.message.toString(),
@@ -157,6 +167,7 @@ class ReplyModalFragment : BottomSheetDialogFragment() {
                             binding.commentsContent.clearFocus()
                         }
                         is ResponseState.Error -> {
+                            isUploadLoading(false)
                             Toast.makeText(
                                 requireActivity(),
                                 getString(R.string.error_comments),

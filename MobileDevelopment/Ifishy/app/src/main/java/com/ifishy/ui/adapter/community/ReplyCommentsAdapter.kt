@@ -33,7 +33,7 @@ class ReplyCommentsAdapter(private val reply: List<RepliesItem?>): RecyclerView.
     override fun getItemCount(): Int = reply.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val replies = reply[position]
+        val replies = reply.reversed()[position]
         if (replies != null) {
             holder.bind(replies,holder.itemView.context)
         }

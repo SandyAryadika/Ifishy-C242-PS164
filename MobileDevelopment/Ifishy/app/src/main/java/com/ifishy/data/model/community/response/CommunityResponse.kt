@@ -47,7 +47,7 @@ data class PostsItem(
 	val likeCount: Int? = null,
 
 	@field:SerializedName("voteStatus")
-	val voteStatus: Any? = null,
+	val voteStatus: String? = null,
 
 	@field:SerializedName("title")
 	val title: String? = null,
