@@ -1,7 +1,6 @@
 package com.ifishy.data.model.community.response
 
 import com.google.gson.annotations.SerializedName
-import com.ifishy.data.model.community.response.CommentsItem
 
 data class CommunityResponse(
 
@@ -13,6 +12,9 @@ data class CommunityResponse(
 )
 
 data class CommentsItem(
+
+	@field:SerializedName("post_id")
+	val postId: Int? = null,
 
 	@field:SerializedName("created_at")
 	val createdAt: String? = null,
@@ -32,14 +34,8 @@ data class CommentsItem(
 
 data class PostsItem(
 
-	@field:SerializedName("shareCount")
-	val shareCount: Int? = null,
-
 	@field:SerializedName("comments")
-	val comments: List<Any?>? = null,
-
-	@field:SerializedName("user_id")
-	val userId: Int? = null,
+	val comments: List<CommentsItem?>? = null,
 
 	@field:SerializedName("image_url")
 	val imageUrl: Any? = null,
@@ -50,20 +46,29 @@ data class PostsItem(
 	@field:SerializedName("likeCount")
 	val likeCount: Int? = null,
 
+	@field:SerializedName("voteStatus")
+	val voteStatus: String? = null,
+
+	@field:SerializedName("title")
+	val title: String? = null,
+
+	@field:SerializedName("content")
+	val content: String? = null,
+
+	@field:SerializedName("shareCount")
+	val shareCount: Int? = null,
+
+	@field:SerializedName("user_id")
+	val userId: Int? = null,
+
 	@field:SerializedName("id")
 	val id: Int? = null,
 
 	@field:SerializedName("voteCount")
 	val voteCount: Int? = null,
 
-	@field:SerializedName("title")
-	val title: String? = null,
-
 	@field:SerializedName("timeSincePosted")
 	val timeSincePosted: String? = null,
-
-	@field:SerializedName("content")
-	val content: String? = null,
 
 	@field:SerializedName("username")
 	val username: String? = null

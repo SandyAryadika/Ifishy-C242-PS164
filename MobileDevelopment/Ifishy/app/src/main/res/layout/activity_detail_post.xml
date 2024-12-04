@@ -1,163 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/main"
-    android:scrollbars="none"
-    android:overScrollMode="never"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.activity.detail_post.DetailPostActivity"
-    android:fillViewport="true">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/global_page_padding_margin">
+        android:layout_height="match_parent"
+        android:padding="@dimen/global_page_padding_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:backgroundTint="@color/secondary_light"
-            android:contentDescription="@string/back"
             android:id="@+id/back"
             android:layout_width="@dimen/back_button"
             android:layout_height="@dimen/back_button"
             android:background="@drawable/image_button"
-            android:src="@drawable/back"
+            android:backgroundTint="@color/secondary_light"
+            android:contentDescription="@string/back"
             android:padding="20dp"
+            android:src="@drawable/back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:contentDescription="@string/bookmark"
-            android:layout_marginEnd="8dp"
             android:id="@+id/bookmark_button"
             android:layout_width="@dimen/image_button"
             android:layout_height="@dimen/image_button"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/image_button"
-            android:outlineProvider="none"
             android:backgroundTint="@color/primary_light"
+            android:contentDescription="@string/bookmark"
+            android:outlineProvider="none"
             android:src="@drawable/bookmark_false"
             app:layout_constraintBottom_toBottomOf="@+id/back"
             app:layout_constraintEnd_toStartOf="@+id/share_button"
             app:layout_constraintTop_toTopOf="@id/back" />
 
         <ImageButton
-            android:contentDescription="@string/share"
             android:id="@+id/share_button"
             android:layout_width="@dimen/image_button"
             android:layout_height="@dimen/image_button"
-            android:backgroundTint="@color/primary_light"
             android:background="@drawable/image_button"
+            android:backgroundTint="@color/primary_light"
+            android:contentDescription="@string/share"
             android:outlineProvider="none"
             android:src="@drawable/share"
             app:layout_constraintBottom_toBottomOf="@+id/back"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/back"
-            />
+            app:layout_constraintTop_toTopOf="@+id/back" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/posts_content"
-            android:visibility="gone"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/post"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/comments"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/back">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/poppins_bold"
-                android:includeFontPadding="false"
-                android:textSize="@dimen/large_text"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/posts_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/tools_title" />
+                app:layout_constraintTop_toBottomOf="@id/back">
 
-            <TextView
-                android:id="@+id/author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/secondary_light"
-                android:fontFamily="@font/poppins_medium"
-                android:includeFontPadding="false"
-                android:paddingHorizontal="@dimen/author_padding_horizontal"
-                android:paddingVertical="@dimen/author_padding_vertical"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/small_text"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                tools:text="@string/tools_author" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:includeFontPadding="false"
+                    android:textSize="@dimen/large_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/tools_title" />
 
-            <TextView
-                android:id="@+id/date_upload"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_bold"
-                android:includeFontPadding="false"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                app:layout_constraintBottom_toBottomOf="@+id/author"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/author"
-                tools:text="@string/tools_date" />
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/secondary_light"
+                    android:fontFamily="@font/poppins_medium"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/author_padding_horizontal"
+                    android:paddingVertical="@dimen/author_padding_vertical"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/small_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    tools:text="@string/tools_author" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/image"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="20dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/author"
-                app:shapeAppearanceOverlay="@style/Indicator.CornerRadius.Image" />
+                <TextView
+                    android:id="@+id/date_upload"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:includeFontPadding="false"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    app:layout_constraintBottom_toBottomOf="@+id/author"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/author"
+                    tools:text="@string/tools_date" />
 
-            <TextView
-                android:id="@+id/description_article"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/poppins"
-                android:includeFontPadding="false"
-                android:justificationMode="inter_word"
-                android:textSize="@dimen/small_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/image"
-                tools:text="@string/tools_desc" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/image"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_background"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/author"
+                    app:shapeAppearanceOverlay="@style/Indicator.CornerRadius.Image" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/description_article"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/poppins"
+                    android:includeFontPadding="false"
+                    android:justificationMode="inter_word"
+                    android:textSize="@dimen/small_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/image"
+                    tools:text="@string/tools_desc" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
 
         <TextView
             android:id="@+id/error"
-            tools:text="Error"
-            android:fontFamily="@font/poppins_bold"
-            android:textSize="@dimen/medium_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/back"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/medium_text"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@id/back"
+            tools:text="Error" />
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/loading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/back"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            >
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/back">
 
             <include layout="@layout/activity_detail_post_shimmer" />
 
@@ -168,17 +179,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_button"
+            android:drawableLeft="@drawable/comments"
+            android:drawableTint="@color/white"
             android:fontFamily="@font/poppins_bold"
-            android:text="@string/comments"
             android:paddingHorizontal="40dp"
+            android:text="@string/comments"
             android:textSize="@dimen/medium_text"
             app:backgroundTint="@color/primary_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:drawableTint="@color/white"
-            android:drawableLeft="@drawable/comments"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>

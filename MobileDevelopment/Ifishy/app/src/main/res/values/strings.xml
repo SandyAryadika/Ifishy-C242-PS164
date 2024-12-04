@@ -70,5 +70,18 @@
     <string name="contact_us">Contact Us</string>
     <string name="tools_email">tertawatapiterluka@gmail.com</string>
     <string name="notification">Notification</string>
+    <string name="error_comments">Error while adding comment</string>
+    <string name="no_post">No post yet</string>
+    <string name="no_comments_yet">No Comments yet</string>
+    <string name="post">post</string>
+    <string name="add_post">add post</string>
+    <string name="post_title">Post Title</string>
+    <string name="write_here">Write content here</string>
+    <string name="no_image_selected">No image selected</string>
+    <string name="error_upload">Error Upload</string>
+    <string name="form_empty">Fill form correctly</string>
+    <string name="cancel">Cancel</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="post_not_save">Post will not saved</string>
 
 </resources>

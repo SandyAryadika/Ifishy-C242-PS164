@@ -11,34 +11,10 @@ data class CommentsResponse(
 	val success: Boolean? = null
 )
 
-data class RepliesItem(
-
-	@field:SerializedName("timeSinceReplied")
-	val timeSinceReplied: String? = null,
-
-	@field:SerializedName("created_at")
-	val createdAt: String? = null,
-
-	@field:SerializedName("id")
-	val id: Int? = null,
-
-	@field:SerializedName("content")
-	val content: String? = null,
-
-	@field:SerializedName("likeCount")
-	val likeCount: Int?=0,
-
-	@field:SerializedName("userLiked")
-	val userLiked: Boolean?=false,
-
-	@field:SerializedName("username")
-	val username: String? = null
-)
-
 data class CommentsItem(
 
 	@field:SerializedName("replies")
-	val replies: List<Any?>? = null,
+	val replies: List<RepliesItem>? = null,
 
 	@field:SerializedName("created_at")
 	val createdAt: String? = null,
@@ -53,7 +29,7 @@ data class CommentsItem(
 	val likeCount: Int?=0,
 
 	@field:SerializedName("userLiked")
-	val userLiked: Boolean?=false,
+	val userLiked: Boolean=false,
 
 	@field:SerializedName("content")
 	val content: String? = null,
