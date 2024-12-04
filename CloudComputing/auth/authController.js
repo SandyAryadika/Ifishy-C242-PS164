@@ -400,6 +400,58 @@ const createPost = async (req, res) => {
   }
 };
 
+const updatePost = async (req, res) => {
+  try {
+    const { postId } = req.params; // ID post yang akan diedit
+    const { title, content } = req.body;
+    const { user } = req; // Informasi user dari token JWT
+    const file = req.file; // File yang diunggah (jika ada)
+
+    // Cek apakah postingan ada dan milik user yang sedang login
+    const [existingPost] = await pool.query('SELECT * FROM posts WHERE id = ? AND user_id = ?', [postId, user.id]);
+
+    if (existingPost.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found or you do not have permission to edit this post',
+      });
+    }
+
+    let imageUrl = existingPost[0].image_url;
+    if (file) {
+      // Upload gambar baru ke bucket GCS di folder image-post
+      const blob = storage.bucket(bucketName).file(`${postFolder}/${Date.now()}-${file.originalname}`);
+      const blobStream = blob.createWriteStream({
+        resumable: false,
+        contentType: file.mimetype,
+      });
+
+      await new Promise((resolve, reject) => {
+        blobStream.on('error', reject);
+        blobStream.on('finish', resolve);
+        blobStream.end(file.buffer);
+      });
+
+      imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+    }
+
+    // Update data postingan di database
+    const updateSql = 'UPDATE posts SET title = ?, content = ?, image_url = ? WHERE id = ? AND user_id = ?';
+    await pool.query(updateSql, [title, content, imageUrl, postId, user.id]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Post updated successfully!',
+    });
+  } catch (error) {
+    console.error('Error in updatePost:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update post',
+    });
+  }
+};
+
 // Fungsi untuk mendapatkan semua postingan
 const getPosts = async (req, res) => {
   try {
@@ -1538,6 +1590,7 @@ module.exports = {
   getUserProfile,
   createPost,
   getPosts,
+  updatePost,
   getPostById,
   addShareToPost,
   addComment,

@@ -17,6 +17,7 @@ const {
     addShareToPost,
     createPost,
     getPosts,
+    updatePost,
     getPostById,
     addComment,
     getCommentsById,
@@ -69,6 +70,7 @@ router.post('/upload-photo',  authenticateToken, upload.single('photo'), uploadP
 router.get('/dashboard/:email', authenticateToken, getDashboardData);
 router.get('/profile/:email', authenticateToken, getUserProfile);
 router.post('/community/posts', authenticateToken, upload.single('image'), createPost); 
+router.put('/community/posts/:postId', authenticateToken, upload.single('image'), updatePost);
 router.get('/community/posts', authenticateToken, getPosts); // Ambil semua posting
 router.get('/community/posts/:id', authenticateToken, getPostById); // Ambil postingan berdasarkan ID
 router.post('/community/posts/:postId/share', authenticateToken, addShareToPost); // Route untuk menambahkan share ke postingan
