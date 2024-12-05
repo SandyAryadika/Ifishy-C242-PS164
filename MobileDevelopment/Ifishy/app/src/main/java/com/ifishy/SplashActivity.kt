@@ -32,14 +32,14 @@ class SplashActivity : AppCompatActivity() {
             splash.setKeepOnScreenCondition{true}
             preferencesViewModel.token.observe(this){token->
                 lifecycleScope.launch {
-                    delay(1000)
+                    delay(500)
                     goTo(token)
                 }
             }
         }else{
             preferencesViewModel.token.observe(this){token->
                 lifecycleScope.launch {
-                    delay(1000)
+                    delay(500)
                     goTo(token)
                 }
             }

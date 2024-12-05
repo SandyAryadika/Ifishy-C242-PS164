@@ -1,11 +1,11 @@
-package com.ifishy.ui.adapter.community
+package com.ifishy.ui.adapter.community.post
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ifishy.R
@@ -13,8 +13,7 @@ import com.ifishy.data.model.community.response.PostsItem
 import com.ifishy.databinding.CommunityItemBinding
 import com.ifishy.utils.Date
 
-class CommunityPostsAdapter:
-    ListAdapter<PostsItem,CommunityPostsAdapter.ViewHolder>(DiffCallback()) {
+class CommunityPostsAdapter : RecyclerView.Adapter<CommunityPostsAdapter.ViewHolder>(){
 
     private lateinit var onItemClickListener: OnClick
 
@@ -22,7 +21,7 @@ class CommunityPostsAdapter:
         this.onItemClickListener = onItemClickListener
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<PostsItem>() {
+    private val diffUtil = object : DiffUtil.ItemCallback<PostsItem>() {
         override fun areItemsTheSame(oldItem: PostsItem, newItem: PostsItem): Boolean {
             return oldItem.id == newItem.id
         }
@@ -30,6 +29,12 @@ class CommunityPostsAdapter:
         override fun areContentsTheSame(oldItem: PostsItem, newItem: PostsItem): Boolean {
             return oldItem == newItem
         }
+    }
+
+    private val asyncListDiffer = AsyncListDiffer(this, diffUtil)
+
+    fun submitData( data: List<PostsItem>){
+        asyncListDiffer.submitList(data)
     }
 
     inner class ViewHolder(private val binding: CommunityItemBinding) :
@@ -120,8 +125,10 @@ class CommunityPostsAdapter:
         return ViewHolder(binding)
     }
 
+    override fun getItemCount(): Int = asyncListDiffer.currentList.size
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val post = getItem(position)
+        val post = asyncListDiffer.currentList[position]
         holder.bind(post, holder.itemView.context)
     }
 

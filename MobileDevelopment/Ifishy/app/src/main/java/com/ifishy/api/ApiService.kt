@@ -1,5 +1,7 @@
 package com.ifishy.api
 
+import com.ifishy.data.model.article.ArticleByIdResponse
+import com.ifishy.data.model.article.ArticleResponse
 import com.ifishy.data.model.auth.request.LoginRequest
 import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
@@ -31,6 +33,12 @@ interface ApiService {
 
     @POST("register")
     suspend fun register(@Body userData: SignUpRequest): SignUpResponse
+
+    @GET("articles")
+    suspend fun getAllArticle(): ArticleResponse
+
+    @GET("articles/{id}")
+    suspend fun getArticleById(@Path("id") id:Int): ArticleByIdResponse
 
     @GET("profile/{email}")
     suspend fun getProfile(

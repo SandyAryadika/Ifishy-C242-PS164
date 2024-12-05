@@ -1,7 +1,5 @@
 package com.ifishy.ui.activity.add_post
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -10,21 +8,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivityAddPostBinding
-import com.ifishy.ui.viewmodel.CommunityViewModel
+import com.ifishy.ui.viewmodel.community.CommunityViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File

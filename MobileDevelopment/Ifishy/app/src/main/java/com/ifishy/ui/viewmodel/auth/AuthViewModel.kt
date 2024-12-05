@@ -1,4 +1,4 @@
-package com.ifishy.ui.viewmodel
+package com.ifishy.ui.viewmodel.auth
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

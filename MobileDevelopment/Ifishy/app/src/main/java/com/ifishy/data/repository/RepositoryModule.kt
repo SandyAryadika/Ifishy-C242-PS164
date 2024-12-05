@@ -2,6 +2,8 @@ package com.ifishy.data.repository
 
 import android.app.Application
 import com.ifishy.api.ApiService
+import com.ifishy.data.repository.article.ArticleRepository
+import com.ifishy.data.repository.article.ArticleRepositoryImpl
 import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.data.repository.auth.AuthRepositoryImpl
 import com.ifishy.data.repository.community.CommunityRepository
@@ -28,6 +30,12 @@ object RepositoryModule {
     @Named("CommunityRepository")
     fun provideCommunityRepo(apiService: ApiService,context: Application): CommunityRepository{
         return CommunityRepositoryImpl(apiService,context)
+    }
+
+    @Provides
+    @Named("ArticleRepository")
+    fun provideArticleRepo(apiService: ApiService,context: Application): ArticleRepository{
+        return ArticleRepositoryImpl(apiService,context)
     }
 
     @Provides

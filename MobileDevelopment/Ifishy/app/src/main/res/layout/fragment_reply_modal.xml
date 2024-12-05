@@ -155,6 +155,7 @@
                         />
 
                     <ImageButton
+                        android:id="@+id/like_icon"
                         android:layout_width="wrap_content"
                         android:layout_marginEnd="3dp"
                         android:layout_height="wrap_content"
@@ -181,6 +182,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
+                    app:stackFromEnd="true"
                     android:id="@+id/comments"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

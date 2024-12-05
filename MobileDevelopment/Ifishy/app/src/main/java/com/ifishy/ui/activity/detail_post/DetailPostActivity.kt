@@ -2,20 +2,17 @@ package com.ifishy.ui.activity.detail_post
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.commit
-import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivityDetailPostBinding
 import com.ifishy.ui.fragment.community.CommentsModalFragment
-import com.ifishy.ui.viewmodel.CommunityViewModel
+import com.ifishy.ui.viewmodel.community.CommunityViewModel
 import com.ifishy.utils.Date
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint

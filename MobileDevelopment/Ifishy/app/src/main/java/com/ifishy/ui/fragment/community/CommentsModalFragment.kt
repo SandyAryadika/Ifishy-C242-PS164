@@ -1,31 +1,23 @@
 package com.ifishy.ui.fragment.community
 
-import android.content.Context
-import android.content.res.Resources
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentCommentsModalBinding
-import com.ifishy.ui.adapter.community.PostsCommentsAdapter
-import com.ifishy.ui.viewmodel.CommunityViewModel
-import com.ifishy.ui.viewmodel.ProfileViewModel
+import com.ifishy.ui.adapter.comments.PostsCommentsAdapter
+import com.ifishy.ui.viewmodel.community.CommunityViewModel
+import com.ifishy.ui.viewmodel.profile.ProfileViewModel
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,7 +29,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private var _binding: FragmentCommentsModalBinding? = null
     private val binding get() = _binding!!
-    private lateinit var commentsAdapter: PostsCommentsAdapter
+    private val commentsAdapter by lazy { PostsCommentsAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -165,7 +157,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                                 this.visibility = View.GONE
                                 this.text = ""
                             }
-                            commentsAdapter = response.data.comments?.let { PostsCommentsAdapter(it) }!!
+                            response.data.comments?.let { commentsAdapter.submitData(it) }
                             binding.comments.apply {
                                 this.adapter = commentsAdapter
                                 this.layoutManager = LinearLayoutManager(requireActivity())

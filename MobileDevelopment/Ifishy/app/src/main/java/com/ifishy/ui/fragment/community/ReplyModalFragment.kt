@@ -15,9 +15,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentReplyModalBinding
-import com.ifishy.ui.adapter.community.ReplyCommentsAdapter
-import com.ifishy.ui.viewmodel.CommunityViewModel
-import com.ifishy.ui.viewmodel.ProfileViewModel
+import com.ifishy.ui.adapter.comments.ReplyCommentsAdapter
+import com.ifishy.ui.viewmodel.community.CommunityViewModel
+import com.ifishy.ui.viewmodel.profile.ProfileViewModel
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +29,7 @@ class ReplyModalFragment : BottomSheetDialogFragment() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private var _binding:FragmentReplyModalBinding?=null
     private val binding get() = _binding!!
+    private val adapter by lazy { ReplyCommentsAdapter() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,12 +106,13 @@ class ReplyModalFragment : BottomSheetDialogFragment() {
                     }
                     is ResponseState.Success -> {
                         isLoading(false)
-                        val adapter = response.data.comment?.replies?.let { ReplyCommentsAdapter(it) }
+                        response.data.comment?.replies?.let { adapter.submitData(it) }
                         binding.comments.apply {
-                            this.adapter = adapter
+                            this.adapter = this@ReplyModalFragment.adapter
                             this.layoutManager = LinearLayoutManager(requireActivity())
                         }
                         response.data.comment?.let {
+                            binding.likeIcon.setImageDrawable(if (it.userLiked == true) ContextCompat.getDrawable(requireActivity(),R.drawable.like_fill) else ContextCompat.getDrawable(requireActivity(),R.drawable.like_false) )
                             binding.dateParent.text = it.createdAt
                             binding.usernameParent.text = it.username
                             binding.contentParent.text = it.content

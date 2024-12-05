@@ -1,4 +1,4 @@
-package com.ifishy.ui.viewmodel
+package com.ifishy.ui.viewmodel.community
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
@@ -17,7 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import javax.inject.Inject
 import javax.inject.Named
 

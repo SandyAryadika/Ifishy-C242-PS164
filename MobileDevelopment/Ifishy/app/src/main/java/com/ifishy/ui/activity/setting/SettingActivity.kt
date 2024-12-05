@@ -5,21 +5,17 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.ifishy.R
 import com.ifishy.databinding.ActivitySettingBinding
 import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.faq.FrequentlyAskMenu
-import com.ifishy.ui.viewmodel.SettingsViewModel
+import com.ifishy.ui.viewmodel.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class Setting : AppCompatActivity() {
+class SettingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingBinding
     private val viewModel: SettingsViewModel by viewModels()
@@ -31,7 +27,7 @@ class Setting : AppCompatActivity() {
     private fun logout(){
         viewModel.clearSession()
 
-        val intent = Intent(this@Setting, LoginActivity::class.java)
+        val intent = Intent(this@SettingActivity, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
