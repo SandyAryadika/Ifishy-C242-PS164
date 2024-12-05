@@ -1,4 +1,4 @@
-package com.ifishy.ui.viewmodel
+package com.ifishy.ui.viewmodel.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

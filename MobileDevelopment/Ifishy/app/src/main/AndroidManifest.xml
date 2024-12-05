@@ -19,7 +19,7 @@
             android:name=".ui.activity.add_post.AddPostActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.setting.Setting"
+            android:name=".ui.activity.setting.SettingActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.faq.FrequentlyAskMenu"

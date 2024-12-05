@@ -3,7 +3,6 @@ package com.ifishy.ui.activity.auth
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.databinding.ActivitySignUpBinding
-import com.ifishy.ui.viewmodel.AuthViewModel
+import com.ifishy.ui.viewmodel.auth.AuthViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint

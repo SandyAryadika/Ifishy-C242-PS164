@@ -1,4 +1,4 @@
-package com.ifishy.ui.adapter.community
+package com.ifishy.ui.adapter.faq
 
 import android.view.LayoutInflater
 import android.view.View

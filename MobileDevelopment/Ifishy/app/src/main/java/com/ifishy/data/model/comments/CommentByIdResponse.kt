@@ -17,7 +17,7 @@ data class Comment(
 	val profilePicture: Any? = null,
 
 	@field:SerializedName("replies")
-	val replies: List<RepliesItem?>? = null,
+	val replies: List<RepliesItem>?=null,
 
 	@field:SerializedName("created_at")
 	val createdAt: String? = null,
@@ -32,7 +32,7 @@ data class Comment(
 	val content: String? = null,
 
 	@field:SerializedName("userLiked")
-	val userLiked: Boolean? = null,
+	val userLiked: Boolean?=null,
 
 	@field:SerializedName("username")
 	val username: String? = null,

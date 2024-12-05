@@ -1,23 +1,41 @@
-package com.ifishy.ui.adapter.community
+package com.ifishy.ui.adapter.comments
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ifishy.R
 import com.ifishy.data.model.comments.CommentsItem
 import com.ifishy.databinding.CommentsItemBinding
+import com.ifishy.utils.Date
 
-class PostsCommentsAdapter(private val comments: List<CommentsItem>) :
+class PostsCommentsAdapter :
     RecyclerView.Adapter<PostsCommentsAdapter.ViewHolder>() {
 
     private lateinit var onItemClick: OnClick
 
     fun onItemClicked(onItemClick: OnClick) {
         this.onItemClick = onItemClick
+    }
+
+    private val diffUtil = object : DiffUtil.ItemCallback<CommentsItem>() {
+        override fun areItemsTheSame(oldItem: CommentsItem, newItem: CommentsItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: CommentsItem, newItem: CommentsItem): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    private val asyncListDiffer = AsyncListDiffer(this, diffUtil)
+
+    fun submitData( data: List<CommentsItem>){
+        asyncListDiffer.submitList(data)
     }
 
     inner class ViewHolder(private val binding: CommentsItemBinding) :
@@ -28,11 +46,9 @@ class PostsCommentsAdapter(private val comments: List<CommentsItem>) :
 
             binding.content.text = item.content
             binding.username.text = item.username
-            binding.date.text = item.createdAt
+            binding.date.text = Date.format(item.createdAt!!)
             binding.reply.text = context.getString(R.string.reply, item.replies?.size ?: 0)
             binding.likeCount.text = item.likeCount.toString()
-
-            binding.content.setOnClickListener { onItemClick.onClickedItem(item.id!!) }
 
             fun updateLikeIcon(isLiked: Boolean) {
                 val icon = if (isLiked) R.drawable.like_fill else R.drawable.like_false
@@ -71,12 +87,14 @@ class PostsCommentsAdapter(private val comments: List<CommentsItem>) :
         return ViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = comments.size
+    override fun getItemCount(): Int = asyncListDiffer.currentList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val comment = comments.reversed()[position]
+        val comment = asyncListDiffer.currentList.reversed()[position]
         holder.bind(comment, holder.itemView.context)
-
+        holder.itemView.setOnClickListener {
+            onItemClick.onClickedItem(comment.id!!)
+        }
 
     }
 

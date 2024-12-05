@@ -8,10 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ifishy.R
 import com.ifishy.data.model.community.response.PostsItem
@@ -19,12 +17,10 @@ import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentCommunityBinding
 import com.ifishy.ui.activity.add_post.AddPostActivity
 import com.ifishy.ui.activity.detail_post.DetailPostActivity
-import com.ifishy.ui.adapter.community.CommunityPostsAdapter
-import com.ifishy.ui.viewmodel.CommunityViewModel
+import com.ifishy.ui.adapter.community.post.CommunityPostsAdapter
+import com.ifishy.ui.viewmodel.community.CommunityViewModel
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CommunityFragment : Fragment() {
@@ -34,8 +30,8 @@ class CommunityFragment : Fragment() {
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
     private var listCommunity: List<PostsItem>? = null
-    private var adapter: CommunityPostsAdapter? = null
-    private var searchValue: String?=null
+    private val adapter by lazy { CommunityPostsAdapter() }
+    private var searchValue: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +49,7 @@ class CommunityFragment : Fragment() {
         }
 
         binding.addPost.setOnClickListener {
-            startActivity(Intent(requireActivity(),AddPostActivity::class.java))
+            startActivity(Intent(requireActivity(), AddPostActivity::class.java))
         }
 
         binding.search.addTextChangedListener(object : TextWatcher {
@@ -62,13 +58,15 @@ class CommunityFragment : Fragment() {
             override fun afterTextChanged(search: Editable?) {
                 search.let {
                     searchValue = search.toString()
-                    if (search.isNullOrEmpty()){
+                    if (search.isNullOrEmpty()) {
                         listCommunity?.let {
-                            adapter?.submitList(it)
+                            adapter.submitData(it)
                         }
-                    }else{
-                        listCommunity?.filter { it.title?.trim()?.contains(search.trim(),true) == true}
-                            ?.let { data -> adapter?.submitList(data) }
+                    } else {
+                        listCommunity?.filter {
+                            it.title?.trim()?.contains(search.trim(), true) == true
+                        }
+                            ?.let { data -> adapter.submitData(data) }
                     }
                 }
             }
@@ -104,24 +102,28 @@ class CommunityFragment : Fragment() {
 
                     is ResponseState.Success -> {
                         isLoading(false)
-                        if (response.data.posts?.isEmpty() == true){
+                        if (response.data.posts?.isEmpty() == true) {
                             binding.community.visibility = View.GONE
                             binding.error.apply {
                                 this.visibility = View.VISIBLE
-                                this.text = ContextCompat.getString(requireActivity(),R.string.no_post)
+                                this.text =
+                                    ContextCompat.getString(requireActivity(), R.string.no_post)
                             }
-                        }else{
+                        } else {
                             binding.community.visibility = View.VISIBLE
                             binding.error.apply {
                                 this.visibility = View.GONE
                                 this.text = ""
                             }
-                            adapter = CommunityPostsAdapter().apply {
-                                this.submitList(response.data.posts)
+                            adapter.apply {
+                                response.data.posts?.let { this.submitData(it) }
                                 this.onItemClicked(object : CommunityPostsAdapter.OnClick {
                                     override fun getDetail(id: Int?) {
                                         startActivity(
-                                            Intent(requireActivity(), DetailPostActivity::class.java)
+                                            Intent(
+                                                requireActivity(),
+                                                DetailPostActivity::class.java
+                                            )
                                                 .putExtra(DetailPostActivity.POST_ID, id)
                                         )
                                     }

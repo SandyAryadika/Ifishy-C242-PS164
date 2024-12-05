@@ -5,7 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ifishy.databinding.ActivityFrequentlyAskMenuBinding
-import com.ifishy.ui.adapter.community.AdapterFAQ
+import com.ifishy.ui.adapter.faq.AdapterFAQ
 import com.ifishy.ui.viewmodel.ViewModelFAQ
 
 class FrequentlyAskMenu : AppCompatActivity() {
