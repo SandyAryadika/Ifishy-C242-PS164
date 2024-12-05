@@ -43,6 +43,9 @@ class SettingActivity : AppCompatActivity() {
 
         observeSettings()
 
+        binding.back.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         binding.settingsLogout.setOnClickListener {
             logout()
