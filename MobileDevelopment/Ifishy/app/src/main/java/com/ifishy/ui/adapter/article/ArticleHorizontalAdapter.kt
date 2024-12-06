@@ -24,7 +24,7 @@ class ArticleHorizontalAdapter(private val articles: List<DataItem>): RecyclerVi
             binding.datePublished.text = Date.format(item.publishedAt!!)
             Glide.with(context)
                 .load(item.coverImage)
-                .into(binding.image)
+                .into(binding.articleImages)
         }
     }
 

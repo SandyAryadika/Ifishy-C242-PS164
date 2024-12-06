@@ -46,6 +46,8 @@ class CustomSearchBar @JvmOverloads constructor(
             }
         })
 
+        hint = ContextCompat.getString(context,R.string.hint_search)
+
         setOnTouchListener(this)
     }
 
@@ -62,7 +64,6 @@ class CustomSearchBar @JvmOverloads constructor(
 
         textSize = 16f
         compoundDrawablePadding = 20
-        hint = ContextCompat.getString(context,R.string.hint_search)
         maxLines = 1
         isSingleLine = true
     }

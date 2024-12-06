@@ -62,7 +62,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/loading"
+        android:id="@+id/loading_detail"
         android:layout_margin="@dimen/global_page_padding_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,13 +100,14 @@
             >
 
             <TextView
-                android:id="@+id/title"
+                android:textAlignment="textStart"
+                android:id="@+id/article_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
-                android:textSize="@dimen/large_text"
+                android:textSize="@dimen/semi_large_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -119,15 +120,15 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/circle"
                 android:backgroundTint="@color/secondary_light"
-                android:fontFamily="@font/poppins_medium"
+                android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="@dimen/author_padding_horizontal"
                 android:paddingVertical="@dimen/author_padding_vertical"
                 android:textAlignment="center"
                 android:textColor="@color/primary_light"
-                android:textSize="@dimen/small_text"
+                android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/article_title"
                 tools:text="@string/tools_author" />
 
             <TextView
@@ -137,6 +138,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
                 android:textAlignment="center"
+                android:textSize="12sp"
                 android:textColor="@color/primary_light"
                 app:layout_constraintBottom_toBottomOf="@+id/author"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -144,12 +146,13 @@
                 tools:text="@string/tools_date" />
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/article_images"
+                android:id="@+id/img"
                 android:layout_width="0dp"
+                android:transitionName="@string/article_image"
                 android:layout_height="200dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/placeholder"
+                tools:src="@drawable/placeholder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/author"
@@ -166,7 +169,7 @@
                 android:textSize="@dimen/small_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/article_images"
+                app:layout_constraintTop_toBottomOf="@id/img"
                 tools:text="@string/tools_desc" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
