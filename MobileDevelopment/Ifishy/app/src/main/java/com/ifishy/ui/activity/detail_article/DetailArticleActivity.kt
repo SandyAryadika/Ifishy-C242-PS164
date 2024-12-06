@@ -3,6 +3,7 @@ package com.ifishy.ui.activity.detail_article
 import android.os.Bundle
 import android.text.Html
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ class DetailArticleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        supportActionBar?.hide()
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -43,13 +45,13 @@ class DetailArticleActivity : AppCompatActivity() {
 
     private fun isLoading(loading:Boolean){
         if (loading){
-            binding.loading.apply {
+            binding.loadingDetail.apply {
                 this.startShimmer()
                 this.visibility = View.VISIBLE
             }
             binding.articleContent.visibility = View.GONE
         }else{
-            binding.loading.apply {
+            binding.loadingDetail.apply {
                 this.stopShimmer()
                 this.visibility = View.GONE
             }
@@ -66,13 +68,15 @@ class DetailArticleActivity : AppCompatActivity() {
                     }
                     is ResponseState.Success -> {
                         isLoading(false)
-                        binding.title.text = response.data.data?.title
-                        binding.author.text = response.data.data?.author
-                        binding.dateUpload.text = Date.format(response.data.data?.publishedAt!!)
-                        Glide.with(this@DetailArticleActivity)
-                            .load(response.data.data.coverImage)
-                            .into(binding.articleImages)
-                        binding.descriptionArticle.text = Html.fromHtml(response.data.data.content,Html.FROM_HTML_MODE_LEGACY)
+                        response.data.data?.let {
+                            binding.articleTitle.text = it.title
+                            binding.author.text = it.author
+                            binding.dateUpload.text = Date.format(it.publishedAt!!)
+                            Glide.with(this@DetailArticleActivity)
+                                .load(it.coverImage)
+                                .into(binding.img)
+                            binding.descriptionArticle.text = Html.fromHtml(response.data.data.content,Html.FROM_HTML_MODE_LEGACY)
+                        }
 
                     }
                     is ResponseState.Error -> {

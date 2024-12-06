@@ -26,7 +26,7 @@
         app:labelVisibilityMode="unlabeled"
         app:itemIconSize="25dp"
         app:itemIconTint="@color/bottom_navigation_icon_color"
-        android:layout_height="75dp"
+        android:layout_height="68dp"
         app:backgroundTint="@color/bottom_navigation_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

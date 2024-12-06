@@ -7,7 +7,7 @@
     <TextView
         android:background="@drawable/circle"
         android:backgroundTint="@color/shimmer"
-        android:id="@+id/welcome_usname"
+        android:id="@+id/welcome_usname_shimmer"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_medium"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/username_shimmer"
         android:includeFontPadding="false"
         android:layout_width="200dp"
         android:background="@drawable/circle"
@@ -28,19 +28,19 @@
         android:fontFamily="@font/poppins_bold"
         android:textAlignment="textStart"
         android:textSize="@dimen/upper_meidum_text"
-        app:layout_constraintTop_toBottomOf="@id/welcome_usname"
+        app:layout_constraintTop_toBottomOf="@id/welcome_usname_shimmer"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/pp"
+        android:id="@+id/pp_shimmer"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@color/shimmer"
         android:contentDescription="@string/profile_picture"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/username"
+        app:layout_constraintBottom_toBottomOf="@+id/username_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/welcome_usname"
+        app:layout_constraintTop_toTopOf="@+id/welcome_usname_shimmer"
         app:shapeAppearanceOverlay="@style/Indicator.CornerRadius" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,7 @@ import com.ifishy.data.model.article.DataItem
 import com.ifishy.databinding.ArticleItemVerticalBinding
 import com.ifishy.utils.Date
 
-class ArticleVerticalAdapter(private val articles: List<DataItem>): RecyclerView.Adapter<ArticleVerticalAdapter.ViewHolder>() {
+class ArticleVerticalAdapter(private var articles: List<DataItem>, private val size:Int?=null): RecyclerView.Adapter<ArticleVerticalAdapter.ViewHolder>() {
 
     private lateinit var onItemClicked: OnClickArticlesVertical
 
@@ -18,14 +18,20 @@ class ArticleVerticalAdapter(private val articles: List<DataItem>): RecyclerView
     }
 
     inner class ViewHolder(private val binding: ArticleItemVerticalBinding): RecyclerView.ViewHolder(binding.root){
+
         fun bind(item: DataItem,context: Context){
             binding.author.text = item.author
             binding.title.text = item.title
             binding.date.text = Date.format(item.publishedAt!!)
             Glide.with(context)
                 .load(item.coverImage)
-                .into(binding.image)
+                .into(binding.articleImages)
         }
+    }
+
+    fun submitData(newDataItem: List<DataItem>){
+        this.articles = newDataItem
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(
@@ -39,9 +45,11 @@ class ArticleVerticalAdapter(private val articles: List<DataItem>): RecyclerView
     override fun onBindViewHolder(holder: ArticleVerticalAdapter.ViewHolder, position: Int) {
         val article = articles[position]
         holder.bind(article,holder.itemView.context)
+        holder.itemView.setOnClickListener { onItemClicked.toDetail(article.id!!)
+         }
     }
 
-    override fun getItemCount(): Int = articles.size
+    override fun getItemCount(): Int = size ?: articles.size
 
     interface OnClickArticlesVertical{
         fun toDetail(id:Int)

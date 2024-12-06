@@ -1,19 +1,25 @@
 package com.ifishy.ui.fragment.home
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ImageView
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentHomeBinding
+import com.ifishy.ui.activity.article.ListArticleActivity
 import com.ifishy.ui.activity.detail_article.DetailArticleActivity
 import com.ifishy.ui.adapter.article.ArticleHorizontalAdapter
 import com.ifishy.ui.adapter.article.ArticleVerticalAdapter
@@ -42,6 +48,9 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.articleHorizontal)
+
         preferenceViewModel.token.observe(viewLifecycleOwner) { token ->
             if (token.isNotEmpty()) {
                 preferenceViewModel.email.observe(viewLifecycleOwner) { email ->
@@ -51,6 +60,23 @@ class HomeFragment : Fragment() {
             }
         }
 
+        binding.see.setOnClickListener {
+            gofull(false)
+        }
+
+        binding.searchviewhome.setOnFocusChangeListener{_,hasFocus->
+            if (hasFocus){
+                binding.searchviewhome.clearFocus()
+                gofull(true)
+            }
+        }
+
+    }
+
+    private fun gofull(search:Boolean){
+        startActivity(Intent(requireActivity(),ListArticleActivity::class.java)
+            .putExtra("Search",search)
+        )
     }
 
     private fun isProfileLoading(loading: Boolean) {
@@ -72,10 +98,9 @@ class HomeFragment : Fragment() {
                     is ResponseState.Loading -> {
                         isProfileLoading(true)
                     }
-
                     is ResponseState.Success -> {
                         isProfileLoading(false)
-                        binding.username.text = "a"
+                        binding.username.text = response.data.profile?.username
                         Glide.with(requireActivity())
                             .load(response.data.profile?.profilePhoto)
                             .placeholder(
@@ -113,6 +138,8 @@ class HomeFragment : Fragment() {
             }
             binding.articleHorizontal.visibility = View.INVISIBLE
             binding.verticalArticle.visibility = View.INVISIBLE
+            binding.error.visibility = View.GONE
+            binding.articleContent.visibility = View.VISIBLE
         } else {
             binding.horizontalLoading.apply {
                 this.stopShimmer()
@@ -124,6 +151,8 @@ class HomeFragment : Fragment() {
             }
             binding.articleHorizontal.visibility = View.VISIBLE
             binding.verticalArticle.visibility = View.VISIBLE
+            binding.error.visibility = View.GONE
+            binding.articleContent.visibility = View.VISIBLE
         }
     }
 
@@ -134,12 +163,11 @@ class HomeFragment : Fragment() {
                     is ResponseState.Loading -> {
                         isLoading(true)
                     }
-
                     is ResponseState.Success -> {
                         response.data.data?.let {
                             isLoading(false)
                             val horizontalAdapter = ArticleHorizontalAdapter(it)
-                            val verticalAdapter = ArticleVerticalAdapter(it)
+                            val verticalAdapter = ArticleVerticalAdapter(it.shuffled(),4)
 
                             binding.articleHorizontal.adapter = horizontalAdapter
                             binding.verticalArticle.adapter = verticalAdapter
@@ -151,6 +179,56 @@ class HomeFragment : Fragment() {
                                 LinearLayoutManager.HORIZONTAL,
                                 false
                             )
+
+                            binding.articleHorizontal.post {
+                                binding.articleHorizontal.smoothScrollToPosition(2)
+                            }
+                            binding.articleHorizontal.addOnScrollListener(object :
+                                RecyclerView.OnScrollListener() {
+                                override fun onScrollStateChanged(
+                                    recyclerView: RecyclerView,
+                                    newState: Int
+                                ) {
+                                    super.onScrollStateChanged(recyclerView, newState)
+
+                                    val layoutManager =
+                                        recyclerView.layoutManager as LinearLayoutManager
+                                    val firstVisiblePosition =
+                                        layoutManager.findFirstVisibleItemPosition()
+                                    val lastVisiblePosition =
+                                        layoutManager.findLastVisibleItemPosition()
+
+                                    for (position in firstVisiblePosition..lastVisiblePosition) {
+                                        val view = layoutManager.findViewByPosition(position)
+                                        val isSelected =
+                                            position == layoutManager.findFirstCompletelyVisibleItemPosition()
+
+                                        view?.let { v->
+                                            val scale = if (isSelected) 1f else 0.9f
+
+                                            if (isSelected) {
+                                                v.animate()
+                                                    .scaleX(scale)
+                                                    .scaleY(scale)
+                                                    .setDuration(400)
+                                                    .setInterpolator(
+                                                        AccelerateDecelerateInterpolator()
+                                                    )
+                                                    .start()
+                                            } else {
+                                                v.animate()
+                                                    .scaleX(scale)
+                                                    .scaleY(scale)
+                                                    .setDuration(400)
+                                                    .setInterpolator(
+                                                        AccelerateDecelerateInterpolator()
+                                                    )
+                                                    .start()
+                                            }
+                                        }
+                                    }
+                                }
+                            })
 
                             verticalAdapter.onItemClicked(object :
                                 ArticleVerticalAdapter.OnClickArticlesVertical {
@@ -184,6 +262,9 @@ class HomeFragment : Fragment() {
 
                     is ResponseState.Error -> {
                         isLoading(false)
+                        binding.error.visibility = View.VISIBLE
+                        binding.error.text = response.message
+                        binding.articleContent.visibility = View.GONE
                     }
                 }
             }
