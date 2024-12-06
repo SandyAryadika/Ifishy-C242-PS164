@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,7 @@ import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.main.MainActivity
 import com.ifishy.ui.activity.onboarding.OnBoardingActivity
+import com.ifishy.utils.Language
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,6 +29,17 @@ class SplashActivity : AppCompatActivity() {
             splash = installSplashScreen()
         }
         super.onCreate(savedInstanceState)
+
+        preferencesViewModel.language.observe(this) { language ->
+            Language.setLocale(this,language)
+        }
+
+        preferencesViewModel.theme.observe(this){isDark->
+            AppCompatDelegate.setDefaultNightMode(
+                if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             splash.setKeepOnScreenCondition{true}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:background="@drawable/edit_text_shape"
+    android:singleLine="true"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:text="Android"
+    android:fontFamily="@font/poppins_medium"
+    android:textSize="@dimen/semi_large_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />

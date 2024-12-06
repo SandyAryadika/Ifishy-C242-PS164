@@ -1,50 +1,47 @@
 package com.ifishy.ui.activity.setting
 
+import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.ifishy.R
+import com.ifishy.SplashActivity
+import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivitySettingBinding
 import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.faq.FrequentlyAskMenu
-import com.ifishy.ui.viewmodel.settings.SettingsViewModel
+import com.ifishy.ui.activity.main.MainActivity
+import com.ifishy.utils.Dialog
+import com.ifishy.utils.Language
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingBinding
-    private val viewModel: SettingsViewModel by viewModels()
-
-
-    private val languages = listOf("EN(US)", "ID", "EN(UK)")
-    private var isUpdatingNightMode = false
-
-    private fun logout(){
-        viewModel.clearSession()
-
-        val intent = Intent(this@SettingActivity, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
+    private val preferenceViewModel: PreferenceViewModel by viewModels()
+    private val languages = listOf("EN", "IN")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         supportActionBar?.hide()
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        observeSettings()
+        loadLanguage()
 
         binding.back.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
 
         binding.settingsLogout.setOnClickListener {
@@ -56,61 +53,75 @@ class SettingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter(this, R.layout.language_spinner, languages)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         binding.languageSpinner.adapter = adapter
 
-        binding.languageSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val selectedLanguage = languages[position]
-                    viewModel.saveSettings(
-                        language = selectedLanguage,
-                        themeDark = binding.switchNight.isChecked
-                    )
-                }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
-
-
-
-        binding.switchNight.setOnCheckedChangeListener { _, isChecked ->
-            if (!isUpdatingNightMode && viewModel.themeDark.value != isChecked) {
-                viewModel.saveSettings(
-                    language = binding.languageSpinner.selectedItem.toString(),
-                    themeDark = isChecked
-                )
-
+        preferenceViewModel.theme.observe(this) { isDark ->
+            binding.switchNight.isChecked = isDark
+            binding.switchNight.setOnCheckedChangeListener { _, isChecked ->
+                val isDarkMode = preferenceViewModel.saveTheme(isChecked)
                 AppCompatDelegate.setDefaultNightMode(
-                    if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
-                    else AppCompatDelegate.MODE_NIGHT_NO
+                    if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 )
-            }
-        }
-    }
 
-        private fun observeSettings() {
-        viewModel.language.observe(this) { language ->
-            if (language != null) {
-                binding.languageSpinner.setSelection(getLanguagePosition(language))
-            } else {
-                binding.languageSpinner.setSelection(0)
             }
         }
 
-            viewModel.themeDark.observe(this) { isDark ->
-                binding.switchNight.isChecked = isDark
-            }
     }
+
 
     private fun getLanguagePosition(language: String): Int {
         return languages.indexOf(language)
+    }
+
+    private fun loadLanguage() {
+        preferenceViewModel.language.observe(this) { language ->
+            binding.languageSpinner.setSelection(
+                getLanguagePosition(language)
+            )
+            binding.languageSpinner.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+
+                        val selected = languages[position]
+
+                        if (language != selected) {
+                            preferenceViewModel.saveLanguage(selected)
+
+                            Language.setLocale(this@SettingActivity, selected.lowercase())
+                            startActivity(Intent(this@SettingActivity,SettingActivity::class.java),ActivityOptions.makeCustomAnimation(this@SettingActivity,0,0).toBundle());
+                            finish();
+                        }
+
+
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+        }
+    }
+
+
+    private fun logout() {
+        Dialog.confirmDialog(
+            supportFragmentManager, getString(R.string.are_you_sure),
+            getString(R.string.want_to_logout)
+        ) {
+            preferenceViewModel.clearSession().apply {
+                startActivity(
+                    Intent(this@SettingActivity, LoginActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                )
+                finish()
+            }
+        }
     }
 
 }
