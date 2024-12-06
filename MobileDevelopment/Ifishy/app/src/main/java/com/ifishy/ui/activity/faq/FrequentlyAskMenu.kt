@@ -19,6 +19,9 @@ class FrequentlyAskMenu : AppCompatActivity() {
         binding = ActivityFrequentlyAskMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.back.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val adapter = AdapterFAQ(emptyList()) { index ->
             viewModel.toggleFaqExpansion(index)
