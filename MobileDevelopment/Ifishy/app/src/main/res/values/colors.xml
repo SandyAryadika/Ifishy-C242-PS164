@@ -15,4 +15,6 @@
     <color name="logout">#F7BFC0</color>
     <color name="logout_teks">#FF0000</color>
     <color name="contact">#AAAAAA</color>
+    <color name="bookmark">#FFECAC</color>
+    <color name="bookmark_text">#FF9800</color>
 </resources>

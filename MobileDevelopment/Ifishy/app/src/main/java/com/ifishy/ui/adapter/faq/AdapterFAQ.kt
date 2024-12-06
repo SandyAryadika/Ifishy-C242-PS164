@@ -1,5 +1,6 @@
 package com.ifishy.ui.adapter.faq
 
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +18,26 @@ class AdapterFAQ(
         fun bind(faqItem: FaqItem) {
             binding.question.text = faqItem.question
             binding.answer.text = faqItem.answer
+
+            binding.expandButton.animate()
+                .rotation(if (faqItem.isExpanded) 90f else 270f)
+                .setDuration(300)
+                .withEndAction {
+
+                    binding.expandButton.rotation = if (faqItem.isExpanded) 90f else 270f
+                }
+                .start()
+
+            val visibilityAnim = ObjectAnimator.ofFloat(binding.answer, "alpha", if (faqItem.isExpanded) 1f else 0f)
+            visibilityAnim.duration = 300
+            visibilityAnim.start()
+
             binding.answer.visibility = if (faqItem.isExpanded) View.VISIBLE else View.GONE
+
 
             binding.expandButton.setOnClickListener {
                 onFaqClick(adapterPosition)
+
             }
         }
     }
@@ -40,6 +57,7 @@ class AdapterFAQ(
         faqList = newFaqList
         notifyDataSetChanged()
     }
+
 }
 
 
