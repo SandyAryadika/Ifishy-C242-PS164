@@ -30,7 +30,6 @@
     <string name="share">share</string>
     <string name="back">back</string>
     <string name="okay">Okay</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="judul_fragment_history">HISTORY</string>
     <string name="hint_search">Search</string>
@@ -91,6 +90,26 @@
     <string name="bookmark_list">Bookmark List</string>
     <string name="language">Language</string>
     <string name="want_to_logout">Want to logout?</string>
+    <string name="q1">What is iFishy Application?</string>
+    <string name="q2">How do I use the fish disease scan feature?</string>
+    <string name="q3">What else can I find in the Home menu?</string>
+    <string name="q4">How do I view my scan history?</string>
+    <string name="q5">What are the features available in the Community menu?</string>
+    <string name="q6">Can I save posts or articles from the app?</string>
+    <string name="q7">How do I update the information in the Profile menu?</string>
+    <string name="q8">Does this app require an internet connection?</string>
+    <string name="q9">Is the data I upload in the app safe?</string>
+    <string name="q10">How can I report bugs or provide feedback on the app?</string>
+    <string name="a1">iFishy is an application designed to assist users in detecting diseases in fish through a scan feature. In addition, the app provides articles, community forums, disease history and user profiles.</string>
+    <string name="a2">Simply take or upload a photo of your fish using the app\'s scan feature. The system will analyze the image and provide information on the fish\'s possible diseases.</string>
+    <string name="a3">The Home menu features various articles and current posts relevant to fish health, care tips, and other interesting information about the world of fish.</string>
+    <string name="a4">The disease scan history can be accessed via the History menu. There, you can see a list of previous scans, complete with dates and related information.</string>
+    <string name="a5">The Community menu allows you to create posts about fish and their diseases, comment on others\' posts, and upvote or downvote to rate the relevance or quality of a topic.</string>
+    <string name="a6">Currently, you can bookmark articles or posts for later reading. Simply click the Save option available on each article or post.</string>
+    <string name="a7">You can update your information in the Profile menu by selecting the Edit Profile button. From there, you can change data such as your name, profile photo, and other personal information.</string>
+    <string name="a8">Yes, iFishy requires an internet connection to access features such as disease scans, articles, community posts, and user data synchronization.</string>
+    <string name="a9">Yes, iFishy uses an encryption system to protect user data. Your personal information and scan results can only be accessed by you.</string>
+    <string name="a10">You can report bugs or provide feedback via the development team via email</string>
 
 
 </resources>

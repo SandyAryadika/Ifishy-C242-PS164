@@ -1,8 +1,10 @@
 package com.ifishy.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ifishy.R
 
 
 class FaqItem (
@@ -11,26 +13,25 @@ class FaqItem (
     var isExpanded : Boolean = false
 )
 
-class ViewModelFAQ: ViewModel() {
+class ViewModelFAQ(private val context: Context): ViewModel() {
 
-    private val _faqlist = MutableLiveData<MutableList<FaqItem>>()
-    val faqlist: MutableLiveData<MutableList<FaqItem>> = _faqlist
+    private val _faqlist = MutableLiveData<List<FaqItem>>()
+    val faqlist: LiveData<List<FaqItem>> = _faqlist
 
 
     init {
-        _faqlist.value = mutableListOf(
-            FaqItem("Apa itu aplikasi iFishy?"," iFishy adalah aplikasi yang dirancang untuk membantu pengguna dalam mendeteksi penyakit pada ikan melalui fitur scan. Selain itu, aplikasi ini menyediakan artikel, forum komunitas, riwayat penyakit, dan profil pengguna."),
-            FaqItem("Bagaimana cara menggunakan fitur scan penyakit pada ikan?", "Anda cukup mengambil atau mengunggah foto ikan menggunakan fitur scan di aplikasi. Sistem akan menganalisis gambar dan memberikan informasi mengenai kemungkinan penyakit yang diderita ikan." ),
-            FaqItem("Apa saja yang bisa saya temukan di menu Home?","Menu Home menampilkan berbagai artikel dan post terkini yang relevan dengan kesehatan ikan, tips perawatan, dan informasi menarik lainnya tentang dunia ikan."),
-            FaqItem("Bagaimana cara melihat riwayat scan yang pernah saya lakukan?","Riwayat scan penyakit dapat diakses melalui menu History. Di sana, Anda dapat melihat daftar hasil scan sebelumnya, lengkap dengan tanggal dan informasi terkait."),
-            FaqItem("Apa saja fitur yang tersedia di menu Community?","Menu Community memungkinkan Anda membuat post seputar ikan dan penyakitnya, memberikan komentar pada post orang lain, serta memberikan upvote atau downvote untuk menilai relevansi atau kualitas sebuah topik."),
-            FaqItem("Bisakah saya menyimpan post atau artikel dari aplikasi?","Saat ini, Anda bisa menandai artikel atau post untuk dibaca nanti. Cukup klik opsi Save yang tersedia di setiap artikel atau post."),
-            FaqItem("Bagaimana cara memperbarui informasi di menu Profile?","Anda bisa memperbarui informasi di menu Profile dengan memilih tombol Edit Profile. Dari sana, Anda dapat mengubah data seperti nama, foto profil, dan informasi pribadi lainnya."),
-            FaqItem("Apakah aplikasi ini memerlukan koneksi internet?", "Ya, iFishy memerlukan koneksi internet untuk mengakses fitur seperti scan penyakit, artikel, post komunitas, dan sinkronisasi data pengguna."),
-            FaqItem("Apakah data yang saya unggah di aplikasi aman?", "Ya, iFishy menggunakan sistem enkripsi untuk melindungi data pengguna. Informasi pribadi dan hasil scan Anda hanya dapat diakses oleh Anda."),
-            FaqItem("Bagaimana cara melaporkan bug atau memberikan masukan terkait aplikasi?", "Anda dapat melaporkan bug atau memberikan masukan melalui tim pengembang via email ")
+        _faqlist.value = listOf(
+            FaqItem(context.getString(R.string.q1), context.getString(R.string.a1)),
+            FaqItem(context.getString(R.string.q2), context.getString(R.string.a2)),
+            FaqItem(context.getString(R.string.q3), context.getString(R.string.a3)),
+            FaqItem(context.getString(R.string.q4), context.getString(R.string.a4)),
+            FaqItem(context.getString(R.string.q5), context.getString(R.string.a5)),
+            FaqItem(context.getString(R.string.q6), context.getString(R.string.a6)),
+            FaqItem(context.getString(R.string.q7), context.getString(R.string.a7)),
+            FaqItem(context.getString(R.string.q8), context.getString(R.string.a8)),
+            FaqItem(context.getString(R.string.q9), context.getString(R.string.a9)),
+            FaqItem(context.getString(R.string.q10), context.getString(R.string.a10))
         )
-
     }
 
     fun toggleFaqExpansion(index: Int) {
