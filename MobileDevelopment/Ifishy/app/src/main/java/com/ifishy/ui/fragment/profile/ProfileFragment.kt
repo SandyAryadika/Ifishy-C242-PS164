@@ -13,6 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.ifishy.R
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentProfileBinding
+import com.ifishy.ui.activity.bookmark.BookmarkActivity
 import com.ifishy.ui.activity.setting.SettingActivity
 import com.ifishy.ui.adapter.profile.ProfilePagerAdapter
 import com.ifishy.ui.viewmodel.profile.ProfileViewModel
@@ -41,6 +42,10 @@ class ProfileFragment : Fragment() {
 
         binding.settings.setOnClickListener {
             startActivity(Intent(requireActivity(),SettingActivity::class.java))
+        }
+
+        binding.bookmark.setOnClickListener {
+            startActivity(Intent(requireActivity(),BookmarkActivity::class.java))
         }
 
         preferenceViewModel.token.observe(viewLifecycleOwner){token->
