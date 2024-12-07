@@ -11,7 +11,7 @@
     <dimen name="indicator_height">14dp</dimen>
     <dimen name="author_padding_horizontal">12dp</dimen>
     <dimen name="author_padding_vertical">2dp</dimen>
-    <dimen name="back_button">55dp</dimen>
-    <dimen name="image_button">48dp</dimen>
-    <dimen name="button_height">45dp</dimen>
+    <dimen name="back_button">50dp</dimen>
+    <dimen name="image_button">40dp</dimen>
+    <dimen name="button_height">55dp</dimen>
 </resources>

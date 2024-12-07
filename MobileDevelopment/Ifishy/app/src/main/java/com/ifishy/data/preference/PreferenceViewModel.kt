@@ -14,11 +14,33 @@ class PreferenceViewModel @Inject constructor(private val userPreferences: UserP
     val token: LiveData<String> = userPreferences.readToken().asLiveData()
     val isAlreadyLogin: LiveData<Boolean> = userPreferences.alreadyLogin().asLiveData()
     val email: LiveData<String> = userPreferences.getUserEmail().asLiveData()
+    val language: LiveData<String> = userPreferences.getLanguage().asLiveData()
+    val theme: LiveData<Boolean> = userPreferences.getTheme().asLiveData()
 
     fun saveToken(token:String,email: String){
         viewModelScope.launch {
             userPreferences.saveToken(token,email)
         }
+    }
+
+    fun saveTheme(isDark: Boolean): Boolean {
+        viewModelScope.launch {
+            userPreferences.saveTheme(isDark)
+        }
+        return isDark
+    }
+
+    fun saveLanguage(language: String){
+        viewModelScope.launch {
+            userPreferences.saveLanguage(language)
+        }
+    }
+
+    fun clearSession(){
+        viewModelScope.launch {
+            userPreferences.clearSession()
+        }
+
     }
 
 }

@@ -11,5 +11,14 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Switch.Style" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorOutline">@color/primary_light</item>
+        <item name="colorSurfaceContainerHighest">@color/secondary_light</item>
+    </style>
+
     <style name="Theme.Ifishy" parent="Base.Theme.Ifishy" />
 </resources>

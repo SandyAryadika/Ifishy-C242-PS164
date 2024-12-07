@@ -7,6 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ifishy.BuildConfig
@@ -54,27 +55,32 @@ class UserPreferences @Inject constructor(private val context: Application) {
         }
     }
 
-    suspend fun saveSettings(language: String, themeDark: Boolean) {
+    suspend fun saveTheme(isDark: Boolean) {
         context.dataStore.edit { preferences ->
-            preferences[LANGUAGE] = language
-            preferences[THEME_DARK] = themeDark
+            preferences[THEME_DARK] = isDark
         }
-        Log.d("UserPreferences", "Settings saved: language=$language, themeDark=$themeDark")
     }
 
     suspend fun clearSession(){
-        context.dataStore.edit {
-            it.clear()
+        context.dataStore.edit {info->
+            info.remove(TOKEN)
+            info.remove(EMAIL)
         }
     }
 
     fun getLanguage(): Flow<String> {
         return context.dataStore.data.map { preferences ->
-            preferences[LANGUAGE] ?: "EN(US)"
+            preferences[LANGUAGE] ?: "EN"
         }
     }
 
-    fun isThemeDark(): Flow<Boolean> {
+    suspend fun saveLanguage(language:String) {
+        context.dataStore.edit { lang->
+            lang[LANGUAGE] = language
+        }
+    }
+
+    fun getTheme(): Flow<Boolean> {
         return context.dataStore.data.map { preferences ->
             preferences[THEME_DARK] ?: false
         }

@@ -16,7 +16,6 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding?=null
     private val binding get() =_binding!!
-    private lateinit var profilepageadapter: ProfilePagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,11 +28,9 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        profilepageadapter = ProfilePagerAdapter(this)
+        binding.content.adapter = ProfilePagerAdapter(this)
 
-        binding.viewPager.adapter = profilepageadapter
-
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+        TabLayoutMediator(binding.selector, binding.content) { tab, position ->
             tab.text = when (position) {
                 0 -> "Personal"
                 1 -> "My Post"
@@ -44,11 +41,6 @@ class ProfileFragment : Fragment() {
         binding.settings.setOnClickListener {
             startActivity(Intent(requireActivity(),SettingActivity::class.java))
         }
-
-        binding.back.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
-        }
-
     }
 
     override fun onDestroy() {
