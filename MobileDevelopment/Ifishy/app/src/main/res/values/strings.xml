@@ -30,7 +30,6 @@
     <string name="share">share</string>
     <string name="back">back</string>
     <string name="okay">Okay</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="judul_fragment_history">HISTORY</string>
     <string name="hint_search">Search</string>
@@ -91,6 +90,25 @@
     <string name="bookmark_list">Bookmark List</string>
     <string name="language">Language</string>
     <string name="want_to_logout">Want to logout?</string>
-
+    <string name="q1">Apa itu aplikasi iFishy?</string>
+    <string name="q2">Bagaimana cara menggunakan fitur scan penyakit pada ikan?</string>
+    <string name="q3">Apa saja yang bisa saya temukan di menu Home?</string>
+    <string name="q4">Bagaimana cara melihat riwayat scan yang pernah saya lakukan?</string>
+    <string name="q5">Apa saja fitur yang tersedia di menu Community?</string>
+    <string name="q6">Bisakah saya menyimpan post atau artikel dari aplikasi?</string>
+    <string name="q7">Bagaimana cara memperbarui informasi di menu Profile?</string>
+    <string name="q8">Apakah aplikasi ini memerlukan koneksi internet?</string>
+    <string name="q9">Apakah data yang saya unggah di aplikasi aman?</string>
+    <string name="q10">Bagaimana cara melaporkan bug atau memberikan masukan terkait aplikasi?</string>
+    <string name="a1">iFishy adalah aplikasi yang dirancang untuk membantu pengguna dalam mendeteksi penyakit pada ikan melalui fitur scan. Selain itu, aplikasi ini menyediakan artikel, forum komunitas, riwayat penyakit, dan profil pengguna.</string>
+    <string name="a2">Anda cukup mengambil atau mengunggah foto ikan menggunakan fitur scan di aplikasi. Sistem akan menganalisis gambar dan memberikan informasi mengenai kemungkinan penyakit yang diderita ikan.</string>
+    <string name="a3">Menu Home menampilkan berbagai artikel dan post terkini yang relevan dengan kesehatan ikan, tips perawatan, dan informasi menarik lainnya tentang dunia ikan.</string>
+    <string name="a4">Riwayat scan penyakit dapat diakses melalui menu History. Di sana, Anda dapat melihat daftar hasil scan sebelumnya, lengkap dengan tanggal dan informasi terkait.</string>
+    <string name="a5">Menu Community memungkinkan Anda membuat post seputar ikan dan penyakitnya, memberikan komentar pada post orang lain, serta memberikan upvote atau downvote untuk menilai relevansi atau kualitas sebuah topik.</string>
+    <string name="a6">Saat ini, Anda bisa menandai artikel atau post untuk dibaca nanti. Cukup klik opsi Save yang tersedia di setiap artikel atau post.</string>
+    <string name="a7">Anda bisa memperbarui informasi di menu Profile dengan memilih tombol Edit Profile. Dari sana, Anda dapat mengubah data seperti nama, foto profil, dan informasi pribadi lainnya.</string>
+    <string name="a8">Ya, iFishy memerlukan koneksi internet untuk mengakses fitur seperti scan penyakit, artikel, post komunitas, dan sinkronisasi data pengguna.</string>
+    <string name="a9">Ya, iFishy menggunakan sistem enkripsi untuk melindungi data pengguna. Informasi pribadi dan hasil scan Anda hanya dapat diakses oleh Anda.</string>
+    <string name="a10">Anda dapat melaporkan bug atau memberikan masukan melalui tim pengembang via email.</string>
 
 </resources>
