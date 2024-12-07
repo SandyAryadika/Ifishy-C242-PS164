@@ -1,16 +1,20 @@
 package com.ifishy.ui.fragment.profile.menu_profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ifishy.R
 import com.ifishy.databinding.FragmentProfilePostBinding
 import com.ifishy.ui.adapter.community.post.CommunityPostsAdapter
 import com.ifishy.ui.viewmodel.community.CommunityViewModel
 import com.ifishy.data.preference.PreferenceViewModel
+import com.ifishy.ui.activity.detail_post.DetailPostActivity
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,20 +45,90 @@ class ProfilePost : Fragment() {
 
 
         preferenceViewModel.token.observe(viewLifecycleOwner) { token ->
-            if (!token.isNullOrEmpty()) {
                 getPosts(token)
-            }
         }
 
-        communityViewModel.posts.observe(viewLifecycleOwner) { response ->
-            if (response is ResponseState.Success) {
-                response.data.posts?.let { adapter.submitData(it) }
+    }
+
+    private fun isLoading(loading:Boolean){
+        if (loading){
+            binding.loadingMypost.apply {
+                this.visibility = View.VISIBLE
+                this.startShimmer()
             }
+            binding.profilePost.visibility = View.GONE
+            binding.error.visibility = View.GONE
+        }else{
+            binding.loadingMypost.apply {
+                this.visibility = View.GONE
+                this.stopShimmer()
+            }
+            binding.profilePost.visibility = View.VISIBLE
+            binding.error.visibility = View.GONE
         }
     }
 
     private fun getPosts(token: String) {
-        communityViewModel.getAllPosts(token)
+        communityViewModel.getAllPosts(token).apply {
+            communityViewModel.posts.observe(viewLifecycleOwner) { response ->
+                when(response){
+                    is ResponseState.Loading -> {
+                        isLoading(true)
+                    }
+                    is ResponseState.Success -> {
+                        isLoading(false)
+                        if (response.data.posts?.isNotEmpty() == true){
+                            adapter.submitData(response.data.posts)
+                            adapter.apply {
+                                response.data.posts?.let { this.submitData(it) }
+                                this.onItemClicked(object : CommunityPostsAdapter.OnClick {
+                                    override fun getDetail(id: Int?) {
+                                        startActivity(
+                                            Intent(
+                                                requireActivity(),
+                                                DetailPostActivity::class.java
+                                            )
+                                                .putExtra(DetailPostActivity.POST_ID, id)
+                                        )
+                                    }
+
+                                    override fun upVote(id: Int?) = upVote(token, id!!)
+                                    override fun downVote(id: Int?) = downVote(token, id!!)
+                                })
+                            }
+                        }else{
+                            binding.error.apply {
+                                this.visibility = View.VISIBLE
+                                this.text = ContextCompat.getString(requireContext(),R.string.no_post)
+                            }
+                        }
+                    }
+                    is ResponseState.Error -> {
+                        isLoading(false)
+                        binding.error.apply {
+                            this.visibility = View.GONE
+                            this.text = response.message
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun upVote(token: String, id: Int) {
+        communityViewModel.addUpvote(token, id).apply {
+            communityViewModel.addUpvote.observe(viewLifecycleOwner) { event ->
+                event.getContentIfNotHandled()
+            }
+        }
+    }
+
+    private fun downVote(token: String, id: Int) {
+        communityViewModel.addDownVote(token, id).apply {
+            communityViewModel.addDownVote.observe(viewLifecycleOwner) { event ->
+                event.getContentIfNotHandled()
+            }
+        }
     }
 
     override fun onDestroyView() {

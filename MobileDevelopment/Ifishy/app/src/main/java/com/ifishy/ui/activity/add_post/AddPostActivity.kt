@@ -105,6 +105,7 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
                             }
                             is ResponseState.Error -> {
                                 isLoading(false)
+                                binding.send.isEnabled = true
                                 Dialog.messageDialog(supportFragmentManager,
                                     getString(R.string.error_upload),response.message)
                             }
