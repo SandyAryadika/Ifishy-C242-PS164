@@ -26,7 +26,7 @@
     <string name="tools_author">Aquariumstore</string>
     <string name="tools_date">Oct 25, 2023</string>
     <string name="tools_desc">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections.\n\n1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.\n\nThe standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</string>
-    <string name="bookmark">bookmark</string>
+    <string name="bookmark">Bookmark</string>
     <string name="share">share</string>
     <string name="back">back</string>
     <string name="okay">Okay</string>
@@ -85,7 +85,7 @@
     <string name="guest">Guest</string>
     <string name="settings">Settings</string>
     <string name="see_more">See More</string>
-    <string name="edit">edit</string>
+    <string name="edit">Edit</string>
     <string name="hidden_pass">*********</string>
     <string name="bookmark_list">Bookmark List</string>
     <string name="language">Language</string>
@@ -110,5 +110,8 @@
     <string name="a8">Ya, iFishy memerlukan koneksi internet untuk mengakses fitur seperti scan penyakit, artikel, post komunitas, dan sinkronisasi data pengguna.</string>
     <string name="a9">Ya, iFishy menggunakan sistem enkripsi untuk melindungi data pengguna. Informasi pribadi dan hasil scan Anda hanya dapat diakses oleh Anda.</string>
     <string name="a10">Anda dapat melaporkan bug atau memberikan masukan melalui tim pengembang via email.</string>
+    <string name="added_to_bookmark">Added to bookmark</string>
+    <string name="removed_from_bookmark">Removed from bookmark</string>
+
 
 </resources>

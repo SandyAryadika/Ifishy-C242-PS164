@@ -12,6 +12,7 @@ const {
     deleteUserAccount,
     logoutUser,
     uploadProfilePhoto,
+    updatePhotoProfile,
     getDashboardData,
     getUserProfile,
     addShareToPost,
@@ -66,7 +67,8 @@ router.get('/users', getAllUsers);
 router.put('/update', updateUserProfile);
 router.delete('/delete', deleteUserAccount);
 router.post('/logout', logoutUser);
-router.post('/upload-photo',  authenticateToken, upload.single('photo'), uploadProfilePhoto); 
+router.post('/upload-photo',  authenticateToken, upload.single('photo'), uploadProfilePhoto);
+router.put('/update-photo-profile', authenticateToken, upload.single('image'), updatePhotoProfile);
 router.get('/dashboard/:email', authenticateToken, getDashboardData);
 router.get('/profile/:email', authenticateToken, getUserProfile);
 router.post('/community/posts', authenticateToken, upload.single('image'), createPost); 

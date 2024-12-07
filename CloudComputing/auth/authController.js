@@ -247,10 +247,11 @@ const storage = new Storage({
   keyFilename: './service-account-key.json',
 });
 
-// Nama bucket
+// Nama bucket beserta foldernya
 const bucketName = 'ifishy-photos';
 const profileFolder = 'photo-profile-user';
 const postFolder = 'image-post';
+const scanFolder = 'scan_history';
 
 const uploadProfilePhoto = async (req, res) => {
   try {
@@ -293,6 +294,53 @@ const uploadProfilePhoto = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to upload profile photo',
+    });
+  }
+};
+
+const updatePhotoProfile = async (req, res) => {
+  try {
+    const { user } = req; // Informasi user dari token JWT
+    const file = req.file; // File yang diunggah
+
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded',
+      });
+    }
+
+    // Nama file baru dengan timestamp dan nama asli file
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const blob = storage.bucket(bucketName).file(`${profileFolder}/${fileName}`);
+
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      contentType: file.mimetype,
+    });
+
+    await new Promise((resolve, reject) => {
+      blobStream.on('error', reject);
+      blobStream.on('finish', resolve);
+      blobStream.end(file.buffer);
+    });
+
+    const newImageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+
+    // Update URL gambar profil di database
+    const updateSql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
+    await pool.query(updateSql, [newImageUrl, user.id]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile photo updated successfully!',
+      imageUrl: newImageUrl,
+    });
+  } catch (error) {
+    console.error('Error in updatePhotoProfile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update profile photo',
     });
   }
 };
@@ -1422,7 +1470,7 @@ const getArticleFromUrl = async (req, res) => {
   }
 };
 
-// Menambahkan bookmark untuk postingan atau artikel
+// Menambahkan atau menghapus bookmark untuk postingan atau artikel
 const addBookmark = async (req, res) => {
   try {
     const { itemId, type } = req.body;
@@ -1443,31 +1491,38 @@ const addBookmark = async (req, res) => {
     const [existingBookmark] = await pool.query(checkBookmarkSql, [userId, itemId, type]);
 
     if (existingBookmark.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: 'Bookmark already exists',
+      // Jika sudah ada bookmark, hapus bookmark tersebut (unbookmark)
+      const deleteBookmarkSql = `
+        DELETE FROM bookmarks WHERE id = ?
+      `;
+      await pool.query(deleteBookmarkSql, [existingBookmark[0].id]);
+
+      res.status(200).json({
+        success: true,
+        message: 'Bookmark removed successfully',
+      });
+    } else {
+      // Jika belum ada bookmark, tambahkan bookmark baru
+      const addBookmarkSql = `
+        INSERT INTO bookmarks (user_id, type, item_id)
+        VALUES (?, ?, ?)
+      `;
+      await pool.query(addBookmarkSql, [userId, type, itemId]);
+
+      res.status(201).json({
+        success: true,
+        message: 'Bookmark added successfully',
       });
     }
-
-    // Tambahkan bookmark
-    const addBookmarkSql = `
-      INSERT INTO bookmarks (user_id, type, item_id)
-      VALUES (?, ?, ?)
-    `;
-    await pool.query(addBookmarkSql, [userId, type, itemId]);
-
-    res.status(201).json({
-      success: true,
-      message: 'Bookmark added successfully',
-    });
   } catch (error) {
-    console.error('Error adding bookmark:', error);
+    console.error('Error handling bookmark:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to add bookmark',
+      message: 'Failed to handle bookmark',
     });
   }
 };
+
 
 // Menghapus bookmark
 const removeBookmark = async (req, res) => {
@@ -1586,6 +1641,7 @@ module.exports = {
   deleteUserAccount,
   logoutUser,
   uploadProfilePhoto,
+  updatePhotoProfile,
   getDashboardData,
   getUserProfile,
   createPost,

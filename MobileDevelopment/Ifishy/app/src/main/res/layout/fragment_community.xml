@@ -9,6 +9,20 @@
     android:layout_marginTop="5dp">
 
     <TextView
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="@dimen/medium_text"
+        android:visibility="visible"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Error" />
+
+    <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -36,67 +50,82 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.ifishy.ui.custom.CustomSearchBar
-        android:id="@+id/search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/edit_text_background"
-        android:hint="@string/hint_search"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_post" />
+        app:layout_constraintTop_toBottomOf="@id/title">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/loading"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search">
-
-        <LinearLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@null"
+            android:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <include layout="@layout/community_item_shimmer" />
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:elevation="0dp"
+                app:contentInsetStart="0dp"
 
-            <include layout="@layout/community_item_shimmer" />
+                app:layout_scrollFlags="scroll|enterAlways">
 
-            <include layout="@layout/community_item_shimmer" />
+                <com.ifishy.ui.custom.CustomSearchBar
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/edit_text_background"
+                    android:hint="@string/hint_search" />
 
-        </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
 
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_bold"
-        android:textSize="@dimen/medium_text"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search"
-        tools:text="Error" />
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_anchor="@id/app_bar"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/community"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search"
-        tools:listitem="@layout/community_item" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/community_item_shimmer" />
+
+                <include layout="@layout/community_item_shimmer" />
+
+                <include layout="@layout/community_item_shimmer" />
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/community"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:visibility="visible"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            tools:listitem="@layout/community_item" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

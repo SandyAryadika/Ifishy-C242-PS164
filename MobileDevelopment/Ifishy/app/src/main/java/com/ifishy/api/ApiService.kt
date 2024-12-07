@@ -6,6 +6,8 @@ import com.ifishy.data.model.auth.request.LoginRequest
 import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.data.model.auth.response.LoginResponse
 import com.ifishy.data.model.auth.response.SignUpResponse
+import com.ifishy.data.model.bookmark.BookmarkRequest
+import com.ifishy.data.model.bookmark.BookmarkResponse
 import com.ifishy.data.model.comments.MessageResponse
 import com.ifishy.data.model.comments.CommentByIdResponse
 import com.ifishy.data.model.comments.CommentsResponse
@@ -54,6 +56,15 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("id") id: Int
     ): CommunityDetailResponse
+
+    @GET("/bookmarks")
+    suspend fun getAllBookmark(@Header("Authorization") token:String): BookmarkResponse
+
+    @POST("/bookmark")
+    suspend fun setBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
+
+    @DELETE("/bookmark")
+    suspend fun deleteBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
 
     @GET("community/posts/{id}/comments")
     suspend fun getAllComments(
