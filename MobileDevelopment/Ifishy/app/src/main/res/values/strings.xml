@@ -112,6 +112,16 @@
     <string name="a10">Anda dapat melaporkan bug atau memberikan masukan melalui tim pengembang via email.</string>
     <string name="added_to_bookmark">Added to bookmark</string>
     <string name="removed_from_bookmark">Removed from bookmark</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="load_profile_error">Load profile error</string>
+    <string name="personal_info">Personal info</string>
+    <string name="new_password">New Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="edit_profile_error">Edit Profile Error</string>
+    <string name="edit_profile_success">Edit Profile Success</string>
+    <string name="your_profile_updated">Your profile updated</string>
+    <string name="input_old_password_first_to_change_password">Input old password first to change password</string>
+    <string name="upload_photo_failed">Upload photo failed</string>
 
 
 </resources>

@@ -33,6 +33,7 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
     private val launchPicker = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ){ uri->
+        binding.cover.isEnabled = true
         if(uri !=null){
             communityViewModel.imagePost = uri
             binding.send.isEnabled = true
@@ -62,7 +63,6 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
         }
         binding.send.setOnClickListener(this)
         binding.back.setOnClickListener(this)
-
 
     }
 
@@ -127,6 +127,7 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v){
             binding.cover->{
+                binding.cover.isEnabled = false
                 launchPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
             binding.send->{

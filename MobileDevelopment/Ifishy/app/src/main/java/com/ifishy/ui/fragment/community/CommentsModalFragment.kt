@@ -157,7 +157,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                                 this.visibility = View.GONE
                                 this.text = ""
                             }
-                            response.data.comments?.let { commentsAdapter.submitData(it) }
+                            response.data.comments?.let { commentsAdapter.submitData(it.reversed()) }
                             binding.comments.apply {
                                 this.adapter = commentsAdapter
                                 this.layoutManager = LinearLayoutManager(requireActivity())
@@ -231,7 +231,7 @@ class CommentsModalFragment : BottomSheetDialogFragment() {
                                 response.data.message.toString(),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            getAllComments(token, id)
+                            getAllComments(token,id)
                             binding.commentsContent.text.clear()
                             binding.commentsContent.clearFocus()
                         }

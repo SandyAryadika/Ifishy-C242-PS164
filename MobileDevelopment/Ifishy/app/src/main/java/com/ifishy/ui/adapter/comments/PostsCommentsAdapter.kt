@@ -90,7 +90,7 @@ class PostsCommentsAdapter :
     override fun getItemCount(): Int = asyncListDiffer.currentList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val comment = asyncListDiffer.currentList.reversed()[position]
+        val comment = asyncListDiffer.currentList[position]
         holder.bind(comment, holder.itemView.context)
         holder.itemView.setOnClickListener {
             onItemClick.onClickedItem(comment.id!!)

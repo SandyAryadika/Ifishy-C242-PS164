@@ -53,7 +53,7 @@ class ReplyCommentsAdapter: RecyclerView.Adapter<ReplyCommentsAdapter.ViewHolder
     override fun getItemCount(): Int = asyncListDiffer.currentList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val replies = asyncListDiffer.currentList.reversed()[position]
+        val replies = asyncListDiffer.currentList[position]
         if (replies != null) {
             holder.bind(replies,holder.itemView.context)
         }

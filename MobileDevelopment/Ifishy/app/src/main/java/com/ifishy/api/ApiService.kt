@@ -15,7 +15,9 @@ import com.ifishy.data.model.comments.request.AddCommentRequest
 import com.ifishy.data.model.community.response.AddPostResponse
 import com.ifishy.data.model.community.response.CommunityDetailResponse
 import com.ifishy.data.model.community.response.CommunityResponse
+import com.ifishy.data.model.profile.request.EditProfileRequest
 import com.ifishy.data.model.profile.response.ProfileResponse
+import com.ifishy.data.model.profile.response.UpdatePhotoProfileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -24,8 +26,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface ApiService {
@@ -57,14 +59,21 @@ interface ApiService {
         @Path("id") id: Int
     ): CommunityDetailResponse
 
-    @GET("/bookmarks")
+    @GET("bookmarks")
     suspend fun getAllBookmark(@Header("Authorization") token:String): BookmarkResponse
 
-    @POST("/bookmark")
+    @POST("bookmark")
     suspend fun setBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
 
-    @DELETE("/bookmark")
+    @DELETE("bookmark")
     suspend fun deleteBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
+
+    @PUT("update")
+    suspend fun editProfile(@Header("Authorization") token: String,@Body userData: EditProfileRequest): MessageResponse
+
+    @Multipart
+    @PUT("update-photo-profile")
+    suspend fun updateProfile(@Header("Authorization") token: String,@Part image:MultipartBody.Part): UpdatePhotoProfileResponse
 
     @GET("community/posts/{id}/comments")
     suspend fun getAllComments(
