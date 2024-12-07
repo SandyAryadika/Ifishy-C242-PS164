@@ -106,7 +106,7 @@ class ReplyModalFragment : BottomSheetDialogFragment() {
                     }
                     is ResponseState.Success -> {
                         isLoading(false)
-                        response.data.comment?.replies?.let { adapter.submitData(it) }
+                        response.data.comment?.replies?.let { adapter.submitData(it.reversed()) }
                         binding.comments.apply {
                             this.adapter = this@ReplyModalFragment.adapter
                             this.layoutManager = LinearLayoutManager(requireActivity())
