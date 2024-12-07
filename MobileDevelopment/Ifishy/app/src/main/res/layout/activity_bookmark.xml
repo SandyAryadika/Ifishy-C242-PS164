@@ -73,7 +73,35 @@
 
             </androidx.appcompat.widget.Toolbar>
 
+            <com.google.android.material.tabs.TabLayout
+                android:layout_marginHorizontal="15dp"
+                android:id="@+id/selectorbook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                app:tabRippleColor="@null"
+                app:tabIndicator="@null"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/secondary_light"
+                app:tabBackground="@drawable/background_tab"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/black"
+                app:tabTextAppearance="@style/TabTextStyle"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                android:elevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/search_bookmark"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_constraintTop_toBottomOf="@id/selectorbook"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:visibility="gone"
