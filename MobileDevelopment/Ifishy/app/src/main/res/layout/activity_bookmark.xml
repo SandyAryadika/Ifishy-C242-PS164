@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.article.ListArticleActivity">
+    tools:context=".ui.activity.bookmark.BookmarkActivity">
 
     <ImageButton
         android:id="@+id/back"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_bold"
         android:textSize="@dimen/large_text"
-        android:text="@string/article"
+        android:text="@string/bookmark"
         app:layout_constraintTop_toTopOf="@id/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,7 @@
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <com.ifishy.ui.custom.CustomSearchBar
-                    android:id="@+id/search_article"
+                    android:id="@+id/search_bookmark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/edit_text_background" />
@@ -79,7 +79,7 @@
             android:visibility="gone"
             android:overScrollMode="never"
             android:scrollbars="none"
-            android:id="@+id/all_articles"
+            android:id="@+id/all_bookmark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

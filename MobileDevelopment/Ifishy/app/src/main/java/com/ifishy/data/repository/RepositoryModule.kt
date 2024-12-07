@@ -6,6 +6,8 @@ import com.ifishy.data.repository.article.ArticleRepository
 import com.ifishy.data.repository.article.ArticleRepositoryImpl
 import com.ifishy.data.repository.auth.AuthRepository
 import com.ifishy.data.repository.auth.AuthRepositoryImpl
+import com.ifishy.data.repository.bookmark.BookmarkRepository
+import com.ifishy.data.repository.bookmark.BookmarkRepositoryImpl
 import com.ifishy.data.repository.community.CommunityRepository
 import com.ifishy.data.repository.community.CommunityRepositoryImpl
 import com.ifishy.data.repository.profile.ProfileRepository
@@ -42,5 +44,11 @@ object RepositoryModule {
     @Named("ProfileRepository")
     fun provideProfileRepo(apiService: ApiService,context: Application): ProfileRepository{
         return ProfileRepositoryImpl(apiService,context)
+    }
+
+    @Provides
+    @Named("BookmarkRepository")
+    fun provideBookmarkRepo(apiService: ApiService,context: Application): BookmarkRepository{
+        return BookmarkRepositoryImpl(apiService,context)
     }
 }

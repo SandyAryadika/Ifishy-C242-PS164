@@ -11,7 +11,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.ifishy.R
+import com.ifishy.data.model.bookmark.BookmarkRequest
+import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivityDetailBinding
+import com.ifishy.ui.viewmodel.BookmarkViewModel
 import com.ifishy.ui.viewmodel.article.ArticleViewModel
 import com.ifishy.utils.Date
 import com.ifishy.utils.ResponseState
@@ -22,6 +25,8 @@ class DetailArticleActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityDetailBinding
     private val articleViewModel: ArticleViewModel by viewModels()
+    private val bookmarkViewModel: BookmarkViewModel by viewModels()
+    private val preferenceViewModel: PreferenceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +61,41 @@ class DetailArticleActivity : AppCompatActivity() {
                 this.visibility = View.GONE
             }
             binding.articleContent.visibility = View.VISIBLE
+        }
+
+    }
+
+    private fun setBookmark(token:String,item: BookmarkRequest){
+        bookmarkViewModel.setBookmark(token,item).apply {
+            bookmarkViewModel.setBookmark.observe(this@DetailArticleActivity){event->
+                event.getContentIfNotHandled()?.let { response->
+                    when(response){
+                        is ResponseState.Loading -> {}
+                        is ResponseState.Success -> {
+                            Toast.makeText(this@DetailArticleActivity,
+                                getString(R.string.added_to_bookmark), Toast.LENGTH_SHORT).show()
+                        }
+                        is ResponseState.Error -> {}
+                    }
+                }
+            }
+        }
+    }
+
+    private fun removeBookmark(token:String,item: BookmarkRequest){
+        bookmarkViewModel.deleteBookmark(token,item).apply {
+            bookmarkViewModel.deleteBookmark.observe(this@DetailArticleActivity){event->
+                event.getContentIfNotHandled()?.let { response->
+                    when(response){
+                        is ResponseState.Loading -> {}
+                        is ResponseState.Success -> {
+                            Toast.makeText(this@DetailArticleActivity,
+                                getString(R.string.removed_from_bookmark), Toast.LENGTH_SHORT).show()
+                        }
+                        is ResponseState.Error -> {}
+                    }
+                }
+            }
         }
     }
 
