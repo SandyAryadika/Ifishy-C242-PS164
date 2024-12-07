@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,6 +27,18 @@ class ProfilePost : Fragment() {
     private var _binding: FragmentProfilePostBinding? = null
     private val binding get() = _binding!!
     private val adapter by lazy { CommunityPostsAdapter() }
+
+    companion object {
+        private const val USERNAME = "USERNAME"
+
+        fun newInstance(data: String): ProfilePost {
+            val fragment = ProfilePost()
+            val bundle = Bundle()
+            bundle.putString(USERNAME, data)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,23 +91,30 @@ class ProfilePost : Fragment() {
                     is ResponseState.Success -> {
                         isLoading(false)
                         if (response.data.posts?.isNotEmpty() == true){
-                            adapter.submitData(response.data.posts)
-                            adapter.apply {
-                                response.data.posts?.let { this.submitData(it) }
-                                this.onItemClicked(object : CommunityPostsAdapter.OnClick {
-                                    override fun getDetail(id: Int?) {
-                                        startActivity(
-                                            Intent(
-                                                requireActivity(),
-                                                DetailPostActivity::class.java
+                            val myPost = response.data.posts.filter { it.username == arguments?.getString(USERNAME) }
+                            if (myPost.isNotEmpty()){
+                                adapter.apply {
+                                    this.submitData(myPost)
+                                    this.onItemClicked(object : CommunityPostsAdapter.OnClick {
+                                        override fun getDetail(id: Int?) {
+                                            startActivity(
+                                                Intent(
+                                                    requireActivity(),
+                                                    DetailPostActivity::class.java
+                                                )
+                                                    .putExtra(DetailPostActivity.POST_ID, id)
                                             )
-                                                .putExtra(DetailPostActivity.POST_ID, id)
-                                        )
-                                    }
+                                        }
 
-                                    override fun upVote(id: Int?) = upVote(token, id!!)
-                                    override fun downVote(id: Int?) = downVote(token, id!!)
-                                })
+                                        override fun upVote(id: Int?) = upVote(token, id!!)
+                                        override fun downVote(id: Int?) = downVote(token, id!!)
+                                    })
+                                }
+                            }else{
+                                binding.error.apply {
+                                    this.visibility = View.VISIBLE
+                                    this.text = ContextCompat.getString(requireContext(),R.string.no_post)
+                                }
                             }
                         }else{
                             binding.error.apply {
