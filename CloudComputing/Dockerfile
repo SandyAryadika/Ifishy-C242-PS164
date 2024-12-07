@@ -1,20 +1,23 @@
-# Gunakan image Node.js resmi dari Docker Hub (pilih versi LTS yang stabil)
-FROM node:18-slim
+# Menggunakan Node.js versi LTS yang stabil
+FROM node:18-alpine
 
-# Set working directory di dalam container
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json dan package-lock.json untuk menginstal dependencies
+# Salin file package.json dan package-lock.json
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy seluruh kode aplikasi ke dalam container
+# Salin semua file ke dalam container
 COPY . .
 
-# Expose port yang digunakan oleh aplikasi (pastikan port sesuai dengan server Anda)
+# Salin file .env ke dalam container
+COPY .env /usr/src/app/.env
+
+# Expose port yang digunakan aplikasi
 EXPOSE 8080
 
-# Menentukan perintah untuk menjalankan aplikasi
+# Tentukan perintah untuk menjalankan aplikasi
 CMD ["node", "server.js"]
