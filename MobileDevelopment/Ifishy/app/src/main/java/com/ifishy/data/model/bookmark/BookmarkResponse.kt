@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class BookmarkResponse(
 
 	@field:SerializedName("bookmarks")
-	val bookmarks: List<BookmarksItem?>? = null,
+	val bookmarks: List<BookmarksItem>? = null,
 
 	@field:SerializedName("success")
 	val success: Boolean? = null

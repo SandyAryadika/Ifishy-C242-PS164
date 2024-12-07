@@ -3,9 +3,11 @@ package com.ifishy.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ifishy.data.model.article.DataItem
 import com.ifishy.data.model.bookmark.BookmarkRequest
 import com.ifishy.data.model.bookmark.BookmarkResponse
 import com.ifishy.data.model.comments.MessageResponse
+import com.ifishy.data.model.community.response.PostsItem
 import com.ifishy.data.repository.bookmark.BookmarkRepository
 import com.ifishy.utils.ResponseState
 import com.ifishy.utils.SingleEvent
@@ -20,6 +22,8 @@ class BookmarkViewModel @Inject constructor(@Named("BookmarkRepository")private 
     val allBookmark: MutableLiveData<ResponseState<BookmarkResponse>> = MutableLiveData()
     val setBookmark: MutableLiveData<SingleEvent<ResponseState<MessageResponse>>> = MutableLiveData()
     val deleteBookmark: MutableLiveData<SingleEvent<ResponseState<MessageResponse>>> = MutableLiveData()
+    val listArticle: MutableList<DataItem> = mutableListOf()
+    val listPost: MutableList<PostsItem> = mutableListOf()
 
     fun getAllBookmark(token:String){
         viewModelScope.launch {

@@ -9,7 +9,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.ifishy.R
 import com.ifishy.databinding.ActivityBookmarkBinding
 import com.ifishy.ui.adapter.boomark.BookmarkAdapterPage
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BookmarkActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityBookmarkBinding
@@ -30,10 +32,8 @@ class BookmarkActivity : AppCompatActivity() {
             finish()
         }
 
-        val adapter = BookmarkAdapterPage(this)
-        binding.viewPager.adapter = adapter
-
-        TabLayoutMediator(binding.selectorbook, binding.viewPager) { tab, position ->
+        binding.content.adapter = BookmarkAdapterPage(this)
+        TabLayoutMediator(binding.bookmarkSelector, binding.content) { tab, position ->
             tab.text = when (position) {
                 0 -> "Article"
                 1 -> "Post"
