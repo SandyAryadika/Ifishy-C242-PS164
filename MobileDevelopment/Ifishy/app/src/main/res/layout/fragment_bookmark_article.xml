@@ -6,17 +6,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activity.bookmark.fragmentBookmark.BookmarkArticleFragment">
 
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Error"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="@dimen/upper_meidum_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_article"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <include layout="@layout/article_item_vertical_shimmer" />
+            <include layout="@layout/article_item_vertical_shimmer" />
+            <include layout="@layout/article_item_vertical_shimmer" />
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:overScrollMode="never"
+        android:id="@+id/rv_article"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/global_page_padding_margin"
-        android:paddingVertical="@dimen/global_page_padding_margin"
+        android:padding="10dp"
         android:scrollbars="none"
-        tools:listitem="@layout/article_item_vertical"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/article_item_vertical" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

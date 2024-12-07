@@ -46,6 +46,21 @@ class DetailArticleActivity : AppCompatActivity() {
 
         getArticleById(id)
 
+        preferenceViewModel.token.observe(this){token->
+            isBookmarked(token,id)
+            binding.bookmarkButton.setOnClickListener {
+                isBookmarked(token,id){ isBookmark->
+                    if (isBookmark){
+                        removeBookmark(token,BookmarkRequest(id,"article"))
+                        binding.bookmarkButton.setImageResource(R.drawable.bookmark_false)
+                    }else{
+                        setBookmark(token,BookmarkRequest(id,"article"))
+                        binding.bookmarkButton.setImageResource(R.drawable.bookmark_true)
+                    }
+                }
+            }
+        }
+
     }
 
     private fun isLoading(loading:Boolean){
@@ -63,6 +78,32 @@ class DetailArticleActivity : AppCompatActivity() {
             binding.articleContent.visibility = View.VISIBLE
         }
 
+    }
+
+    private fun isBookmarked(token: String, id: Int, callback:((Boolean) -> Unit)?=null ) {
+        bookmarkViewModel.getAllBookmark(token)
+        bookmarkViewModel.allBookmark.observe(this@DetailArticleActivity) { response ->
+            when (response) {
+                is ResponseState.Error -> {
+                    callback?.let {
+                        it(false)
+                    }
+                }
+                is ResponseState.Loading -> {
+                }
+                is ResponseState.Success -> {
+                    val exist = response.data.bookmarks
+                        ?.filter { it.type == "article" }
+                        ?.any { it.itemId == id } == true
+
+                    binding.bookmarkButton.setImageResource(
+                        if (exist) R.drawable.bookmark_true else R.drawable.bookmark_false
+                    )
+
+                    callback?.invoke(exist)
+                }
+            }
+        }
     }
 
     private fun setBookmark(token:String,item: BookmarkRequest){

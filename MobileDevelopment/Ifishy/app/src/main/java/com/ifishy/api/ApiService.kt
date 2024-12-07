@@ -23,6 +23,7 @@ import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -65,7 +66,7 @@ interface ApiService {
     @POST("bookmark")
     suspend fun setBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
 
-    @DELETE("bookmark")
+    @HTTP(method = "DELETE", hasBody = true, path = "bookmark")
     suspend fun deleteBookmark(@Header("Authorization") token: String, @Body item: BookmarkRequest): MessageResponse
 
     @PUT("update")

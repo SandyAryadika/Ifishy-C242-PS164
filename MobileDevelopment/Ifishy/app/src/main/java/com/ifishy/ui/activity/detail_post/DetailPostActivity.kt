@@ -45,10 +45,53 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         binding.comments.setOnClickListener(this)
 
         id = intent.getIntExtra(POST_ID,0)
-        preferencesViewModel.token.observe(this@DetailPostActivity){token->
-            id?.let { getDetail(token,it) }
+        preferencesViewModel.token.observe(this@DetailPostActivity) { token ->
+            id?.let { id ->
+                getDetail(token, id)
+                isBookmarked(token, id)
+            }
         }
 
+        preferencesViewModel.token.observe(this@DetailPostActivity){token->
+            binding.bookmarkButton.setOnClickListener {
+                isBookmarked(token, id!!) { isBookmark ->
+                    if (isBookmark) {
+                        removeBookmark(token, BookmarkRequest(id!!, "post"))
+                        binding.bookmarkButton.setImageResource(R.drawable.bookmark_false)
+                    } else {
+                        setBookmark(token, BookmarkRequest(id!!, "post"))
+                        binding.bookmarkButton.setImageResource(R.drawable.bookmark_true)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun isBookmarked(token: String, id: Int, callback:((Boolean) -> Unit)?=null ) {
+        bookmarkViewModel.getAllBookmark(token)
+        bookmarkViewModel.allBookmark.observe(this@DetailPostActivity) { response ->
+            when (response) {
+                is ResponseState.Error -> {
+                    callback?.let {
+                        it(false)
+                    }
+                }
+                is ResponseState.Loading -> {
+                }
+                is ResponseState.Success -> {
+                    val exist = response.data.bookmarks
+                        ?.filter { it.type == "post" }
+                        ?.any { it.itemId == id } == true
+
+                    binding.bookmarkButton.setImageResource(
+                        if (exist) R.drawable.bookmark_true else R.drawable.bookmark_false
+                    )
+
+                    callback?.invoke(exist)
+                }
+            }
+        }
     }
 
     private fun setBookmark(token:String,item: BookmarkRequest){
