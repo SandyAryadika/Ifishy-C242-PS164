@@ -50,16 +50,16 @@ class ProfileFragment : Fragment() {
 
         preferenceViewModel.token.observe(viewLifecycleOwner){token->
             preferenceViewModel.email.observe(viewLifecycleOwner){email->
-                getProfile(email,token)
-
-                binding.content.adapter = ProfilePagerAdapter(this,email)
-                TabLayoutMediator(binding.selector, binding.content) { tab, position ->
-                    tab.text = when (position) {
-                        0 -> "Personal"
-                        1 -> "My Post"
-                        else -> null
-                    }
-                }.attach()
+                getProfile(email,token){ username->
+                    binding.content.adapter = ProfilePagerAdapter(this,email,username)
+                    TabLayoutMediator(binding.selector, binding.content) { tab, position ->
+                        tab.text = when (position) {
+                            0 -> "Personal"
+                            1 -> "My Post"
+                            else -> null
+                        }
+                    }.attach()
+                }
             }
         }
     }
@@ -80,7 +80,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun getProfile(email:String,token:String){
+    private fun getProfile(email:String,token:String,callback:((String) -> Unit)?=null){
         profileViewModel.getProfile(token,email).apply {
             profileViewModel.profile.observe(viewLifecycleOwner){response->
                 when(response){
@@ -90,6 +90,7 @@ class ProfileFragment : Fragment() {
                     is ResponseState.Success -> {
                         isLoading(false)
                         binding.username.text = response.data.profile?.username
+                        response.data.profile?.username?.let { callback?.invoke(it) }
                         Glide.with(requireContext())
                             .load(response.data.profile?.profilePhoto)
                             .placeholder(ContextCompat.getDrawable(requireContext(), R.drawable.user_placeholder))

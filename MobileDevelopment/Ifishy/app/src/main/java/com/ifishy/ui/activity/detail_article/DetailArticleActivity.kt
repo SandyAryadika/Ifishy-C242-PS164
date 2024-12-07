@@ -63,6 +63,8 @@ class DetailArticleActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun isLoading(loading:Boolean){
         if (loading){
             binding.loadingDetail.apply {
@@ -85,13 +87,16 @@ class DetailArticleActivity : AppCompatActivity() {
         bookmarkViewModel.allBookmark.observe(this@DetailArticleActivity) { response ->
             when (response) {
                 is ResponseState.Error -> {
+                    binding.bookmarkButton.isEnabled = true
                     callback?.let {
                         it(false)
                     }
                 }
                 is ResponseState.Loading -> {
+                    binding.bookmarkButton.isEnabled = false
                 }
                 is ResponseState.Success -> {
+                    binding.bookmarkButton.isEnabled = true
                     val exist = response.data.bookmarks
                         ?.filter { it.type == "article" }
                         ?.any { it.itemId == id } == true
@@ -111,12 +116,17 @@ class DetailArticleActivity : AppCompatActivity() {
             bookmarkViewModel.setBookmark.observe(this@DetailArticleActivity){event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
-                        is ResponseState.Loading -> {}
+                        is ResponseState.Loading -> {
+                            binding.bookmarkButton.isEnabled = false
+                        }
                         is ResponseState.Success -> {
+                            binding.bookmarkButton.isEnabled = true
                             Toast.makeText(this@DetailArticleActivity,
                                 getString(R.string.added_to_bookmark), Toast.LENGTH_SHORT).show()
                         }
-                        is ResponseState.Error -> {}
+                        is ResponseState.Error -> {
+                            binding.bookmarkButton.isEnabled = true
+                        }
                     }
                 }
             }
@@ -128,12 +138,17 @@ class DetailArticleActivity : AppCompatActivity() {
             bookmarkViewModel.deleteBookmark.observe(this@DetailArticleActivity){event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
-                        is ResponseState.Loading -> {}
+                        is ResponseState.Loading -> {
+                            binding.bookmarkButton.isEnabled = false
+                        }
                         is ResponseState.Success -> {
+                            binding.bookmarkButton.isEnabled = true
                             Toast.makeText(this@DetailArticleActivity,
                                 getString(R.string.removed_from_bookmark), Toast.LENGTH_SHORT).show()
                         }
-                        is ResponseState.Error -> {}
+                        is ResponseState.Error -> {
+                            binding.bookmarkButton.isEnabled = true
+                        }
                     }
                 }
             }

@@ -112,5 +112,18 @@
     <string name="a8">Ya, iFishy memerlukan koneksi internet untuk mengakses fitur seperti scan penyakit, artikel, post komunitas, dan sinkronisasi data pengguna.</string>
     <string name="a9">Ya, iFishy menggunakan sistem enkripsi untuk melindungi data pengguna. Informasi pribadi dan hasil scan Anda hanya dapat diakses oleh Anda.</string>
     <string name="a10">Anda dapat melaporkan bug atau memberikan masukan melalui tim pengembang via email.</string>
+    <string name="added_to_bookmark">Di tambah ke bookmark</string>
+    <string name="removed_from_bookmark">Di hapus dari bookmark</string>
+    <string name="edit_profile">Edit Profil</string>
+    <string name="load_profile_error">Gagal memuat menu profil</string>
+    <string name="personal_info">Informasi pribadi</string>
+    <string name="new_password">Password baru</string>
+    <string name="old_password">Password lama</string>
+    <string name="edit_profile_error">Edit profil error</string>
+    <string name="edit_profile_success">Edit profil berhasil</string>
+    <string name="your_profile_updated">Profil di updated</string>
+    <string name="input_old_password_first_to_change_password">Masukkan password lama untuk mengubah password</string>
+    <string name="upload_photo_failed">Gagal upload foto</string>
+    <string name="no_bookmark_yet">Belum ada bookmark</string>
 
 </resources>

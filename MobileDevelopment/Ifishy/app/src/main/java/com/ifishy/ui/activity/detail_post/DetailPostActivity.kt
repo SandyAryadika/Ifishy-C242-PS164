@@ -73,13 +73,16 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         bookmarkViewModel.allBookmark.observe(this@DetailPostActivity) { response ->
             when (response) {
                 is ResponseState.Error -> {
+                    binding.bookmarkButton.isEnabled = true
                     callback?.let {
                         it(false)
                     }
                 }
                 is ResponseState.Loading -> {
+                    binding.bookmarkButton.isEnabled = false
                 }
                 is ResponseState.Success -> {
+                    binding.bookmarkButton.isEnabled = true
                     val exist = response.data.bookmarks
                         ?.filter { it.type == "post" }
                         ?.any { it.itemId == id } == true
@@ -99,12 +102,17 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
             bookmarkViewModel.setBookmark.observe(this@DetailPostActivity){event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
-                        is ResponseState.Loading -> {}
+                        is ResponseState.Loading -> {
+                            binding.bookmarkButton.isEnabled = false
+                        }
                         is ResponseState.Success -> {
+                            binding.bookmarkButton.isEnabled = true
                             Toast.makeText(this@DetailPostActivity,
                                 getString(R.string.added_to_bookmark), Toast.LENGTH_SHORT).show()
                         }
-                        is ResponseState.Error -> {}
+                        is ResponseState.Error -> {
+                            binding.bookmarkButton.isEnabled = true
+                        }
                     }
                 }
             }
@@ -116,12 +124,17 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
             bookmarkViewModel.deleteBookmark.observe(this@DetailPostActivity){event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
-                        is ResponseState.Loading -> {}
+                        is ResponseState.Loading -> {
+                            binding.bookmarkButton.isEnabled = false
+                        }
                         is ResponseState.Success -> {
+                            binding.bookmarkButton.isEnabled = true
                             Toast.makeText(this@DetailPostActivity,
                                 getString(R.string.removed_from_bookmark), Toast.LENGTH_SHORT).show()
                         }
-                        is ResponseState.Error -> {}
+                        is ResponseState.Error -> {
+                            binding.bookmarkButton.isEnabled = true
+                        }
                     }
                 }
             }
