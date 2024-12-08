@@ -102,7 +102,7 @@
         android:backgroundTint="@color/alter_text_background"
         app:tabBackground="@drawable/background_tab"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/black"
+        app:tabTextColor="@color/tab_text_unselected"
         app:tabTextAppearance="@style/TabTextStyle"
         app:tabMode="fixed"
         app:tabGravity="fill"

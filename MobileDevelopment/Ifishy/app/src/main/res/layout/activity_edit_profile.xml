@@ -87,7 +87,7 @@
             android:id="@+id/pp_overlay"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:alpha="0.15"
+            android:alpha="0.3"
             android:background="@color/black"
             android:contentDescription="@string/profile_picture"
             app:layout_constraintBottom_toBottomOf="@id/pp"
@@ -131,7 +131,7 @@
             android:includeFontPadding="false"
             android:inputType="text"
             android:maxLines="1"
-            android:textColor="@color/black"
+            android:textColor="@color/edit_text_color"
             android:textSize="@dimen/upper_meidum_text"
             app:backgroundTint="@color/alter_text_background"
             app:layout_constraintEnd_toEndOf="parent"
@@ -151,7 +151,7 @@
             android:includeFontPadding="false"
             android:inputType="textEmailAddress"
             android:maxLines="1"
-            android:textColor="@color/black"
+            android:textColor="@color/edit_text_color"
             android:textSize="@dimen/upper_meidum_text"
             app:backgroundTint="@color/alter_text_background"
             app:layout_constraintEnd_toEndOf="parent"
@@ -184,7 +184,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password_title"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/black">
+            app:passwordToggleTint="@color/edit_text_color">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/old_password"
@@ -201,7 +201,7 @@
                 android:maxLines="1"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/edit_text_color"
                 android:textSize="@dimen/upper_meidum_text" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -220,7 +220,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/old_password_container"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="@color/black">
+            app:passwordToggleTint="@color/edit_text_color">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/new_password"
@@ -237,7 +237,7 @@
                 android:maxLines="1"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textColor="@color/black"
+                android:textColor="@color/edit_text_color"
                 android:textSize="@dimen/upper_meidum_text" />
 
         </com.google.android.material.textfield.TextInputLayout>

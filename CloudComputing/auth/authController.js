@@ -1629,6 +1629,7 @@ const getBookmarkById = async (req, res) => {
 
 // Fungsi untuk menyimpan data scan_history
 const saveScanHistory = async (req, res) => {
+
   const { userId, disease, confidence } = req.body;
 
   // Validasi input
@@ -1650,10 +1651,6 @@ const saveScanHistory = async (req, res) => {
               contentType: fishImage.mimetype,
           },
       });
-
-      blobStream.on('finish', async () => {
-          // Mendapatkan URL file setelah di-upload
-          const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
           // Menyimpan data ke database
           const query = `

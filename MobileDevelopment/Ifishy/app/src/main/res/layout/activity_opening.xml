@@ -53,7 +53,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/get_started"
-            android:textColor="@color/primary_light"
+            android:textColor="@color/get_started"
             android:textSize="16sp"
             app:backgroundTint="@color/secondary_light"
             app:layout_constraintBottom_toTopOf="@+id/login_button"
