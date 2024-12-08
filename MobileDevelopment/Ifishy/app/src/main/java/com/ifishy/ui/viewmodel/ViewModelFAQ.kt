@@ -1,25 +1,30 @@
 package com.ifishy.ui.viewmodel
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.ifishy.R
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
-class FaqItem (
-    val question : String,
-    val answer : String,
-    var isExpanded : Boolean = false
+data class FaqItem(
+    val question: String,
+    val answer: String,
+    var isExpanded: Boolean = false
 )
 
-class ViewModelFAQ(private val context: Context): ViewModel() {
+@HiltViewModel
+class ViewModelFAQ @Inject constructor(
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _faqlist = MutableLiveData<List<FaqItem>>()
     val faqlist: LiveData<List<FaqItem>> = _faqlist
 
-
     init {
+        val context = application.applicationContext
         _faqlist.value = listOf(
             FaqItem(context.getString(R.string.q1), context.getString(R.string.a1)),
             FaqItem(context.getString(R.string.q2), context.getString(R.string.a2)),

@@ -1,29 +1,23 @@
 package com.ifishy.ui.activity.setting
 
-import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.ifishy.R
-import com.ifishy.SplashActivity
 import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.ActivitySettingBinding
 import com.ifishy.ui.activity.auth.LoginActivity
 import com.ifishy.ui.activity.faq.FrequentlyAskMenu
-import com.ifishy.ui.activity.main.MainActivity
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.Language
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
-import kotlin.properties.Delegates
+
 
 @AndroidEntryPoint
 class SettingActivity : AppCompatActivity() {
