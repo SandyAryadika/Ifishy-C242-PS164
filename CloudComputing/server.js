@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('./auth/authRoutes');
 const app = express();
+const punycode = require('punycode/');
 
 // Middleware
 app.use(cors());

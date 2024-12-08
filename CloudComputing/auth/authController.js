@@ -1,11 +1,12 @@
+require('dotenv').config(); // Biasanya ditempatkan di awal file
 const pool = require('../config/dbConfig');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Storage } = require('@google-cloud/storage');
 const axios = require('axios');
-const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const path = require('path');
+const FormData = require('form-data');
 const { JWT_SECRET } = require('../config/secrets');
 
 // Register User
@@ -702,33 +703,25 @@ const addComment = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan URL foto profil dari GCS berdasarkan username
+// Fungsi untuk mendapatkan URL foto profil dari GCS
 const getProfilePictureUrl = async (username) => {
+  // Menggunakan nama pengguna untuk mendapatkan path foto profil
+  const filePath = `photo-profile-user/${username}.jpg`;
   try {
-    const [files] = await storage.bucket(bucketName).getFiles({
-      prefix: `${profileFolder}/`,
-    });
-
-    // Cari file yang cocok dengan username
-    const profileFile = files.find((file) => file.name.includes(username));
-
-    if (!profileFile) {
-      return null;
+    // Mengecek apakah file foto profil ada di bucket GCS
+    const fileExists = await storage.bucket(process.env.GCP_BUCKET_NAME).file(filePath).exists();
+    if (fileExists[0]) {
+      return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/${filePath}`;
+    } else {
+      // Jika tidak ada, gunakan foto profil default
+      return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/photo-profile-user/default-profile.jpg`;
     }
-
-    const [url] = await profileFile.getSignedUrl({
-      action: 'read',
-      expires: '03-01-2026', // URL kadaluwarsa dalam waktu tertentu
-    });
-
-    return url;
   } catch (error) {
-    console.error(`Failed to get profile picture for ${username}:`, error);
-    return null;
+    console.error("Error getting profile picture:", error);
+    return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/photo-profile-user/default-profile.jpg`;
   }
 };
 
-// Menampilkan semua komentar pada sebuah postingan
 const getComments = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -736,7 +729,7 @@ const getComments = async (req, res) => {
 
     // Query untuk mendapatkan semua komentar terkait postingan
     const commentsSql = `
-      SELECT c.id, c.content, c.created_at, u.username
+      SELECT c.id, c.content, c.created_at, c.user_id, u.username
       FROM comments c
       JOIN users u ON c.user_id = u.id
       WHERE c.post_id = ?
@@ -746,7 +739,7 @@ const getComments = async (req, res) => {
 
     // Query untuk mendapatkan semua balasan komentar terkait postingan
     const repliesSql = `
-      SELECT r.id, r.content, r.created_at, r.parent_comment_id, u.username
+      SELECT r.id, r.content, r.created_at, r.parent_comment_id, r.user_id, u.username
       FROM replies r
       JOIN users u ON r.user_id = u.id
       WHERE r.parent_comment_id IN (SELECT id FROM comments WHERE post_id = ?)
@@ -757,7 +750,6 @@ const getComments = async (req, res) => {
     // Gabungkan komentar dengan balasannya dalam struktur nested
     const formattedComments = await Promise.all(
       comments.map(async (comment) => {
-        // Ambil jumlah like untuk komentar ini
         const likeCountSql = `
           SELECT COUNT(*) AS like_count
           FROM likes
@@ -765,8 +757,7 @@ const getComments = async (req, res) => {
         `;
         const [likeCountResult] = await pool.query(likeCountSql, [comment.id]);
         const likeCount = likeCountResult[0].like_count || 0;
-
-        // Periksa apakah user saat ini telah memberikan like pada komentar ini
+    
         const userLikeSql = `
           SELECT id
           FROM likes
@@ -774,11 +765,10 @@ const getComments = async (req, res) => {
         `;
         const [userLikeResult] = await pool.query(userLikeSql, [comment.id, userId]);
         const userLiked = userLikeResult.length > 0;
-
-        // Ambil URL foto profil dari GCS untuk komentar utama
+    
+        // Ambil URL foto profil untuk komentar utama
         const profilePictureUrl = await getProfilePictureUrl(comment.username);
-
-        // Ambil URL foto profil dari GCS untuk setiap reply
+    
         const commentReplies = await Promise.all(
           replies
             .filter((reply) => reply.parent_comment_id === comment.id)
@@ -787,21 +777,22 @@ const getComments = async (req, res) => {
               content: reply.content,
               created_at: reply.created_at,
               username: reply.username,
-              profilePicture: await getProfilePictureUrl(reply.username), // Ambil URL foto profil reply
+              profilePicture: await getProfilePictureUrl(reply.username), // Ambil URL foto profil untuk balasan
               timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
             }))
         );
-
+    
         return {
           ...comment,
           profilePicture: profilePictureUrl, // Tambahkan URL foto profil ke komentar
           timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
-          likeCount,                           // Tambahkan jumlah likes
-          userLiked,                           // Tambahkan apakah user telah memberikan like
-          replies: commentReplies,             // Tambahkan array replies ke setiap komentar
+          likeCount,
+          userLiked,
+          replies: commentReplies,
         };
       })
     );
+    
 
     res.status(200).json({
       success: true,
@@ -1633,6 +1624,49 @@ const getBookmarkById = async (req, res) => {
   }
 };
 
+// Fungsi untuk menyimpan data scan_history
+const saveScanHistory = async (req, res) => {
+  const { userId, fishImage, disease, confidence } = req.body;
+
+  if (!userId || !fishImage || !disease || !confidence) {
+      return res.status(400).json({ message: "Semua data harus diisi!" });
+  }
+
+  try {
+      const query = `
+          INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
+          VALUES (?, ?, ?, ?, NOW())
+      `;
+
+      await db.execute(query, [userId, fishImage, disease, confidence]);
+
+      res.status(201).json({ message: "Scan history berhasil disimpan!" });
+  } catch (error) {
+      console.error("Error saat menyimpan scan history:", error.message);
+      res.status(500).json({ message: "Gagal menyimpan scan history." });
+  }
+};
+
+// Fungsi untuk mendapatkan semua scan history berdasarkan user ID
+const getScanHistory = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+      return res.status(400).json({ message: "User ID diperlukan!" });
+  }
+
+  try {
+      const query = `SELECT * FROM scan_history WHERE user_id = ? ORDER BY scanned_at DESC`;
+
+      const [results] = await db.execute(query, [userId]);
+
+      res.status(200).json({ data: results });
+  } catch (error) {
+      console.error("Error saat mengambil scan history:", error.message);
+      res.status(500).json({ message: "Gagal mengambil scan history." });
+  }
+};
+
 module.exports = { 
   registerUser, 
   loginUser, 
@@ -1668,4 +1702,6 @@ module.exports = {
   addBookmark,
   removeBookmark,
   getBookmarks,
-  getBookmarkById };
+  getBookmarkById,
+  saveScanHistory,
+  getScanHistory };

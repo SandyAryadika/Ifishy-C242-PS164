@@ -39,8 +39,11 @@ const {
     addBookmark,
     removeBookmark,
     getBookmarks,
-    getBookmarkById } = require('./authController');
-const router = express.Router();
+    getBookmarkById,
+    saveScanHistory,
+    getScanHistory } = require('./authController');
+
+    const router = express.Router();
 
 // Validasi untuk registrasi
 router.post(
@@ -96,5 +99,7 @@ router.post('/bookmark', authenticateToken, addBookmark);  // Menambahkan bookma
 router.delete('/bookmark', authenticateToken, removeBookmark);  // Menghapus bookmark
 router.get('/bookmarks', authenticateToken, getBookmarks);  // Mendapatkan semua bookmark
 router.get('/bookmark/:id', authenticateToken, getBookmarkById);
+router.post('/scan-history', saveScanHistory); // Endpoint untuk menyimpan scan history
+router.get('/scan-history/:userId', getScanHistory); // Endpoint untuk mendapatkan scan history berdasarkan user ID
 
 module.exports = router;
