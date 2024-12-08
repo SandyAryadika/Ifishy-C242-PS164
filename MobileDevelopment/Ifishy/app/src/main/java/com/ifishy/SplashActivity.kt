@@ -35,10 +35,12 @@ class SplashActivity : AppCompatActivity() {
         }
 
         preferencesViewModel.theme.observe(this){isDark->
-            AppCompatDelegate.setDefaultNightMode(
-                if (isDark) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
+            if(isDark!=null){
+                AppCompatDelegate.setDefaultNightMode(
+                    if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+                    else AppCompatDelegate.MODE_NIGHT_NO
+                )
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){

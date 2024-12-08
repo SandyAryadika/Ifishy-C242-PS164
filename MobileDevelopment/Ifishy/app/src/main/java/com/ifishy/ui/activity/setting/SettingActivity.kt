@@ -53,7 +53,9 @@ class SettingActivity : AppCompatActivity() {
 
 
         preferenceViewModel.theme.observe(this) { isDark ->
-            binding.switchNight.isChecked = isDark
+            if (isDark != null) {
+                binding.switchNight.isChecked = isDark
+            }
             binding.switchNight.setOnCheckedChangeListener { _, isChecked ->
                 val isDarkMode = preferenceViewModel.saveTheme(isChecked)
                 AppCompatDelegate.setDefaultNightMode(

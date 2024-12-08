@@ -1626,9 +1626,29 @@ const getBookmarkById = async (req, res) => {
 
 // Fungsi untuk menyimpan data scan_history
 const saveScanHistory = async (req, res) => {
-  const { userId, fishImage, disease, confidence } = req.body;
+  const {user} = req
+  const {disease, confidence } = req.body;
+  const {file} = req.file
 
-  if (!userId || !fishImage || !disease || !confidence) {
+  let imageUrl = null
+
+  if (file) {
+    const blob = storage.bucket(bucketName).file(`${scanFolder}/${Date.now()}-${file.originalname}`);
+    const blobStream = blob.createWriteStream({
+      resumable: false,
+      contentType: file.mimetype,
+    });
+
+    await new Promise((resolve, reject) => {
+      blobStream.on('error', reject);
+      blobStream.on('finish', resolve);
+      blobStream.end(file.buffer);
+    });
+
+    imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+  }
+
+  if (!imageUrl || !disease || !confidence) {
       return res.status(400).json({ message: "Semua data harus diisi!" });
   }
 
@@ -1638,7 +1658,7 @@ const saveScanHistory = async (req, res) => {
           VALUES (?, ?, ?, ?, NOW())
       `;
 
-      await db.execute(query, [userId, fishImage, disease, confidence]);
+    await pool.query(query, [user.id, imageUrl, disease, confidence]);
 
       res.status(201).json({ message: "Scan history berhasil disimpan!" });
   } catch (error) {

@@ -80,9 +80,9 @@ class UserPreferences @Inject constructor(private val context: Application) {
         }
     }
 
-    fun getTheme(): Flow<Boolean> {
+    fun getTheme(): Flow<Boolean?> {
         return context.dataStore.data.map { preferences ->
-            preferences[THEME_DARK] ?: false
+            preferences[THEME_DARK]
         }
     }
 }

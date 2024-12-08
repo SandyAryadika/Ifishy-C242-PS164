@@ -69,6 +69,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/login_title" />
 
             <EditText
+                android:textCursorDrawable="@null"
                 android:id="@+id/email"
                 android:layout_width="0dp"
                 android:layout_height="55dp"
@@ -80,7 +81,7 @@
                 android:includeFontPadding="false"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:textColor="@color/black"
+                android:textColor="@color/edit_text_color"
                 android:textSize="@dimen/upper_meidum_text"
                 app:backgroundTint="@color/edit_text_background"
                 app:layout_constraintBottom_toTopOf="@+id/password_container"
@@ -104,9 +105,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/black">
+                app:endIconTint="@color/edit_text_color"
+                android:textCursorDrawable="@null"
+                app:passwordToggleTint="@color/edit_text_color">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:textCursorDrawable="@null"
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -121,7 +125,7 @@
                     android:maxLines="1"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/edit_text_color"
                     android:textSize="@dimen/upper_meidum_text" />
 
             </com.google.android.material.textfield.TextInputLayout>

@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bottom_navigation_icon_color">#FFFFFF</color>
+    <color name="edit_text_color">@color/white</color>
+    <color name="get_started">@color/white</color>
+    <color name="tab_text_unselected">@color/white</color>
     <color name="bottom_navigation_background">@color/dark_background</color>
+    <color name="primary_light">#4D638C</color>
     <color name="secondary_light">#303030</color>
+    <color name="hint_edit_text">#8E8E8E</color>
     <color name="textSpinner">#ffffff</color>
     <color name="bgedit">@color/dark_background</color>
     <color name="see_all">#ffffff</color>
     <color name="bgBookmark">#303030</color>
     <color name="edit_text_background">#303030</color>
-    <color name="alter_text_background">#E9EBEE</color>
+    <color name="alter_text_background">@color/edit_text_background</color>
     <color name="teks_subs">#ffffff</color>
 </resources>
