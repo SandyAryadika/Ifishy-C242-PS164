@@ -5,7 +5,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('./auth/authRoutes');
 const app = express();
-const punycode = require('punycode/');
 
 // Middleware
 app.use(cors());
@@ -15,7 +14,7 @@ app.use(express.urlencoded({ extended: true })); // Untuk x-www-form-urlencoded
 
 app.get('/', (req, res) => {
   console.log('Root route accessed');
-  res.send('Welcome to the API!');
+  res.send('Welcome to the Ifihsy Backend API!');
 });
 
 // Daftarkan route

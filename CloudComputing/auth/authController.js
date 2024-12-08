@@ -1,13 +1,18 @@
-require('dotenv').config(); // Biasanya ditempatkan di awal file
 const pool = require('../config/dbConfig');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Storage } = require('@google-cloud/storage');
-const axios = require('axios');
 const puppeteer = require('puppeteer');
-const path = require('path');
-const FormData = require('form-data');
-const { JWT_SECRET } = require('../config/secrets');
+
+const storage = new Storage({
+  projectId: 'bangkit-capstone-ps164',
+  keyFilename: './service-account-key.json',
+});
+
+// Nama bucket beserta foldernya
+const bucketName = 'ifishy-photos';
+const profileFolder = 'photo-profile-user';
+const postFolder = 'image-post';
 
 // Register User
 async function registerUser(req, res) {
@@ -124,7 +129,7 @@ const getAllUsers = async (req, res) => {
 };
 
 // Fungsi untuk mengupdate profil pengguna
-const updateUserProfile = async (req, res) => {
+const updateUser = async (req, res) => {
   const { username, email, password, newPassword } = req.body;
   const token = req.headers.authorization?.split(" ")[1];
 
@@ -243,17 +248,6 @@ const logoutUser = async (req, res) => {
   }
 };
 
-const storage = new Storage({
-  projectId: 'bangkit-capstone-ps164',
-  keyFilename: './service-account-key.json',
-});
-
-// Nama bucket beserta foldernya
-const bucketName = 'ifishy-photos';
-const profileFolder = 'photo-profile-user';
-const postFolder = 'image-post';
-const scanFolder = 'scan_history';
-
 const uploadProfilePhoto = async (req, res) => {
   try {
     const { userId } = req.body; // Ambil userId dari body
@@ -263,8 +257,9 @@ const uploadProfilePhoto = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
-    // Upload ke bucket GCS di folder photo-profile-user
-    const blob = storage.bucket(bucketName).file(`${profileFolder}/${Date.now()}-${file.originalname}`);
+    // Nama file disesuaikan dengan userId
+    const fileName = `${profileFolder}/${userId}-${Date.now()}-${file.originalname}`;
+    const blob = storage.bucket(bucketName).file(fileName);
     const blobStream = blob.createWriteStream({
       resumable: false,
       contentType: file.mimetype,
@@ -276,7 +271,7 @@ const uploadProfilePhoto = async (req, res) => {
     });
 
     blobStream.on('finish', async () => {
-      const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+      const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
       // Update URL foto profil di database
       const sql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
@@ -703,31 +698,36 @@ const addComment = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan URL foto profil dari GCS
-const getProfilePictureUrl = async (username) => {
-  // Menggunakan nama pengguna untuk mendapatkan path foto profil
-  const filePath = `photo-profile-user/${username}.jpg`;
+// Fungsi untuk mendapatkan URL foto profil dari GCS dengan penanganan spasi dan karakter khusus
+const getProfilePictureUrl = async (userId) => {
   try {
-    // Mengecek apakah file foto profil ada di bucket GCS
-    const fileExists = await storage.bucket(process.env.GCP_BUCKET_NAME).file(filePath).exists();
-    if (fileExists[0]) {
-      return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/${filePath}`;
+    // Ambil URL foto profil dari database
+    const [result] = await pool.query('SELECT profile_photo FROM users WHERE id = ?', [userId]);
+
+    if (result.length > 0 && result[0].profile_photo) {
+      // Mengambil file path dari database (misalnya: "photo-profile-user/1733310540576-Kenzie Kay on Instagram.jpg")
+      const filePath = result[0].profile_photo;
+
+      // URL lengkap ke file GCS
+      return `https://storage.googleapis.com/${bucketName}/${filePath}`;
     } else {
-      // Jika tidak ada, gunakan foto profil default
-      return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/photo-profile-user/default-profile.jpg`;
+      // Jika tidak ada URL foto profil, gunakan foto default
+      return `https://storage.googleapis.com/${bucketName}/${profileFolder}/default-profile.jpg`;
     }
   } catch (error) {
-    console.error("Error getting profile picture:", error);
-    return `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/photo-profile-user/default-profile.jpg`;
+    console.error('Error getting profile picture from database:', error);
+    return `https://storage.googleapis.com/${bucketName}/${profileFolder}/default-profile.jpg`;
   }
 };
 
+
+
 const getComments = async (req, res) => {
   try {
-    const { postId } = req.params;
-    const userId = req.user.id; // Ambil user_id dari token JWT yang di-decode
+    const { postId } = req.params; // Ambil postId dari parameter URL
+    const userId = req.user.id; // Ambil user_id dari token JWT yang telah di-decode
 
-    // Query untuk mendapatkan semua komentar terkait postingan
+    // Query untuk mendapatkan semua komentar utama terkait postingan
     const commentsSql = `
       SELECT c.id, c.content, c.created_at, c.user_id, u.username
       FROM comments c
@@ -737,7 +737,7 @@ const getComments = async (req, res) => {
     `;
     const [comments] = await pool.query(commentsSql, [postId]);
 
-    // Query untuk mendapatkan semua balasan komentar terkait postingan
+    // Query untuk mendapatkan semua balasan terkait komentar dalam postingan
     const repliesSql = `
       SELECT r.id, r.content, r.created_at, r.parent_comment_id, r.user_id, u.username
       FROM replies r
@@ -750,6 +750,7 @@ const getComments = async (req, res) => {
     // Gabungkan komentar dengan balasannya dalam struktur nested
     const formattedComments = await Promise.all(
       comments.map(async (comment) => {
+        // Hitung jumlah like untuk setiap komentar
         const likeCountSql = `
           SELECT COUNT(*) AS like_count
           FROM likes
@@ -757,7 +758,8 @@ const getComments = async (req, res) => {
         `;
         const [likeCountResult] = await pool.query(likeCountSql, [comment.id]);
         const likeCount = likeCountResult[0].like_count || 0;
-    
+
+        // Periksa apakah user saat ini sudah menyukai komentar ini
         const userLikeSql = `
           SELECT id
           FROM likes
@@ -765,10 +767,11 @@ const getComments = async (req, res) => {
         `;
         const [userLikeResult] = await pool.query(userLikeSql, [comment.id, userId]);
         const userLiked = userLikeResult.length > 0;
-    
+
         // Ambil URL foto profil untuk komentar utama
-        const profilePictureUrl = await getProfilePictureUrl(comment.username);
-    
+        const profilePictureUrl = await getProfilePictureUrl(comment.user_id);
+
+        // Format balasan untuk komentar ini
         const commentReplies = await Promise.all(
           replies
             .filter((reply) => reply.parent_comment_id === comment.id)
@@ -777,11 +780,11 @@ const getComments = async (req, res) => {
               content: reply.content,
               created_at: reply.created_at,
               username: reply.username,
-              profilePicture: await getProfilePictureUrl(reply.username), // Ambil URL foto profil untuk balasan
+              profilePicture: await getProfilePictureUrl(reply.user_id), // Ambil URL foto profil untuk balasan
               timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
             }))
         );
-    
+
         return {
           ...comment,
           profilePicture: profilePictureUrl, // Tambahkan URL foto profil ke komentar
@@ -792,8 +795,8 @@ const getComments = async (req, res) => {
         };
       })
     );
-    
 
+    // Kirim response berhasil
     res.status(200).json({
       success: true,
       comments: formattedComments,
@@ -815,7 +818,7 @@ const getCommentsById = async (req, res) => {
 
     // Query untuk mendapatkan komentar berdasarkan commentId
     const commentSql = `
-      SELECT c.id, c.content, c.created_at, u.username
+      SELECT c.id, c.content, c.created_at, c.user_id, u.username
       FROM comments c
       JOIN users u ON c.user_id = u.id
       WHERE c.id = ?
@@ -833,7 +836,7 @@ const getCommentsById = async (req, res) => {
 
     // Query untuk mendapatkan semua balasan (replies) dari komentar yang dipilih
     const repliesSql = `
-      SELECT r.id, r.content, r.created_at, r.parent_comment_id, u.username
+      SELECT r.id, r.content, r.created_at, r.parent_comment_id, r.user_id, u.username
       FROM replies r
       JOIN users u ON r.user_id = u.id
       WHERE r.parent_comment_id = ?
@@ -860,7 +863,7 @@ const getCommentsById = async (req, res) => {
     const userLikedComment = userLikeCommentResult.length > 0;
 
     // Dapatkan URL foto profil untuk komentar utama
-    const profilePictureUrlComment = await getProfilePictureUrl(comment.username);
+    const profilePictureUrlComment = await getProfilePictureUrl(comment.user_id); // Menggunakan user_id untuk mendapatkan foto profil
 
     // Format komentar utama dengan balasan dan URL foto profil
     const formattedComment = {
@@ -880,7 +883,7 @@ const getCommentsById = async (req, res) => {
             FROM likes
             WHERE comment_id = ?
           `;
-          const [likeCountReplyResult] = await pool.query(likeCountReplySql, [commentId]);
+          const [likeCountReplyResult] = await pool.query(likeCountReplySql, [reply.id]);
           const likeCountReply = likeCountReplyResult[0].like_count || 0;
 
           // Query untuk memeriksa apakah user telah memberi like pada balasan, menggunakan comment_id sebagai parent
@@ -889,11 +892,11 @@ const getCommentsById = async (req, res) => {
             FROM likes
             WHERE comment_id = ? AND user_id = ?
           `;
-          const [userLikeReplyResult] = await pool.query(userLikeReplySql, [commentId, userId]);
+          const [userLikeReplyResult] = await pool.query(userLikeReplySql, [reply.id, userId]);
           const userLikedReply = userLikeReplyResult.length > 0;
 
           // Dapatkan URL foto profil untuk balasan
-          const profilePictureUrlReply = await getProfilePictureUrl(reply.username);
+          const profilePictureUrlReply = await getProfilePictureUrl(reply.user_id); // Menggunakan user_id untuk mendapatkan foto profil
 
           return {
             id: reply.id,
@@ -1626,41 +1629,41 @@ const getBookmarkById = async (req, res) => {
 
 // Fungsi untuk menyimpan data scan_history
 const saveScanHistory = async (req, res) => {
-  const {user} = req
-  const {disease, confidence } = req.body;
-  const {file} = req.file
 
-  let imageUrl = null
+  const { userId, disease, confidence } = req.body;
 
-  if (file) {
-    const blob = storage.bucket(bucketName).file(`${scanFolder}/${Date.now()}-${file.originalname}`);
-    const blobStream = blob.createWriteStream({
-      resumable: false,
-      contentType: file.mimetype,
-    });
-
-    await new Promise((resolve, reject) => {
-      blobStream.on('error', reject);
-      blobStream.on('finish', resolve);
-      blobStream.end(file.buffer);
-    });
-
-    imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
-  }
-
-  if (!imageUrl || !disease || !confidence) {
+  // Validasi input
+  if (!userId || !disease || !confidence || !req.file) {
       return res.status(400).json({ message: "Semua data harus diisi!" });
   }
 
+  // Ambil file gambar dari request
+  const fishImage = req.file;
+
   try {
-      const query = `
-          INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
-          VALUES (?, ?, ?, ?, NOW())
-      `;
+      // Upload gambar ke Google Cloud Storage
+      const bucket = storage.bucket(bucketName);
+      const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
+      const file = bucket.file(fileName);
 
-    await pool.query(query, [user.id, imageUrl, disease, confidence]);
+      const blobStream = file.createWriteStream({
+          metadata: {
+              contentType: fishImage.mimetype,
+          },
+      });
 
-      res.status(201).json({ message: "Scan history berhasil disimpan!" });
+          // Menyimpan data ke database
+          const query = `
+              INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
+              VALUES (?, ?, ?, ?, NOW())
+          `;
+
+          await db.execute(query, [userId, publicUrl, disease, confidence]);
+
+          res.status(201).json({ message: "Scan history berhasil disimpan!" });
+      });
+
+      blobStream.end(fishImage.buffer);
   } catch (error) {
       console.error("Error saat menyimpan scan history:", error.message);
       res.status(500).json({ message: "Gagal menyimpan scan history." });
@@ -1687,11 +1690,51 @@ const getScanHistory = async (req, res) => {
   }
 };
 
+// Fungsi untuk mendapatkan scan history berdasarkan user_id
+const getScanHistoryById = async (req, res) => {
+  const { userId } = req.params;
+
+  // Validasi input
+  if (!userId) {
+      return res.status(400).json({ message: "User ID diperlukan!" });
+  }
+
+  try {
+      // Query untuk mendapatkan scan history berdasarkan user_id
+      const query = `
+          SELECT 
+              id, 
+              user_id, 
+              disease, 
+              confidence, 
+              description, 
+              treatment, 
+              scan_timestamp 
+          FROM scan_history 
+          WHERE user_id = ? 
+          ORDER BY scan_timestamp DESC
+      `;
+
+      const [results] = await db.execute(query, [userId]);
+
+      // Jika tidak ada hasil, kembalikan pesan bahwa data tidak ditemukan
+      if (results.length === 0) {
+          return res.status(404).json({ message: "Scan history tidak ditemukan untuk user ini." });
+      }
+
+      // Kembalikan hasil
+      res.status(200).json({ data: results });
+  } catch (error) {
+      console.error("Error saat mengambil scan history:", error.message);
+      res.status(500).json({ message: "Gagal mengambil scan history." });
+  }
+};
+
 module.exports = { 
   registerUser, 
   loginUser, 
   getAllUsers, 
-  updateUserProfile, 
+  updateUser, 
   deleteUserAccount,
   logoutUser,
   uploadProfilePhoto,
@@ -1724,4 +1767,5 @@ module.exports = {
   getBookmarks,
   getBookmarkById,
   saveScanHistory,
-  getScanHistory };
+  getScanHistory,
+  getScanHistoryById };
