@@ -23,7 +23,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/circle"
         android:backgroundTint="@color/shimmer"
-        android:textColor="@color/primary_light"
+        android:textColor="@color/see_all"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_shimmer" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/date_upload_shimmer"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/primary_light"
+        android:textColor="@color/see_all"
         app:layout_constraintBottom_toBottomOf="@+id/author_shimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/author_shimmer" />
