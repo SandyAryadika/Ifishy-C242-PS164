@@ -1,9 +1,11 @@
 package com.ifishy.utils
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.ifishy.ui.dialog.ConfirmDialogFragment
 import com.ifishy.ui.dialog.MessageDialogFragment
+import com.ifishy.ui.dialog.ScanResultDialog
 
 object Dialog {
 
@@ -43,6 +45,19 @@ object Dialog {
         confirmDialog.onClickListener = onClickListener
 
         confirmDialog.show(fragmentManager,confirmDialog::class.java.simpleName)
+    }
+
+    fun resultDialog(
+        fragmentManager: FragmentManager,
+        uri: Uri
+    ): ScanResultDialog{
+        val bundle = Bundle()
+        val resultDialog = ScanResultDialog()
+        bundle.putString("image_uri",uri.toString())
+        resultDialog.arguments = bundle
+
+        resultDialog.show(fragmentManager,resultDialog::class.java.simpleName)
+        return resultDialog
     }
 
 }

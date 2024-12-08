@@ -26,10 +26,12 @@ android {
         debug{
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
             buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/\"")
+            buildConfigField("String","BASE_URL_ML","\"https://ifishy-api-441158734882.asia-southeast2.run.app/\"")
         }
         release {
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
             buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/")
+            buildConfigField("String","BASE_URL_ML","\"https://ifishy-api-441158734882.asia-southeast2.run.app/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -89,6 +91,11 @@ dependencies {
 
     //Glide
     implementation (libs.glide)
+
+    //CameraX
+    implementation(libs.androidx.camera.camera2)
+    implementation (libs.androidx.camera.lifecycle)
+    implementation (libs.androidx.camera.view)
 
 
 }
