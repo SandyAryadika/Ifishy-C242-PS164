@@ -99,7 +99,8 @@ class ScanActivity : AppCompatActivity() {
 
     fun cropImage(uri: Uri) {
         val destinationUri = Uri.fromFile(File(cacheDir, "classification_crop.jpg"))
-
+        val options = UCrop.Options()
+        options.setActiveControlsWidgetColor(ContextCompat.getColor(this,R.color.primary_light))
         val intent = UCrop.of(uri, destinationUri)
             .getIntent(this)
 

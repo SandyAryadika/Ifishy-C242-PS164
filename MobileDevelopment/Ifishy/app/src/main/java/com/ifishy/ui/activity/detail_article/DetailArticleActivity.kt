@@ -1,5 +1,6 @@
 package com.ifishy.ui.activity.detail_article
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Html
 import android.view.View
@@ -172,6 +173,17 @@ class DetailArticleActivity : AppCompatActivity() {
                                 .load(it.coverImage)
                                 .into(binding.img)
                             binding.descriptionArticle.text = Html.fromHtml(response.data.data.content,Html.FROM_HTML_MODE_LEGACY)
+                            binding.shareButton.setOnClickListener {
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, """
+                                        ${response.data.data.title}
+                                        
+                                        Baca Selengkapnya di : Ifishy
+                                    """.trimIndent()) // Teks yang ingin dibagikan
+                                }
+                                startActivity(Intent.createChooser(intent, "Bagikan menggunakan"))
+                            }
                         }
 
                     }

@@ -35,8 +35,8 @@ class BookmarkActivity : AppCompatActivity() {
         binding.content.adapter = BookmarkAdapterPage(this)
         TabLayoutMediator(binding.bookmarkSelector, binding.content) { tab, position ->
             tab.text = when (position) {
-                0 -> "Article"
-                1 -> "Post"
+                0 -> "Artikel"
+                1 -> "Postingan"
                 else -> throw IllegalStateException("Unexpected tab position: $position")
             }
         }.attach()

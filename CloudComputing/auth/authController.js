@@ -13,6 +13,7 @@ const storage = new Storage({
 const bucketName = 'ifishy-photos';
 const profileFolder = 'photo-profile-user';
 const postFolder = 'image-post';
+const scanHistoryFolder = "scan-history";
 
 // Register User
 async function registerUser(req, res) {
@@ -1627,9 +1628,7 @@ const getBookmarkById = async (req, res) => {
   }
 };
 
-// Fungsi untuk menyimpan data scan_history
 const saveScanHistory = async (req, res) => {
-
   const { userId, disease, confidence } = req.body;
 
   // Validasi input
@@ -1639,30 +1638,29 @@ const saveScanHistory = async (req, res) => {
 
   // Ambil file gambar dari request
   const fishImage = req.file;
-
   try {
       // Upload gambar ke Google Cloud Storage
       const bucket = storage.bucket(bucketName);
       const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
       const file = bucket.file(fileName);
-
       const blobStream = file.createWriteStream({
           metadata: {
               contentType: fishImage.mimetype,
           },
       });
 
+      blobStream.on('finish', async () => {
+          // Mendapatkan URL file setelah di-upload
+          const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+
           // Menyimpan data ke database
           const query = `
               INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
               VALUES (?, ?, ?, ?, NOW())
           `;
-
-          await db.execute(query, [userId, publicUrl, disease, confidence]);
-
+          await pool.query(query, [userId, publicUrl, disease, confidence]);
           res.status(201).json({ message: "Scan history berhasil disimpan!" });
       });
-
       blobStream.end(fishImage.buffer);
   } catch (error) {
       console.error("Error saat menyimpan scan history:", error.message);
@@ -1670,35 +1668,12 @@ const saveScanHistory = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan semua scan history berdasarkan user ID
-const getScanHistory = async (req, res) => {
-  const { userId } = req.params;
-
-  if (!userId) {
-      return res.status(400).json({ message: "User ID diperlukan!" });
-  }
-
-  try {
-      const query = `SELECT * FROM scan_history WHERE user_id = ? ORDER BY scanned_at DESC`;
-
-      const [results] = await db.execute(query, [userId]);
-
-      res.status(200).json({ data: results });
-  } catch (error) {
-      console.error("Error saat mengambil scan history:", error.message);
-      res.status(500).json({ message: "Gagal mengambil scan history." });
-  }
-};
-
-// Fungsi untuk mendapatkan scan history berdasarkan user_id
 const getScanHistoryById = async (req, res) => {
   const { userId } = req.params;
-
   // Validasi input
   if (!userId) {
       return res.status(400).json({ message: "User ID diperlukan!" });
   }
-
   try {
       // Query untuk mendapatkan scan history berdasarkan user_id
       const query = `
@@ -1714,21 +1689,18 @@ const getScanHistoryById = async (req, res) => {
           WHERE user_id = ? 
           ORDER BY scan_timestamp DESC
       `;
-
       const [results] = await db.execute(query, [userId]);
-
       // Jika tidak ada hasil, kembalikan pesan bahwa data tidak ditemukan
       if (results.length === 0) {
           return res.status(404).json({ message: "Scan history tidak ditemukan untuk user ini." });
       }
-
       // Kembalikan hasil
       res.status(200).json({ data: results });
   } catch (error) {
       console.error("Error saat mengambil scan history:", error.message);
       res.status(500).json({ message: "Gagal mengambil scan history." });
   }
-};
+}
 
 module.exports = { 
   registerUser, 
@@ -1767,5 +1739,5 @@ module.exports = {
   getBookmarks,
   getBookmarkById,
   saveScanHistory,
-  getScanHistory,
-  getScanHistoryById };
+  saveScanHistory,
+  getScanHistoryById }

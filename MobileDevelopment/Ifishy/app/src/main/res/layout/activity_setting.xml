@@ -58,20 +58,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/settings" />
 
-        <TextView
-            android:id="@+id/Language"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
-            android:includeFontPadding="false"
-            android:paddingVertical="10dp"
-            android:text="@string/language"
-            android:textAlignment="textStart"
-            android:textSize="@dimen/upper_meidum_text"
-            app:layout_constraintBottom_toBottomOf="@id/language_spinner"
-            app:layout_constraintStart_toStartOf="@id/language_spinner"
-            app:layout_constraintTop_toTopOf="@id/language_spinner" />
-
         <ImageButton
             android:id="@+id/expand_button"
             android:layout_width="15dp"
@@ -83,22 +69,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/faq"
             app:layout_constraintEnd_toEndOf="@id/faq"
             app:layout_constraintTop_toTopOf="@+id/faq" />
-
-        <Spinner
-            android:id="@+id/language_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:color/transparent"
-            android:popupBackground="?android:windowBackground"
-            android:text="@string/faq"
-            android:textAlignment="textEnd"
-            android:textSize="@dimen/upper_meidum_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/faq"
-            tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/switch_night"
@@ -116,7 +86,7 @@
             android:textSize="@dimen/upper_meidum_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/language_spinner" />
+            app:layout_constraintTop_toBottomOf="@id/faq" />
 
         <ImageButton
             android:layout_width="wrap_content"

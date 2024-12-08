@@ -55,6 +55,7 @@
             android:background="@drawable/image_button"
             android:backgroundTint="@color/secondary_light"
             android:layout_marginBottom="50dp"
+            app:tint="@color/bottom_navigation_icon_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/scan_icon"

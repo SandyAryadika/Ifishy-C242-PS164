@@ -68,18 +68,6 @@ class UserPreferences @Inject constructor(private val context: Application) {
         }
     }
 
-    fun getLanguage(): Flow<String> {
-        return context.dataStore.data.map { preferences ->
-            preferences[LANGUAGE] ?: "EN"
-        }
-    }
-
-    suspend fun saveLanguage(language:String) {
-        context.dataStore.edit { lang->
-            lang[LANGUAGE] = language
-        }
-    }
-
     fun getTheme(): Flow<Boolean?> {
         return context.dataStore.data.map { preferences ->
             preferences[THEME_DARK]
