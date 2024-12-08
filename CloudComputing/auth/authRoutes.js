@@ -1,14 +1,13 @@
 const express = require('express');
 const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() }); // Simpan file di memori sementara
-const uploadMiddleware = require('../middleware/uploadMiddleware');
+const upload = multer({ storage: multer.memoryStorage() });
 const { body } = require('express-validator');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { 
     registerUser, 
     loginUser, 
     getAllUsers,
-    updateUserProfile, 
+    updateUser, 
     deleteUserAccount,
     logoutUser,
     uploadProfilePhoto,
@@ -41,7 +40,8 @@ const {
     getBookmarks,
     getBookmarkById,
     saveScanHistory,
-    getScanHistory } = require('./authController');
+    getScanHistory,
+    getScanHistoryById } = require('./authController');
 
     const router = express.Router();
 
@@ -67,7 +67,7 @@ router.post(
 );
 
 router.get('/users', getAllUsers);
-router.put('/update', updateUserProfile);
+router.put('/update', updateUser);
 router.delete('/delete', deleteUserAccount);
 router.post('/logout', logoutUser);
 router.post('/upload-photo',  authenticateToken, upload.single('photo'), uploadProfilePhoto);
@@ -101,5 +101,6 @@ router.get('/bookmarks', authenticateToken, getBookmarks);  // Mendapatkan semua
 router.get('/bookmark/:id', authenticateToken, getBookmarkById);
 router.post('/scan-history', saveScanHistory); // Endpoint untuk menyimpan scan history
 router.get('/scan-history/:userId', getScanHistory); // Endpoint untuk mendapatkan scan history berdasarkan user ID
+router.get('/scan-history/:userId', getScanHistoryById);
 
 module.exports = router;
