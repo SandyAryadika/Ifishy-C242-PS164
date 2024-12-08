@@ -30,10 +30,6 @@ class SplashActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
 
-        preferencesViewModel.language.observe(this) { language ->
-            Language.setLocale(this,language)
-        }
-
         preferencesViewModel.theme.observe(this){isDark->
             if(isDark!=null){
                 AppCompatDelegate.setDefaultNightMode(

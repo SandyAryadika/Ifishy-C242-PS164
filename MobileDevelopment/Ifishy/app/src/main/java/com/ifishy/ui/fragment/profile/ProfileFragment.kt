@@ -54,8 +54,8 @@ class ProfileFragment : Fragment() {
                     binding.content.adapter = ProfilePagerAdapter(this,email,username)
                     TabLayoutMediator(binding.selector, binding.content) { tab, position ->
                         tab.text = when (position) {
-                            0 -> "Personal"
-                            1 -> "My Post"
+                            0 -> "Pribadi"
+                            1 -> "Postingan"
                             else -> null
                         }
                     }.attach()

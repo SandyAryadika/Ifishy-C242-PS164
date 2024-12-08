@@ -32,8 +32,6 @@ class SettingActivity : AppCompatActivity() {
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loadLanguage()
-
         binding.back.setOnClickListener {
             finish()
         }
@@ -46,10 +44,6 @@ class SettingActivity : AppCompatActivity() {
             val intent = Intent(this, FrequentlyAskMenu::class.java)
             startActivity(intent)
         }
-
-        val adapter = ArrayAdapter(this, R.layout.language_spinner, languages)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        binding.languageSpinner.adapter = adapter
 
 
         preferenceViewModel.theme.observe(this) { isDark ->
@@ -65,43 +59,6 @@ class SettingActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-
-    private fun getLanguagePosition(language: String): Int {
-        return languages.indexOf(language)
-    }
-
-    private fun loadLanguage() {
-        preferenceViewModel.language.observe(this) { language ->
-            binding.languageSpinner.setSelection(
-                getLanguagePosition(language)
-            )
-            binding.languageSpinner.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-
-                        val selected = languages[position]
-
-                        if (language != selected) {
-                            preferenceViewModel.saveLanguage(selected)
-
-                            Language.setLocale(this@SettingActivity, selected.lowercase())
-                            startActivity(Intent(this@SettingActivity,SettingActivity::class.java),ActivityOptions.makeCustomAnimation(this@SettingActivity,0,0).toBundle());
-                            finish();
-                        }
-
-
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
-                }
-        }
     }
 
 
