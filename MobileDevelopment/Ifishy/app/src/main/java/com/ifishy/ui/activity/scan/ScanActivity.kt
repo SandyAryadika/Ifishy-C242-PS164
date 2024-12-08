@@ -5,7 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
-import android.app.ActivityOptions
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -26,8 +26,8 @@ import com.ifishy.ui.dialog.ScanResultDialog
 import com.ifishy.ui.viewmodel.scan.ScanViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -41,6 +41,18 @@ class ScanActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture?=null
     private val scanViewModel: ScanViewModel by viewModels()
     private var resultDialog: ScanResultDialog? = null
+
+    private val uCropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val resultUri = UCrop.getOutput(result.data!!)
+            resultUri?.let {
+                scanViewModel.imageScan = it
+                predict()
+            }
+        } else if (result.resultCode == UCrop.RESULT_ERROR) {
+            Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private val cameraPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -57,8 +69,7 @@ class ScanActivity : AppCompatActivity() {
         ActivityResultContracts.PickVisualMedia()
     ){uri->
         if(uri != null){
-            scanViewModel.imageScan = uri
-            predict()
+            cropImage(uri)
         }else{
             Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
         }
@@ -86,6 +97,15 @@ class ScanActivity : AppCompatActivity() {
         }
     }
 
+    fun cropImage(uri: Uri) {
+        val destinationUri = Uri.fromFile(File(cacheDir, "classification_crop.jpg"))
+
+        val intent = UCrop.of(uri, destinationUri)
+            .getIntent(this)
+
+        uCropLauncher.launch(intent)
+    }
+
     private fun takePhoto() {
         val photoFile = File(cacheDir, "classification.jpg")
 
@@ -96,8 +116,7 @@ class ScanActivity : AppCompatActivity() {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    scanViewModel.imageScan = Uri.fromFile(photoFile)
-                    predict()
+                    cropImage(Uri.fromFile(photoFile))
                 }
 
                 override fun onError(exception: ImageCaptureException) {

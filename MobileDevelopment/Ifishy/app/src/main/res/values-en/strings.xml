@@ -123,6 +123,13 @@
     <string name="input_old_password_first_to_change_password">Input old password first to change password</string>
     <string name="upload_photo_failed">Upload photo failed</string>
     <string name="no_bookmark_yet">No bookmark yet</string>
+    <string name="camera_must_allowed">Camera must allowed</string>
+    <string name="failed_to_start_camera">Failed to start camera</string>
+    <string name="cause">Cause</string>
+    <string name="treatment">Treatment</string>
+    <string name="scanning">Scanning</string>
+    <string name="error_while_take_photo">Error while take photo</string>
+    <string name="validation">Validation</string>
 
 
 </resources>

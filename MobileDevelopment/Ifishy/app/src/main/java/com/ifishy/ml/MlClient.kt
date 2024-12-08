@@ -27,7 +27,9 @@ object MlClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .connectTimeout(10,TimeUnit.MINUTES)
+        .connectTimeout(5,TimeUnit.MINUTES)
+        .readTimeout(5,TimeUnit.MINUTES)
+        .writeTimeout(5,TimeUnit.MINUTES)
         .build()
 
     @Provides

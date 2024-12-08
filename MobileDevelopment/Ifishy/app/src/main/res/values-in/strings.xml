@@ -125,5 +125,12 @@
     <string name="input_old_password_first_to_change_password">Masukkan password lama untuk mengubah password</string>
     <string name="upload_photo_failed">Gagal upload foto</string>
     <string name="no_bookmark_yet">Belum ada bookmark</string>
+    <string name="camera_must_allowed">Kamera harus di izinkan</string>
+    <string name="failed_to_start_camera">Gagal membuka kamera</string>
+    <string name="cause">Penyebab</string>
+    <string name="treatment">Perawatan</string>
+    <string name="scanning">Memindai</string>
+    <string name="error_while_take_photo">Error saat ambil foto</string>
+    <string name="validation">Validasi</string>
 
 </resources>
