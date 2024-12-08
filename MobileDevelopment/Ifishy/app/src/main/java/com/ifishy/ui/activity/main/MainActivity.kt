@@ -1,5 +1,6 @@
 package com.ifishy.ui.activity.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.ifishy.R
 import com.ifishy.databinding.ActivityMainBinding
+import com.ifishy.ui.activity.scan.ScanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,6 +33,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        binding.scan.setOnClickListener {
+            startActivity(Intent(this, ScanActivity::class.java))
+        }
 
         val navController = findNavController(R.id.nav_host)
         val appBarConfiguration = AppBarConfiguration(

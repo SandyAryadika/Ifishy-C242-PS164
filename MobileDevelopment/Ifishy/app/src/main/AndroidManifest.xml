@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".Application"
@@ -15,6 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ifishy"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.activity.result.ResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FullScreen"
+            />
+        <activity
+            android:name=".ui.activity.scan.ScanActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FullScreen" />
         <activity
             android:name=".ui.fragment.profile.EditProfileActivity"
             android:exported="false" />

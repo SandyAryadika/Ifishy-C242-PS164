@@ -27,5 +27,11 @@
         <item name="colorSurfaceContainerHighest">@color/secondary_light</item>
     </style>
 
+    <style name="Theme.FullScreen" parent="Base.Theme.Ifishy">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="Theme.Ifishy" parent="Base.Theme.Ifishy" />
 </resources>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000"
+        motion:autoTransition="animateToEnd"
+        motion:motionInterpolator="easeOut">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/cause_content"
+               motion:framePosition="20"
+               android:alpha="0" />
+           <KeyAttribute
+               motion:motionTarget="@+id/treatment_title"
+               motion:framePosition="40"
+               android:alpha="0" />
+           <KeyAttribute
+               motion:motionTarget="@+id/tratement_content"
+               motion:framePosition="60"
+               android:alpha="0" />
+           <KeyAttribute
+               motion:motionTarget="@+id/validation_title"
+               motion:framePosition="80"
+               android:alpha="0" />
+           <KeyAttribute
+               motion:motionTarget="@+id/validation_content"
+               motion:framePosition="90"
+               android:alpha="0" />
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/cause_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:translationY="-10dp"
+            android:alpha="0" />
+        <Constraint
+            android:id="@+id/cause_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/cause_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="-10dp"
+            android:alpha="0" />
+        <Constraint
+            android:id="@+id/treatment_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/cause_content"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:translationY="-10dp"
+            android:alpha="0" />
+        <Constraint
+            android:id="@+id/tratement_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/treatment_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="-10dp"
+            android:alpha="0" />
+        <Constraint
+            android:id="@+id/validation_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/tratement_content"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:translationY="-10dp"
+            android:alpha="0" />
+        <Constraint
+            android:id="@+id/validation_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/validation_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="-10dp"
+            android:alpha="0" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/cause_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:translationY="0dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/cause_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/cause_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="0dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/treatment_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/cause_content"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:translationY="0dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/tratement_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/treatment_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="0dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/validation_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/tratement_content"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:translationY="0dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/validation_title"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/tratement_content"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/validation_content"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/validation_title"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="5dp"
+            android:translationY="0dp"
+            android:alpha="1" />
+    </ConstraintSet>
+</MotionScene>

@@ -12,6 +12,9 @@ import com.ifishy.data.repository.community.CommunityRepository
 import com.ifishy.data.repository.community.CommunityRepositoryImpl
 import com.ifishy.data.repository.profile.ProfileRepository
 import com.ifishy.data.repository.profile.ProfileRepositoryImpl
+import com.ifishy.data.repository.scan.ScanRepository
+import com.ifishy.data.repository.scan.ScanRepositoryImpl
+import com.ifishy.ml.MlService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +53,11 @@ object RepositoryModule {
     @Named("BookmarkRepository")
     fun provideBookmarkRepo(apiService: ApiService,context: Application): BookmarkRepository{
         return BookmarkRepositoryImpl(apiService,context)
+    }
+
+    @Provides
+    @Named("ScanRepository")
+    fun provideScanRepo(mlService: MlService, context: Application): ScanRepository{
+        return ScanRepositoryImpl(mlService,context)
     }
 }
