@@ -4,6 +4,7 @@
     <color name="white">#FFFFFF</color>
     <color name="primary_light">#283654</color>
     <color name="secondary_light">#E9EBEE</color>
+    <color name="grey">#E9EBEE</color>
     <color name="dark_background">#212121</color>
     <color name="edit_text_background">#E9EBEE</color>
     <color name="hint_edit_text">#757677</color>
@@ -16,4 +17,10 @@
     <color name="contact">#AAAAAA</color>
     <color name="bookmark">#FFECAC</color>
     <color name="bookmark_text">#FF9800</color>
+    <color name="textSpinner">#000000</color>
+    <color name="bgedit">@color/bottom_navigation_background</color>
+    <color name="see_all">#283654</color>
+    <color name="bgBookmark">#283654</color>
+    <color name="alter_text_background">#303030</color>
+    <color name="teks_subs">#000000</color>
 </resources>

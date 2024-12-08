@@ -201,7 +201,7 @@
                     android:text="@string/see_more"
                     android:textSize="12sp"
                     android:fontFamily="@font/poppins_bold"
-                    android:textColor="@color/primary_light"
+                    android:textColor="@color/see_all"
                     android:layout_marginEnd="@dimen/global_page_padding_margin"
                     app:layout_constraintTop_toTopOf="@id/tvArticle"
                     app:layout_constraintBottom_toBottomOf="@+id/tvArticle"

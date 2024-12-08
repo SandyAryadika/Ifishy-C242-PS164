@@ -78,7 +78,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
                 android:text="@string/okay"
-                android:textColor="@color/primary_light"
+                android:textColor="@color/see_all"
                 android:textSize="@dimen/small_text"
                 app:backgroundTint="@color/secondary_light"
                 app:layout_constraintBottom_toBottomOf="parent"

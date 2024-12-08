@@ -4,7 +4,7 @@
         <item name="android:windowBackground">@color/dark_background</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:textColorHint">@color/hint_edit_text</item>
+        <item name="android:textColorHint">@color/black</item>
     </style>
 
 
@@ -12,6 +12,7 @@
     <style name="ThemeOverlay.App.Switch" parent="">
         <item name="colorPrimary">#303030</item>
         <item name="colorOnPrimary">@color/dark_background</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 
@@ -19,4 +20,6 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+
 </resources>

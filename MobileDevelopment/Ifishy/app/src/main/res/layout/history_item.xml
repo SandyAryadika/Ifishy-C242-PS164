@@ -41,7 +41,7 @@
             android:fontFamily="@font/poppins"
             android:textSize="@dimen/small_text"
             android:text="@string/tools_date"
-            android:textColor="@color/edit_text_background"
+            android:textColor="@color/see_all"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@id/item_photo"
