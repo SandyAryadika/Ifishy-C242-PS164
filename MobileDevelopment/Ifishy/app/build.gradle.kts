@@ -97,5 +97,8 @@ dependencies {
     implementation (libs.androidx.camera.lifecycle)
     implementation (libs.androidx.camera.view)
 
+    //UCrop
+    implementation(libs.ucrop)
+
 
 }

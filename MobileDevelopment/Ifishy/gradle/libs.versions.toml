@@ -21,6 +21,7 @@ activity = "1.9.3"
 constraintlayout = "2.2.0"
 navigationFragmentVersion = "2.8.4"
 shimmer = "0.5.0"
+ucrop = "2.2.8"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }
@@ -49,6 +50,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationFragmentVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
