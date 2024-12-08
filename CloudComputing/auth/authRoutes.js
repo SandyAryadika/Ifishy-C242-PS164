@@ -99,7 +99,7 @@ router.post('/bookmark', authenticateToken, addBookmark);  // Menambahkan bookma
 router.delete('/bookmark', authenticateToken, removeBookmark);  // Menghapus bookmark
 router.get('/bookmarks', authenticateToken, getBookmarks);  // Mendapatkan semua bookmark
 router.get('/bookmark/:id', authenticateToken, getBookmarkById);
-router.post('/scan-history', saveScanHistory); // Endpoint untuk menyimpan scan history
+router.post('/scan-history', upload.single('fishImage'), saveScanHistory); 
 router.get('/scan-history/:userId', getScanHistory); // Endpoint untuk mendapatkan scan history berdasarkan user ID
 router.get('/scan-history/:userId', getScanHistoryById);
 
