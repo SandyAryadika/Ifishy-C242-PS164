@@ -1,10 +1,14 @@
 package com.ifishy.ui.adapter.article
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
+import android.provider.CalendarContract.Colors
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ifishy.R
 import com.ifishy.data.model.article.DataItem
 import com.ifishy.databinding.ArticleItemHorizontalBinding
 import com.ifishy.utils.Date
@@ -24,6 +28,8 @@ class ArticleHorizontalAdapter(private val articles: List<DataItem>): RecyclerVi
             binding.datePublished.text = Date.format(item.publishedAt!!)
             Glide.with(context)
                 .load(item.coverImage)
+                .placeholder(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
+                .error(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
                 .into(binding.articleImages)
         }
     }

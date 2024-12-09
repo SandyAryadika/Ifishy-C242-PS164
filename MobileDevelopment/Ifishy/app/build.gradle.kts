@@ -14,7 +14,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,12 +25,12 @@ android {
     buildTypes {
         debug{
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
-            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/\"")
+            buildConfigField("String","BASE_URL","\"https://nodejs-backend-441158734882.asia-southeast2.run.app/api/auth/\"")
             buildConfigField("String","BASE_URL_ML","\"https://ifishy-api-441158734882.asia-southeast2.run.app/\"")
         }
         release {
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
-            buildConfigField("String","BASE_URL","\"https://bursting-proper-cougar.ngrok-free.app/api/auth/")
+            buildConfigField("String","BASE_URL","\"https://nodejs-backend-441158734882.asia-southeast2.run.app/api/auth/")
             buildConfigField("String","BASE_URL_ML","\"https://ifishy-api-441158734882.asia-southeast2.run.app/\"")
             isMinifyEnabled = false
             proguardFiles(

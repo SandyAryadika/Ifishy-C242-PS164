@@ -2,6 +2,9 @@ package com.ifishy.ui.activity.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -11,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
 import com.ifishy.data.model.auth.request.SignUpRequest
 import com.ifishy.databinding.ActivitySignUpBinding
+import com.ifishy.ui.activity.guest.GuestActivity
 import com.ifishy.ui.viewmodel.auth.AuthViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
@@ -34,16 +38,61 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
             insets
         }
 
+        binding.password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(pass: Editable?) {
+
+                val password = pass.toString()
+
+                if (password.isNotEmpty() && password.length < 6){
+                    binding.passwordContainer.error = getString(R.string.password_kurang_dari_6_karakter)
+                    binding.password.error =
+                        getString(R.string.password_kurang_dari_6_karakter)
+                }else{
+                    binding.password.error =null
+                    binding.passwordContainer.error = null
+                }
+
+            }
+
+        })
+
+        binding.email.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(email: Editable?) {
+
+                val emails = email.toString()
+
+                if (emails.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(emails).matches()) {
+                    binding.email.error = getString(R.string.email_tidak_valid)
+                } else {
+                    binding.email.error = null
+                }
+
+            }
+
+        })
+
+
         binding.signUpButton.setOnClickListener(this)
         binding.loginButton.setOnClickListener(this)
+        binding.guest.setOnClickListener {
+            startActivity(Intent(this, GuestActivity::class.java))
+        }
+
+
 
     }
 
     private fun isValid(): Boolean {
-        return binding.email.text.isNotEmpty() &&
-                binding.username.text.isNotEmpty() &&
-                binding.password.text!!.isNotEmpty() &&
-                binding.confirmPass.text.isNotEmpty()
+        val emailValid = binding.email.text.isNotEmpty() && binding.email.error == null
+        val usernameValid = binding.username.text.isNotEmpty()
+        val passwordValid = binding.password.text!!.isNotEmpty() && binding.password.error == null
+        val confirmPassValid = binding.confirmPass.text.isNotEmpty()
+
+        return emailValid && usernameValid && passwordValid && confirmPassValid
     }
 
     private fun isLoading(loading:Boolean){

@@ -132,5 +132,8 @@
     <string name="scanning">Memindai</string>
     <string name="error_while_take_photo">Error saat ambil foto</string>
     <string name="validation">Validasi</string>
+    <string name="lanjutkan_tanpa_akun">Lanjutkan tanpa akun</string>
+    <string name="email_tidak_valid">Email tidak valid</string>
+    <string name="password_kurang_dari_6_karakter">Password kurang dari 6 karakter</string>
 
 </resources>

@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.ifishy.R
 import com.ifishy.databinding.ActivityScanBinding
+import com.ifishy.databinding.ActivityScanGuestBinding
 import com.ifishy.ui.activity.result.ResultActivity
 import com.ifishy.ui.dialog.ScanResultDialog
 import com.ifishy.ui.viewmodel.scan.ScanViewModel
@@ -35,9 +36,9 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 @AndroidEntryPoint
-class ScanActivity : AppCompatActivity() {
+class ScanGuestActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityScanBinding
+    private lateinit var binding: ActivityScanGuestBinding
     private var imageCapture: ImageCapture?=null
     private val scanViewModel: ScanViewModel by viewModels()
     private var resultDialog: ScanResultDialog? = null
@@ -79,7 +80,7 @@ class ScanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         supportActionBar?.hide()
-        binding = ActivityScanBinding.inflate(layoutInflater)
+        binding = ActivityScanGuestBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         checkPermission()
@@ -121,7 +122,7 @@ class ScanActivity : AppCompatActivity() {
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(this@ScanActivity,
+                    Toast.makeText(this@ScanGuestActivity,
                         getString(R.string.error_while_take_photo), Toast.LENGTH_SHORT).show()
                 }
             })
@@ -183,7 +184,7 @@ class ScanActivity : AppCompatActivity() {
         val image = MultipartBody.Part.createFormData("file",file.name,file.asRequestBody("image/jpeg".toMediaTypeOrNull()))
 
         scanViewModel.predict(image).apply {
-            scanViewModel.predictResult.observe(this@ScanActivity){event->
+            scanViewModel.predictResult.observe(this@ScanGuestActivity){ event->
                 event.getContentIfNotHandled()?.let { response->
                     when(response){
                         is ResponseState.Loading -> {
@@ -192,7 +193,7 @@ class ScanActivity : AppCompatActivity() {
                         }
                         is ResponseState.Success -> {
                             lifecycleScope.launch {
-                                val intent =  Intent(this@ScanActivity,ResultActivity::class.java)
+                                val intent =  Intent(this@ScanGuestActivity,ResultActivity::class.java)
                                     .putExtra(ResultActivity.DISEASE_IMAGE,file.path)
                                     .putExtra(ResultActivity.DISEASE_NAME,"${response.data.disease}")
                                     .putExtra(ResultActivity.DISEASE_CAUSE,"${response.data.details?.penyebab}")
