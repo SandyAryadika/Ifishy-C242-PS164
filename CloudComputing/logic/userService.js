@@ -7,7 +7,7 @@ const createUser = async (username, email, password) => {
         const query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
         const [result] = await pool.execute(query, [username, email, hashedPassword]);
 
-        console.log("Insert query result:", result);  // Log hasil query
+        console.log("Insert query result:", result);
         
         return { success: true };
     } catch (error) {

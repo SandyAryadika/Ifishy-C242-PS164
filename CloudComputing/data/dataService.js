@@ -1,4 +1,4 @@
-const db = require('../config/dbConfig'); // Path ke dbConfig.js
+const db = require('../config/dbConfig');
 
 module.exports = {
     createUser: async (user) => {

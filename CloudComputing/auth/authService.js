@@ -1,7 +1,7 @@
-const dataService = require('../data/dataService'); // Path ke dataService.js
+const dataService = require('../data/dataService');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/secrets'); // Path ke secrets.js
+const { JWT_SECRET } = require('../config/secrets');
 
 module.exports = {
     registerUser: async (username, password) => {

@@ -9,17 +9,14 @@ const storage = new Storage({
   keyFilename: './service-account-key.json',
 });
 
-// Nama bucket beserta foldernya
 const bucketName = 'ifishy-photos';
 const profileFolder = 'photo-profile-user';
 const postFolder = 'image-post';
 const scanHistoryFolder = "scan-history";
 
-// Register User
 async function registerUser(req, res) {
   const { username, email, password, confirmPassword } = req.body;
 
-  // Validasi input: pastikan username dan email tidak kosong
   if (!username || !email || !password || !confirmPassword) {
     return res.status(400).json({
       success: false,
@@ -27,7 +24,6 @@ async function registerUser(req, res) {
     });
   }
 
-  // Validasi password dan confirmPassword
   if (password !== confirmPassword) {
     return res.status(400).json({
       success: false,
@@ -36,10 +32,8 @@ async function registerUser(req, res) {
   }
 
   try {
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Simpan user ke database
     const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
     const [result] = await pool.query(query, [username, email, hashedPassword]);
 
@@ -61,12 +55,10 @@ async function registerUser(req, res) {
   }
 }
 
-// Login User
 async function loginUser(req, res) {
   const { email, password } = req.body;
 
   try {
-    // Cari user berdasarkan email
     const query = 'SELECT * FROM users WHERE email = ?';
     const [rows] = await pool.query(query, [email]);
 
@@ -79,7 +71,6 @@ async function loginUser(req, res) {
 
     const user = rows[0];
 
-    // Cek password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -88,7 +79,6 @@ async function loginUser(req, res) {
       });
     }
 
-    // Buat token JWT
     const jwtSecret = process.env.JWT_SECRET;
 
     if (!jwtSecret) {
@@ -129,7 +119,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Fungsi untuk mengupdate profil pengguna
 const updateUser = async (req, res) => {
   const { username, email, password, newPassword } = req.body;
   const token = req.headers.authorization?.split(" ")[1];
@@ -142,11 +131,9 @@ const updateUser = async (req, res) => {
   }
 
   try {
-      // Verifikasi token dan dapatkan ID user
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const userId = decoded.id;
 
-      // Ambil data user dari database
       const [userRows] = await pool.query("SELECT * FROM users WHERE id = ?", [userId]);
       if (userRows.length === 0) {
           return res.status(404).json({
@@ -155,14 +142,11 @@ const updateUser = async (req, res) => {
           });
       }
 
-      // Update username dan email jika disertakan dalam request
       const updatedUsername = username || userRows[0].username;
       const updatedEmail = email || userRows[0].email;
 
-      // Jika password baru diberikan, perbarui password
       let updatedPassword = userRows[0].password;
       if (newPassword) {
-          // Periksa password lama sebelum mengganti dengan yang baru
           const isPasswordValid = await bcrypt.compare(password, userRows[0].password);
           if (!isPasswordValid) {
               return res.status(400).json({
@@ -171,11 +155,9 @@ const updateUser = async (req, res) => {
               });
           }
 
-          // Enkripsi password baru
           updatedPassword = await bcrypt.hash(newPassword, 10);
       }
 
-      // Update ke database
       await pool.query(
           "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?",
           [updatedUsername, updatedEmail, updatedPassword, userId]
@@ -194,7 +176,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Fungsi untuk menghapus akun pengguna
 const deleteUserAccount = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
@@ -206,11 +187,9 @@ const deleteUserAccount = async (req, res) => {
   }
 
   try {
-      // Verifikasi token dan dapatkan ID user
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const userId = decoded.id;
 
-      // Hapus data user dari database
       const result = await pool.query("DELETE FROM users WHERE id = ?", [userId]);
       if (result.affectedRows === 0) {
           return res.status(404).json({
@@ -232,10 +211,8 @@ const deleteUserAccount = async (req, res) => {
   }
 };
 
-// Logout User
 const logoutUser = async (req, res) => {
   try {
-    // Hapus token dari sisi klien (opsional untuk server)
     res.status(200).json({
       success: true,
       message: 'Logout successful',
@@ -251,14 +228,13 @@ const logoutUser = async (req, res) => {
 
 const uploadProfilePhoto = async (req, res) => {
   try {
-    const { userId } = req.body; // Ambil userId dari body
-    const file = req.file; // File yang diunggah
+    const { userId } = req.body;
+    const file = req.file;
 
     if (!file) {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
-    // Nama file disesuaikan dengan userId
     const fileName = `${profileFolder}/${userId}-${Date.now()}-${file.originalname}`;
     const blob = storage.bucket(bucketName).file(fileName);
     const blobStream = blob.createWriteStream({
@@ -274,7 +250,6 @@ const uploadProfilePhoto = async (req, res) => {
     blobStream.on('finish', async () => {
       const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
-      // Update URL foto profil di database
       const sql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
       await pool.query(sql, [publicUrl, userId]);
 
@@ -297,8 +272,8 @@ const uploadProfilePhoto = async (req, res) => {
 
 const updatePhotoProfile = async (req, res) => {
   try {
-    const { user } = req; // Informasi user dari token JWT
-    const file = req.file; // File yang diunggah
+    const { user } = req;
+    const file = req.file;
 
     if (!file) {
       return res.status(400).json({
@@ -307,7 +282,6 @@ const updatePhotoProfile = async (req, res) => {
       });
     }
 
-    // Nama file baru dengan timestamp dan nama asli file
     const fileName = `${Date.now()}-${file.originalname}`;
     const blob = storage.bucket(bucketName).file(`${profileFolder}/${fileName}`);
 
@@ -324,7 +298,6 @@ const updatePhotoProfile = async (req, res) => {
 
     const newImageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-    // Update URL gambar profil di database
     const updateSql = 'UPDATE users SET profile_photo = ? WHERE id = ?';
     await pool.query(updateSql, [newImageUrl, user.id]);
 
@@ -342,12 +315,10 @@ const updatePhotoProfile = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan data dashboard berdasarkan email
 const getDashboardData = async (req, res) => {
   const { email } = req.params;
 
   try {
-    // Query untuk mendapatkan data pengguna berdasarkan email
     const [rows] = await pool.query('SELECT id, username, email, profile_photo FROM users WHERE email = ?', [email]);
 
     if (rows.length === 0) {
@@ -357,11 +328,10 @@ const getDashboardData = async (req, res) => {
       });
     }
 
-    // Mengembalikan data pengguna
     res.status(200).json({
       success: true,
       message: 'Dashboard data retrieved successfully',
-      data: rows[0], // Mengambil data pengguna pertama yang ditemukan
+      data: rows[0], 
     });
   } catch (error) {
     console.error('Error in getDashboardData:', error);
@@ -372,12 +342,10 @@ const getDashboardData = async (req, res) => {
   }
 };
 
-// Mendapatkan profile user berdasarkan email
 const getUserProfile = async (req, res) => {
   try {
-    const { email } = req.params; // Mengambil email dari parameter URL
+    const { email } = req.params;
 
-    // Query untuk mendapatkan data user berdasarkan email
     const sql = 'SELECT id, username, email, profile_photo FROM users WHERE email = ?';
     const [rows] = await pool.query(sql, [email]); 
 
@@ -402,16 +370,14 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// membuat postingan
 const createPost = async (req, res) => {
   try {
     const { title, content } = req.body;
-    const { user } = req; // Informasi user dari token JWT
-    const file = req.file; // File yang diunggah
+    const { user } = req; 
+    const file = req.file;
 
     let imageUrl = null;
     if (file) {
-      // Upload ke bucket GCS di folder image-post
       const blob = storage.bucket(bucketName).file(`${postFolder}/${Date.now()}-${file.originalname}`);
       const blobStream = blob.createWriteStream({
         resumable: false,
@@ -427,7 +393,6 @@ const createPost = async (req, res) => {
       imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
     }
 
-    // Simpan data postingan ke database
     const sql = 'INSERT INTO posts (user_id, title, content, image_url) VALUES (?, ?, ?, ?)';
     const [result] = await pool.query(sql, [user.id, title, content, imageUrl]);
 
@@ -447,12 +412,11 @@ const createPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const { postId } = req.params; // ID post yang akan diedit
+    const { postId } = req.params;
     const { title, content } = req.body;
-    const { user } = req; // Informasi user dari token JWT
-    const file = req.file; // File yang diunggah (jika ada)
+    const { user } = req;
+    const file = req.file;
 
-    // Cek apakah postingan ada dan milik user yang sedang login
     const [existingPost] = await pool.query('SELECT * FROM posts WHERE id = ? AND user_id = ?', [postId, user.id]);
 
     if (existingPost.length === 0) {
@@ -464,7 +428,6 @@ const updatePost = async (req, res) => {
 
     let imageUrl = existingPost[0].image_url;
     if (file) {
-      // Upload gambar baru ke bucket GCS di folder image-post
       const blob = storage.bucket(bucketName).file(`${postFolder}/${Date.now()}-${file.originalname}`);
       const blobStream = blob.createWriteStream({
         resumable: false,
@@ -480,7 +443,6 @@ const updatePost = async (req, res) => {
       imageUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
     }
 
-    // Update data postingan di database
     const updateSql = 'UPDATE posts SET title = ?, content = ?, image_url = ? WHERE id = ? AND user_id = ?';
     await pool.query(updateSql, [title, content, imageUrl, postId, user.id]);
 
@@ -497,12 +459,10 @@ const updatePost = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan semua postingan
 const getPosts = async (req, res) => {
   try {
-    const userId = req.user.id; // User ID dari JWT Token
+    const userId = req.user.id;
 
-    // Query untuk mendapatkan postingan dan semua data terkait (komentar, like, share, vote)
     const sqlPosts = `
       SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username,
              (SELECT COUNT(*) FROM post_votes WHERE post_id = p.id AND vote_type = 'upvote') AS likeCount,
@@ -515,7 +475,6 @@ const getPosts = async (req, res) => {
     `;
     const [posts] = await pool.query(sqlPosts, [userId]);
 
-    // Query untuk mendapatkan komentar untuk setiap postingan
     const sqlComments = `
       SELECT c.id, c.content, c.created_at, u.username, c.post_id
       FROM comments c
@@ -524,9 +483,7 @@ const getPosts = async (req, res) => {
     `;
     const [comments] = await pool.query(sqlComments);
 
-    // Menggabungkan komentar dengan postingan
     const postsWithDetails = posts.map(post => {
-      // Filter komentar berdasarkan post_id
       const postComments = comments.filter(comment => comment.post_id === post.id)
         .map(comment => ({
           ...comment,
@@ -535,7 +492,7 @@ const getPosts = async (req, res) => {
 
       return {
         ...post,
-        comments: postComments, // Menambahkan komentar ke setiap postingan
+        comments: postComments,
         timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
       };
     });
@@ -557,7 +514,6 @@ const getPostById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Ambil postingan berdasarkan ID
     const sqlPost = `
       SELECT p.id, p.title, p.content, p.image_url, p.created_at, p.user_id, u.username
       FROM posts p
@@ -575,7 +531,6 @@ const getPostById = async (req, res) => {
 
     const post = postResult[0];
 
-    // Ambil komentar untuk postingan tersebut
     const sqlComments = `
       SELECT c.id, c.content, c.created_at, u.username
       FROM comments c
@@ -585,7 +540,6 @@ const getPostById = async (req, res) => {
     `;
     const [comments] = await pool.query(sqlComments, [id]);
 
-    // Hitung jumlah likes untuk postingan tersebut
     const sqlLikes = `
       SELECT COUNT(*) AS like_count
       FROM post_votes
@@ -594,7 +548,6 @@ const getPostById = async (req, res) => {
     const [likeResult] = await pool.query(sqlLikes, [id]);
     const likeCount = likeResult[0].like_count || 0;
 
-    // Hitung jumlah share untuk postingan tersebut
     const sqlShares = `
       SELECT COUNT(*) AS share_count
       FROM post_votes
@@ -603,7 +556,6 @@ const getPostById = async (req, res) => {
     const [shareResult] = await pool.query(sqlShares, [id]);
     const shareCount = shareResult[0].share_count || 0;
 
-    // Format komentar dan hitung waktu sejak komentar
     const formattedComments = comments.map(comment => ({
       ...comment,
       timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
@@ -614,8 +566,8 @@ const getPostById = async (req, res) => {
       post: {
         ...post,
         comments: formattedComments,
-        likeCount,     // Menambahkan jumlah likes
-        shareCount,    // Menambahkan jumlah share
+        likeCount,
+        shareCount,
         timeSincePosted: `${Math.floor((Date.now() - new Date(post.created_at)) / 60000)} minutes ago`,
       },
     });
@@ -631,9 +583,8 @@ const getPostById = async (req, res) => {
 const addShareToPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Asumsikan userId berasal dari JWT token
+    const userId = req.user.id;
 
-    // Cek apakah user sudah membagikan postingan ini sebelumnya
     const checkShareQuery = `SELECT * FROM shares WHERE post_id = ? AND user_id = ?`;
     const [existingShare] = await pool.query(checkShareQuery, [postId, userId]);
 
@@ -644,7 +595,6 @@ const addShareToPost = async (req, res) => {
       });
     }
 
-    // Tambahkan share baru ke dalam tabel shares
     const insertShareQuery = `INSERT INTO shares (post_id, user_id) VALUES (?, ?)`;
     await pool.query(insertShareQuery, [postId, userId]);
 
@@ -661,14 +611,12 @@ const addShareToPost = async (req, res) => {
   }
 };
 
-//User dapat berkomentar pada postingan
 const addComment = async (req, res) => {
   try {
     const { content } = req.body;
     const { user } = req;
     const { postId } = req.params;
 
-    // Periksa jika postId valid
     if (!postId) {
       return res.status(400).json({
         success: false,
@@ -699,20 +647,15 @@ const addComment = async (req, res) => {
   }
 };
 
-// Fungsi untuk mendapatkan URL foto profil dari GCS dengan penanganan spasi dan karakter khusus
 const getProfilePictureUrl = async (userId) => {
   try {
-    // Ambil URL foto profil dari database
     const [result] = await pool.query('SELECT profile_photo FROM users WHERE id = ?', [userId]);
 
     if (result.length > 0 && result[0].profile_photo) {
-      // Mengambil file path dari database (misalnya: "photo-profile-user/1733310540576-Kenzie Kay on Instagram.jpg")
       const filePath = result[0].profile_photo;
 
-      // URL lengkap ke file GCS
       return `https://storage.googleapis.com/${bucketName}/${filePath}`;
     } else {
-      // Jika tidak ada URL foto profil, gunakan foto default
       return `https://storage.googleapis.com/${bucketName}/${profileFolder}/default-profile.jpg`;
     }
   } catch (error) {
@@ -725,10 +668,9 @@ const getProfilePictureUrl = async (userId) => {
 
 const getComments = async (req, res) => {
   try {
-    const { postId } = req.params; // Ambil postId dari parameter URL
-    const userId = req.user.id; // Ambil user_id dari token JWT yang telah di-decode
+    const { postId } = req.params;
+    const userId = req.user.id; 
 
-    // Query untuk mendapatkan semua komentar utama terkait postingan
     const commentsSql = `
       SELECT c.id, c.content, c.created_at, c.user_id, u.username
       FROM comments c
@@ -738,7 +680,6 @@ const getComments = async (req, res) => {
     `;
     const [comments] = await pool.query(commentsSql, [postId]);
 
-    // Query untuk mendapatkan semua balasan terkait komentar dalam postingan
     const repliesSql = `
       SELECT r.id, r.content, r.created_at, r.parent_comment_id, r.user_id, u.username
       FROM replies r
@@ -748,10 +689,8 @@ const getComments = async (req, res) => {
     `;
     const [replies] = await pool.query(repliesSql, [postId]);
 
-    // Gabungkan komentar dengan balasannya dalam struktur nested
     const formattedComments = await Promise.all(
       comments.map(async (comment) => {
-        // Hitung jumlah like untuk setiap komentar
         const likeCountSql = `
           SELECT COUNT(*) AS like_count
           FROM likes
@@ -760,7 +699,6 @@ const getComments = async (req, res) => {
         const [likeCountResult] = await pool.query(likeCountSql, [comment.id]);
         const likeCount = likeCountResult[0].like_count || 0;
 
-        // Periksa apakah user saat ini sudah menyukai komentar ini
         const userLikeSql = `
           SELECT id
           FROM likes
@@ -769,10 +707,8 @@ const getComments = async (req, res) => {
         const [userLikeResult] = await pool.query(userLikeSql, [comment.id, userId]);
         const userLiked = userLikeResult.length > 0;
 
-        // Ambil URL foto profil untuk komentar utama
         const profilePictureUrl = await getProfilePictureUrl(comment.user_id);
 
-        // Format balasan untuk komentar ini
         const commentReplies = await Promise.all(
           replies
             .filter((reply) => reply.parent_comment_id === comment.id)
@@ -781,14 +717,14 @@ const getComments = async (req, res) => {
               content: reply.content,
               created_at: reply.created_at,
               username: reply.username,
-              profilePicture: await getProfilePictureUrl(reply.user_id), // Ambil URL foto profil untuk balasan
+              profilePicture: await getProfilePictureUrl(reply.user_id),
               timeSinceReplied: `${Math.floor((Date.now() - new Date(reply.created_at)) / 60000)} minutes ago`,
             }))
         );
 
         return {
           ...comment,
-          profilePicture: profilePictureUrl, // Tambahkan URL foto profil ke komentar
+          profilePicture: profilePictureUrl,
           timeSinceCommented: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`,
           likeCount,
           userLiked,
@@ -797,7 +733,6 @@ const getComments = async (req, res) => {
       })
     );
 
-    // Kirim response berhasil
     res.status(200).json({
       success: true,
       comments: formattedComments,
@@ -811,13 +746,11 @@ const getComments = async (req, res) => {
   }
 };
 
-// Mendapatkan komentar dan balasan berdasarkan ID komentar
 const getCommentsById = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const userId = req.user.id; // Ambil user_id dari token JWT yang di-decode
+    const userId = req.user.id;
 
-    // Query untuk mendapatkan komentar berdasarkan commentId
     const commentSql = `
       SELECT c.id, c.content, c.created_at, c.user_id, u.username
       FROM comments c
@@ -835,7 +768,6 @@ const getCommentsById = async (req, res) => {
 
     const comment = commentResult[0];
 
-    // Query untuk mendapatkan semua balasan (replies) dari komentar yang dipilih
     const repliesSql = `
       SELECT r.id, r.content, r.created_at, r.parent_comment_id, r.user_id, u.username
       FROM replies r
@@ -845,7 +777,6 @@ const getCommentsById = async (req, res) => {
     `;
     const [replies] = await pool.query(repliesSql, [commentId]);
 
-    // Query untuk menghitung jumlah like pada komentar utama
     const likeCountCommentSql = `
       SELECT COUNT(*) AS like_count
       FROM likes
@@ -854,7 +785,6 @@ const getCommentsById = async (req, res) => {
     const [likeCountCommentResult] = await pool.query(likeCountCommentSql, [commentId]);
     const likeCountComment = likeCountCommentResult[0].like_count || 0;
 
-    // Query untuk memeriksa apakah user telah memberi like pada komentar utama
     const userLikeCommentSql = `
       SELECT id
       FROM likes
@@ -863,10 +793,8 @@ const getCommentsById = async (req, res) => {
     const [userLikeCommentResult] = await pool.query(userLikeCommentSql, [commentId, userId]);
     const userLikedComment = userLikeCommentResult.length > 0;
 
-    // Dapatkan URL foto profil untuk komentar utama
-    const profilePictureUrlComment = await getProfilePictureUrl(comment.user_id); // Menggunakan user_id untuk mendapatkan foto profil
+    const profilePictureUrlComment = await getProfilePictureUrl(comment.user_id);
 
-    // Format komentar utama dengan balasan dan URL foto profil
     const formattedComment = {
       id: comment.id,
       content: comment.content,
@@ -878,7 +806,6 @@ const getCommentsById = async (req, res) => {
       userLiked: userLikedComment,
       replies: await Promise.all(
         replies.map(async (reply) => {
-          // Query untuk menghitung jumlah like pada balasan, hitung berdasarkan comment_id (parent comment)
           const likeCountReplySql = `
             SELECT COUNT(*) AS like_count
             FROM likes
@@ -887,7 +814,6 @@ const getCommentsById = async (req, res) => {
           const [likeCountReplyResult] = await pool.query(likeCountReplySql, [reply.id]);
           const likeCountReply = likeCountReplyResult[0].like_count || 0;
 
-          // Query untuk memeriksa apakah user telah memberi like pada balasan, menggunakan comment_id sebagai parent
           const userLikeReplySql = `
             SELECT id
             FROM likes
@@ -895,9 +821,6 @@ const getCommentsById = async (req, res) => {
           `;
           const [userLikeReplyResult] = await pool.query(userLikeReplySql, [reply.id, userId]);
           const userLikedReply = userLikeReplyResult.length > 0;
-
-          // Dapatkan URL foto profil untuk balasan
-          const profilePictureUrlReply = await getProfilePictureUrl(reply.user_id); // Menggunakan user_id untuk mendapatkan foto profil
 
           return {
             id: reply.id,
@@ -926,11 +849,10 @@ const getCommentsById = async (req, res) => {
   }
 };
 
-//Membalas komentar
 const addReplyToComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const { content } = req.body; // userId dan content harus dikirimkan dari client
+    const { content } = req.body;
     const userId = req.user.id
 
     if (!content) {
@@ -960,7 +882,6 @@ const getCommentsWithReplies = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    // Query untuk mendapatkan semua komentar terkait postingan
     const commentsSql = `
       SELECT c.id, c.content, c.created_at, u.username,
              (SELECT COUNT(*) FROM likes WHERE comment_id = c.id) AS like_count
@@ -971,7 +892,6 @@ const getCommentsWithReplies = async (req, res) => {
     `;
     const [comments] = await pool.query(commentsSql, [postId]);
 
-    // Query untuk mendapatkan semua balasan terkait komentar
     const repliesSql = `
       SELECT r.id, r.content, r.created_at, r.parent_comment_id, u.username
       FROM replies r
@@ -981,7 +901,6 @@ const getCommentsWithReplies = async (req, res) => {
     `;
     const [replies] = await pool.query(repliesSql, [postId]);
 
-    // Gabungkan komentar dengan balasannya
     const commentsWithReplies = comments.map((comment) => {
       const commentReplies = replies
         .filter((reply) => reply.parent_comment_id === comment.id)
@@ -1013,13 +932,11 @@ const getCommentsWithReplies = async (req, res) => {
   }
 };
 
-//menambahkan like
 const addLikeToComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const userId = req.user.id; // Mengambil userId dari token JWT
+    const userId = req.user.id;
 
-    // Cek apakah user sudah memberikan like pada komentar ini
     const checkLikeQuery = 'SELECT * FROM likes WHERE comment_id = ? AND user_id = ?';
     const [existingLike] = await pool.query(checkLikeQuery, [commentId, userId]);
 
@@ -1030,11 +947,9 @@ const addLikeToComment = async (req, res) => {
       });
     }
 
-    // Jika belum ada like, tambahkan like
     const addLikeQuery = 'INSERT INTO likes (comment_id, user_id) VALUES (?, ?)';
     await pool.query(addLikeQuery, [commentId, userId]);
 
-    // Update jumlah like di komentar
     const updateLikeCountQuery = 'UPDATE comments SET like_count = like_count + 1 WHERE id = ?';
     await pool.query(updateLikeCountQuery, [commentId]);
 
@@ -1051,13 +966,11 @@ const addLikeToComment = async (req, res) => {
   }
 };
 
-// Menghapus like dari komentar
 const removeLikeFromComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-    const userId = req.user.id; // Mengambil userId dari token JWT
+    const userId = req.user.id;
 
-    // Cek apakah user sudah memberikan like pada komentar ini
     const checkLikeQuery = 'SELECT * FROM likes WHERE comment_id = ? AND user_id = ?';
     const [existingLike] = await pool.query(checkLikeQuery, [commentId, userId]);
 
@@ -1068,11 +981,9 @@ const removeLikeFromComment = async (req, res) => {
       });
     }
 
-    // Jika sudah ada like, hapus like
     const removeLikeQuery = 'DELETE FROM likes WHERE comment_id = ? AND user_id = ?';
     await pool.query(removeLikeQuery, [commentId, userId]);
 
-    // Update jumlah like di komentar
     const updateLikeCountQuery = 'UPDATE comments SET like_count = like_count - 1 WHERE id = ?';
     await pool.query(updateLikeCountQuery, [commentId]);
 
@@ -1089,12 +1000,10 @@ const removeLikeFromComment = async (req, res) => {
   }
 };
 
-// Menampilkan semua komentar yang disukai oleh user
 const getLikedCommentsByUser = async (req, res) => {
   try {
-    const userId = req.user.id; // Mengambil userId dari token JWT
+    const userId = req.user.id;
 
-    // Query untuk mendapatkan komentar yang disukai oleh user
     const sql = `
       SELECT c.id, c.content, c.created_at, c.like_count, p.title AS post_title, p.id AS post_id
       FROM likes l
@@ -1106,7 +1015,6 @@ const getLikedCommentsByUser = async (req, res) => {
     
     const [likedComments] = await pool.query(sql, [userId]);
 
-    // Format waktu komentar yang disukai
     const formattedComments = likedComments.map(comment => ({
       ...comment,
       timeSinceLiked: `${Math.floor((Date.now() - new Date(comment.created_at)) / 60000)} minutes ago`
@@ -1125,13 +1033,11 @@ const getLikedCommentsByUser = async (req, res) => {
   }
 };
 
-// Menambahkan upvote pada postingan
 const addUpvoteToPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
+    const userId = req.user.id; 
 
-    // Cek apakah pengguna sudah memberikan upvote atau downvote pada postingan ini
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
@@ -1139,12 +1045,10 @@ const addUpvoteToPost = async (req, res) => {
       if (existingVote[0].vote_type === 'upvote') {
         return res.status(400).json({ success: false, message: 'You have already upvoted this post' });
       } else if (existingVote[0].vote_type === 'downvote') {
-        // Hapus downvote dan tambahkan upvote
         await pool.query('DELETE FROM post_votes WHERE post_id = ? AND user_id = ?', [postId, userId]);
       }
     }
 
-    // Tambahkan upvote
     await pool.query('INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)', [postId, userId, 'upvote']);
     await pool.query('UPDATE posts SET upvote_count = upvote_count + 1 WHERE id = ?', [postId]);
 
@@ -1155,13 +1059,11 @@ const addUpvoteToPost = async (req, res) => {
   }
 };
 
-// Menambahkan downvote pada postingan
 const addDownvoteToPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
+    const userId = req.user.id;
 
-    // Cek apakah pengguna sudah memberikan vote sebelumnya
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
@@ -1169,13 +1071,11 @@ const addDownvoteToPost = async (req, res) => {
       if (existingVote[0].vote_type === 'downvote') {
         return res.status(400).json({ success: false, message: 'You have already downvoted this post' });
       } else if (existingVote[0].vote_type === 'upvote') {
-        // Hapus upvote dan tambahkan downvote
         await pool.query('DELETE FROM post_votes WHERE post_id = ? AND user_id = ?', [postId, userId]);
         await pool.query('UPDATE posts SET upvote_count = upvote_count - 1 WHERE id = ?', [postId]);
       }
     }
 
-    // Tambahkan downvote
     await pool.query('INSERT INTO post_votes (post_id, user_id, vote_type) VALUES (?, ?, ?)', [postId, userId, 'downvote']);
     await pool.query('UPDATE posts SET downvote_count = downvote_count + 1 WHERE id = ?', [postId]);
 
@@ -1186,26 +1086,21 @@ const addDownvoteToPost = async (req, res) => {
   }
 };
 
-//retrieved vote status (single)
 const getVoteStatusById = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
+    const userId = req.user.id;
 
-    // Query untuk memeriksa apakah pengguna sudah memberikan vote
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
     if (existingVote.length > 0) {
-      // Jika sudah ada vote, kembalikan jenis vote yang diberikan
       return res.status(200).json({
         success: true,
         message: 'Vote status retrieved successfully',
-        vote_status: existingVote[0].vote_type, // Bisa "upvote" atau "downvote"
+        vote_status: existingVote[0].vote_type,
       });
     }
-
-    // Jika belum ada vote, kembalikan status "no vote"
     res.status(200).json({
       success: true,
       message: 'User has not voted yet',
@@ -1220,13 +1115,11 @@ const getVoteStatusById = async (req, res) => {
   }
 };
 
-// Hapus Upvote dari Postingan
 const removeUpvoteFromPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
+    const userId = req.user.id;
 
-    // Cek apakah user sudah memberikan upvote
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
@@ -1237,11 +1130,9 @@ const removeUpvoteFromPost = async (req, res) => {
       });
     }
 
-    // Hapus upvote dari tabel post_votes
     const removeUpvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
     await pool.query(removeUpvoteQuery, [postId, userId]);
 
-    // Update jumlah upvote pada post
     const updateUpvoteCountQuery = 'UPDATE posts SET upvote_count = upvote_count - 1 WHERE id = ?';
     await pool.query(updateUpvoteCountQuery, [postId]);
 
@@ -1258,13 +1149,11 @@ const removeUpvoteFromPost = async (req, res) => {
   }
 };
 
-// Hapus Downvote dari Postingan
 const removeDownvoteFromPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id; // Mendapatkan userId dari token JWT
+    const userId = req.user.id;
 
-    // Cek apakah user sudah memberikan downvote
     const checkVoteQuery = 'SELECT vote_type FROM post_votes WHERE post_id = ? AND user_id = ?';
     const [existingVote] = await pool.query(checkVoteQuery, [postId, userId]);
 
@@ -1275,11 +1164,9 @@ const removeDownvoteFromPost = async (req, res) => {
       });
     }
 
-    // Hapus downvote dari tabel post_votes
     const removeDownvoteQuery = 'DELETE FROM post_votes WHERE post_id = ? AND user_id = ?';
     await pool.query(removeDownvoteQuery, [postId, userId]);
 
-    // Update jumlah downvote pada post
     const updateDownvoteCountQuery = 'UPDATE posts SET downvote_count = downvote_count - 1 WHERE id = ?';
     await pool.query(updateDownvoteCountQuery, [postId]);
 
@@ -1296,7 +1183,6 @@ const removeDownvoteFromPost = async (req, res) => {
   }
 };
 
-// Mendapatkan artikel berdasarkan ID
 const getArticleById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -1324,7 +1210,6 @@ const getArticleById = async (req, res) => {
   }
 };
 
-// Mendapatkan semua artikel
 const getAllArticles = async (req, res) => {
   try {
     const sql = 'SELECT * FROM articles ORDER BY published_at DESC';
@@ -1344,24 +1229,20 @@ const getAllArticles = async (req, res) => {
   }
 };
 
-// Fungsi untuk men-scrape artikel dari URL
 const scrapeArticle = async (url) => {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);
 
-    // Ambil data setelah halaman sepenuhnya dimuat
     const result = await page.evaluate(() => {
       const title = document.querySelector('h1')?.innerText || '';
       const author = document.querySelector('.author-name')?.innerText || '';
       const content = document.querySelector('.content-body')?.innerHTML || '';
       const coverImage = document.querySelector('.lazyloaded')?.src || '';
 
-      // Ambil tanggal publikasi
       const publicationTime = document.querySelector('time[itemprop="datePublished"]')?.getAttribute('datetime') || 'Unknown publication date';
 
-      // Mengambil semua gambar dengan class lazyloaded
       const images = [];
       document.querySelectorAll('.placeholder-container').forEach((img) => {
         let imageUrl = img.getAttribute('data-src');
@@ -1403,7 +1284,6 @@ const scrapeArticle = async (url) => {
   }
 };
 
-// Fungsi untuk mengambil artikel dan menyimpannya ke database
 const getArticleFromUrl = async (req, res) => {
   try {
     const { url } = req.params;
@@ -1423,10 +1303,7 @@ const getArticleFromUrl = async (req, res) => {
     const result = await scrapeArticle(fullUrl);
 
     if (result.success) {
-      // Simpan artikel ke database
       const { title, content, author, coverImage, publicationTime } = result;
-
-      // Konversi publicationTime ke format MySQL (YYYY-MM-DD HH:MM:SS)
       const formattedPublicationTime = new Date(publicationTime)
         .toISOString()
         .slice(0, 19)
@@ -1465,13 +1342,10 @@ const getArticleFromUrl = async (req, res) => {
   }
 };
 
-// Menambahkan atau menghapus bookmark untuk postingan atau artikel
 const addBookmark = async (req, res) => {
   try {
     const { itemId, type } = req.body;
-    const userId = req.user.id; // Ambil user_id dari token JWT
-
-    // Validasi input
+    const userId = req.user.id;
     if (!itemId || !type || !['post', 'article'].includes(type)) {
       return res.status(400).json({
         success: false,
@@ -1479,14 +1353,12 @@ const addBookmark = async (req, res) => {
       });
     }
 
-    // Periksa apakah bookmark sudah ada
     const checkBookmarkSql = `
       SELECT id FROM bookmarks WHERE user_id = ? AND item_id = ? AND type = ?
     `;
     const [existingBookmark] = await pool.query(checkBookmarkSql, [userId, itemId, type]);
 
     if (existingBookmark.length > 0) {
-      // Jika sudah ada bookmark, hapus bookmark tersebut (unbookmark)
       const deleteBookmarkSql = `
         DELETE FROM bookmarks WHERE id = ?
       `;
@@ -1497,7 +1369,6 @@ const addBookmark = async (req, res) => {
         message: 'Bookmark removed successfully',
       });
     } else {
-      // Jika belum ada bookmark, tambahkan bookmark baru
       const addBookmarkSql = `
         INSERT INTO bookmarks (user_id, type, item_id)
         VALUES (?, ?, ?)
@@ -1518,12 +1389,10 @@ const addBookmark = async (req, res) => {
   }
 };
 
-
-// Menghapus bookmark
 const removeBookmark = async (req, res) => {
   try {
     const { itemId, type } = req.body;
-    const userId = req.user.id; // Ambil user_id dari token JWT
+    const userId = req.user.id; 
 
     if (!itemId || !type || !['post', 'article'].includes(type)) {
       return res.status(400).json({
@@ -1550,7 +1419,6 @@ const removeBookmark = async (req, res) => {
   }
 };
 
-// Mendapatkan semua bookmark milik user
 const getBookmarks = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -1581,13 +1449,11 @@ const getBookmarks = async (req, res) => {
   }
 };
 
-// Mendapatkan bookmark berdasarkan ID milik user
 const getBookmarkById = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { id } = req.params; // Mengambil ID dari parameter URL
+    const { id } = req.params;
 
-    // Validasi input ID
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -1631,15 +1497,12 @@ const getBookmarkById = async (req, res) => {
 const saveScanHistory = async (req, res) => {
   const { userId, disease, confidence } = req.body;
 
-  // Validasi input
   if (!userId || !disease || !confidence || !req.file) {
       return res.status(400).json({ message: "Semua data harus diisi!" });
   }
 
-  // Ambil file gambar dari request
   const fishImage = req.file;
   try {
-      // Upload gambar ke Google Cloud Storage
       const bucket = storage.bucket(bucketName);
       const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
       const file = bucket.file(fileName);
@@ -1650,10 +1513,7 @@ const saveScanHistory = async (req, res) => {
       });
 
       blobStream.on('finish', async () => {
-          // Mendapatkan URL file setelah di-upload
           const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
-
-          // Menyimpan data ke database
           const query = `
               INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
               VALUES (?, ?, ?, ?, NOW())
@@ -1670,12 +1530,10 @@ const saveScanHistory = async (req, res) => {
 
 const getScanHistoryById = async (req, res) => {
   const { userId } = req.params;
-  // Validasi input
   if (!userId) {
       return res.status(400).json({ message: "User ID diperlukan!" });
   }
   try {
-      // Query untuk mendapatkan scan history berdasarkan user_id
       const query = `
           SELECT 
               id, 
@@ -1690,11 +1548,9 @@ const getScanHistoryById = async (req, res) => {
           ORDER BY scan_timestamp DESC
       `;
       const [results] = await db.execute(query, [userId]);
-      // Jika tidak ada hasil, kembalikan pesan bahwa data tidak ditemukan
       if (results.length === 0) {
           return res.status(404).json({ message: "Scan history tidak ditemukan untuk user ini." });
       }
-      // Kembalikan hasil
       res.status(200).json({ data: results });
   } catch (error) {
       console.error("Error saat mengambil scan history:", error.message);

@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
-const secretKey = process.env.JWT_SECRET; // Pastikan JWT_SECRET ada di file .env
+const secretKey = process.env.JWT_SECRET;
 
-// Middleware untuk verifikasi token JWT
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.header('Authorization'); // Mengambil Authorization Header
+  const authHeader = req.header('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({
@@ -12,16 +11,15 @@ const authenticateToken = (req, res, next) => {
     });
   }
 
-  const token = authHeader.replace('Bearer ', ''); // Menghapus prefix "Bearer "
+  const token = authHeader.replace('Bearer ', '');
 
   try {
-    const decoded = jwt.verify(token, secretKey); // Verifikasi token
-    req.user = decoded; // Menyimpan informasi pengguna yang terdekode di req.user
-    next(); // Melanjutkan ke route berikutnya
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded;
+    next();
   } catch (error) {
     console.error('Invalid token', error);
 
-    // Menangani error token berdasarkan tipe error
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
