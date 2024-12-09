@@ -1496,36 +1496,40 @@ const getBookmarkById = async (req, res) => {
 
 const saveScanHistory = async (req, res) => {
   const { userId, disease, confidence } = req.body;
-
-  if (!userId || !disease || !confidence || !req.file) {
-      return res.status(400).json({ message: "Semua data harus diisi!" });
-  }
-
-  const fishImage = req.file;
-  try {
-      const bucket = storage.bucket(bucketName);
-      const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
-      const file = bucket.file(fileName);
-      const blobStream = file.createWriteStream({
-          metadata: {
-              contentType: fishImage.mimetype,
-          },
-      });
-
-      blobStream.on('finish', async () => {
-          const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
-          const query = `
-              INSERT INTO scan_history (user_id, fish_image, disease, confidence, scanned_at) 
-              VALUES (?, ?, ?, ?, NOW())
-          `;
-          await pool.query(query, [userId, publicUrl, disease, confidence]);
-          res.status(201).json({ message: "Scan history berhasil disimpan!" });
-      });
-      blobStream.end(fishImage.buffer);
-  } catch (error) {
-      console.error("Error saat menyimpan scan history:", error.message);
-      res.status(500).json({ message: "Gagal menyimpan scan history." });
-  }
+    if (!userId || !disease || !confidence || !req.file) {
+        return res.status(400).json({ message: "Semua data harus diisi!" });
+    }
+    
+    const confidenceValue = parseFloat(confidence);
+    if (isNaN(confidenceValue)) {
+        return res.status(400).json({ message: "Confidence harus berupa angka desimal!" });
+    }
+    
+    const fishImage = req.file;
+    try {
+        const bucket = storage.bucket(bucketName);
+        const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
+        const file = bucket.file(fileName);
+        const blobStream = file.createWriteStream({
+            metadata: {
+                contentType: fishImage.mimetype,
+            },
+        });
+      
+        blobStream.on('finish', async () => {
+            const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+            const query = `
+                INSERT INTO scan_history (user_id, fish_image, disease, confidence, scan_timestamp) 
+                VALUES (?, ?, ?, ?, NOW())
+            `;
+            await pool.query(query, [userId, publicUrl, disease, confidenceValue]);
+            res.status(201).json({ message: "Scan history berhasil disimpan!" });
+        });
+        blobStream.end(fishImage.buffer);
+    } catch (error) {
+        console.error("Error saat menyimpan scan history:", error.message);
+        res.status(500).json({ message: "Gagal menyimpan scan history." });
+    }
 };
 
 const getScanHistoryById = async (req, res) => {
