@@ -46,6 +46,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
 
+
         preferenceViewModel.theme.observe(this) { isDark ->
             if (isDark != null) {
                 binding.switchNight.isChecked = isDark

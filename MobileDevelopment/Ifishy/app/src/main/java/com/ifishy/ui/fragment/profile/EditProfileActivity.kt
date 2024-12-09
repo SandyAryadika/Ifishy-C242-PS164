@@ -1,9 +1,12 @@
 package com.ifishy.ui.fragment.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +14,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -23,6 +27,7 @@ import com.ifishy.ui.activity.main.MainActivity
 import com.ifishy.ui.viewmodel.profile.ProfileViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,11 +45,12 @@ class EditProfileActivity : AppCompatActivity() {
     private val lauchPicker = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
-        binding.ppOverlay.isEnabled = true
         if (uri != null) {
+            binding.ppOverlay.isEnabled = true
             profileViewModel.imageProfile = uri
             binding.pp.setImageURI(uri)
         } else {
+            binding.ppOverlay.isEnabled = true
             Toast.makeText(this@EditProfileActivity, R.string.no_image_selected, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -77,6 +83,63 @@ class EditProfileActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.oldPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(pass: Editable?) {
+
+                val password = pass.toString()
+
+                if (password.isNotEmpty() && password.length < 6){
+                    binding.oldPasswordContainer.error = getString(R.string.password_kurang_dari_6_karakter)
+                    binding.oldPassword.error =
+                        getString(R.string.password_kurang_dari_6_karakter)
+                }else{
+                    binding.oldPassword.error =null
+                    binding.oldPasswordContainer.error = null
+                }
+
+            }
+
+        })
+
+        binding.newPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(pass: Editable?) {
+
+                val password = pass.toString()
+
+                if (password.isNotEmpty() && password.length < 6){
+                    binding.newPasswordContainer.error = getString(R.string.password_kurang_dari_6_karakter)
+                    binding.newPassword.error =
+                        getString(R.string.password_kurang_dari_6_karakter)
+                }else{
+                    binding.newPassword.error =null
+                    binding.newPasswordContainer.error = null
+                }
+
+            }
+
+        })
+
+        binding.email.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(email: Editable?) {
+
+                val emails = email.toString()
+
+                if (emails.isNotEmpty() && !Patterns.EMAIL_ADDRESS.matcher(emails).matches()) {
+                    binding.email.error = getString(R.string.email_tidak_valid)
+                } else {
+                    binding.email.error = null
+                }
+
+            }
+
+        })
+
         binding.ppOverlay.setOnClickListener {
             binding.ppOverlay.isEnabled = false
             lauchPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -89,18 +152,49 @@ class EditProfileActivity : AppCompatActivity() {
                     updatePhoto(token)
                 }
 
-                editProfile(
-                    token, EditProfileRequest(
-                        email = binding.email.text.toString(),
-                        username = binding.username.text.toString(),
-                        password = binding.oldPassword.text.toString(),
-                        newPassword = binding.newPassword.text.toString()
+                if (isValid()){
+                    editProfile(
+                        token, EditProfileRequest(
+                            email = binding.email.text.toString(),
+                            username = binding.username.text.toString(),
+                            password = binding.oldPassword.text.toString(),
+                            newPassword = binding.newPassword.text.toString()
+                        )
                     )
-                )
+                }
 
             }
         }
 
+    }
+
+    private fun isValid(): Boolean {
+        val email = binding.email.text.toString()
+        val username = binding.username.text.toString()
+        val oldPassword = binding.oldPassword.text.toString()
+        val newPassword = binding.newPassword.text.toString()
+
+        if (email.isEmpty() || username.isEmpty()) {
+            Dialog.messageDialog(supportFragmentManager,getString(R.string.edit_profile_error),getString(R.string.form_empty))
+            return false
+        }
+
+        if (binding.email.error != null) {
+            Dialog.messageDialog(supportFragmentManager,getString(R.string.edit_profile_error),getString(R.string.email_tidak_valid))
+            return false
+        }
+
+        if ((oldPassword.isNotEmpty() || newPassword.isNotEmpty()) && (oldPassword.isEmpty() || newPassword.isEmpty())) {
+            Dialog.messageDialog(supportFragmentManager,getString(R.string.edit_profile_error),getString(R.string.form_empty))
+            return false
+        }
+
+        if (binding.oldPassword.error != null || binding.newPassword.error != null) {
+            Dialog.messageDialog(supportFragmentManager,getString(R.string.edit_profile_error),getString(R.string.password_kurang_dari_6_karakter))
+            return false
+        }
+
+        return true
     }
 
     private fun isLoading(loading: Boolean) {

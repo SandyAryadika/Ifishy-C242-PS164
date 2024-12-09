@@ -1,6 +1,7 @@
 package com.ifishy.ui.adapter.community.post
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -115,6 +116,8 @@ class CommunityPostsAdapter : RecyclerView.Adapter<CommunityPostsAdapter.ViewHol
             }
             Glide.with(context)
                 .load(item.imageUrl)
+                .placeholder(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
+                .error(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
                 .into(binding.image)
         }
     }

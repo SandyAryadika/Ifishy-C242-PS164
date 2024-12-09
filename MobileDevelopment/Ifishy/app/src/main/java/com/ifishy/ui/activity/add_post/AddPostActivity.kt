@@ -1,5 +1,7 @@
 package com.ifishy.ui.activity.add_post
 
+import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +10,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
@@ -16,6 +19,7 @@ import com.ifishy.databinding.ActivityAddPostBinding
 import com.ifishy.ui.viewmodel.community.CommunityViewModel
 import com.ifishy.utils.Dialog
 import com.ifishy.utils.ResponseState
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -30,13 +34,13 @@ class AddPostActivity : AppCompatActivity(), View.OnClickListener {
     private val communityViewModel: CommunityViewModel by viewModels()
     private val preferenceViewModel: PreferenceViewModel by viewModels()
 
+
     private val launchPicker = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ){ uri->
         binding.cover.isEnabled = true
         if(uri !=null){
             communityViewModel.imagePost = uri
-            binding.send.isEnabled = true
             binding.cover.setImageURI(uri)
         }else{
             binding.send.isEnabled = true
