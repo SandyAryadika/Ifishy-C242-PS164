@@ -1595,5 +1595,4 @@ module.exports = {
   getBookmarks,
   getBookmarkById,
   saveScanHistory,
-  saveScanHistory,
   getScanHistoryById }
