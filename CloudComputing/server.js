@@ -10,13 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   console.log('Root route accessed');
   res.send('Welcome to the Ifihsy Backend API!');
 });
-
-app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

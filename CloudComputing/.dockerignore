@@ -1,7 +1,5 @@
 node_modules
 npm-debug.log
-service-account-key.json
 .DS_Store
 .git
 .gitignore
-# .env
