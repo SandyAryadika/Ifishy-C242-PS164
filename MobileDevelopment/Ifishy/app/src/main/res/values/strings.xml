@@ -41,7 +41,7 @@
     <string name="upvote">upvote</string>
     <string name="downvote">downvote</string>
     <string name="home_menu">Home</string>
-    <string name="history_menu">History</string>
+    <string name="history_menu">Riwayat</string>
     <string name="scan_menu">Pindai</string>
     <string name="community_menu">Community</string>
     <string name="profile_menu">Profile</string>
@@ -135,5 +135,11 @@
     <string name="lanjutkan_tanpa_akun">Lanjutkan tanpa akun</string>
     <string name="email_tidak_valid">Email tidak valid</string>
     <string name="password_kurang_dari_6_karakter">Password kurang dari 6 karakter</string>
+    <string name="scanning_error">Scanning Error</string>
+    <string name="ulangi">Ulangi</string>
+    <string name="ikan_tidak_terdeteksi">Ikan tidak terdeteksi</string>
+    <string name="gagal_simpan">Gagal menyimpan ke riwayat</string>
+    <string name="disimpan_di_riwayat">Disimpan di riwayat</string>
+    <string name="belum_ada_history">Belum ada history</string>
 
 </resources>

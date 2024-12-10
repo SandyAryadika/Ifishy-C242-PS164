@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 data class ResponseHistoryById(
 
 	@field:SerializedName("data")
-	val data: List<DataItem?>? = null
+	val data: List<DataItem>? = null
 )
 
 data class DataItem(
 
 	@field:SerializedName("treatment")
-	val treatment: Any? = null,
+	val treatment: String? = null,
 
 	@field:SerializedName("disease")
 	val disease: String? = null,
@@ -20,19 +20,19 @@ data class DataItem(
 	val userId: Int? = null,
 
 	@field:SerializedName("image_url")
-	val imageUrl: Any? = null,
+	val imageUrl: String? = null,
 
 	@field:SerializedName("confidence")
 	val confidence: Float? = null,
 
 	@field:SerializedName("description")
-	val description: Any? = null,
+	val description: String? = null,
 
 	@field:SerializedName("id")
 	val id: Int? = null,
 
 	@field:SerializedName("validation")
-	val validation: Any? = null,
+	val validation: String? = null,
 
 	@field:SerializedName("fish_image")
 	val fishImage: String? = null,

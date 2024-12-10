@@ -1,47 +1,31 @@
-package com.ifishy.ui.activity.result
+package com.ifishy.ui.activity.history
 
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.Window
-import android.view.WindowManager
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.ifishy.R
-import com.ifishy.data.preference.PreferenceViewModel
+import com.ifishy.databinding.ActivityHistoryDetailBinding
 import com.ifishy.databinding.ActivityResultBinding
-import com.ifishy.ui.viewmodel.history.HistoryViewModel
-import com.ifishy.ui.viewmodel.scan.ScanViewModel
-import com.ifishy.utils.Dialog
-import com.ifishy.utils.ImageProcessing
-import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 
 @AndroidEntryPoint
-class ResultActivity : AppCompatActivity() {
+class HistoryDetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityResultBinding
+    private lateinit var binding: ActivityHistoryDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        binding = ActivityResultBinding.inflate(layoutInflater)
+        binding = ActivityHistoryDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.back.setOnClickListener {
             finish()
         }
 
-        val id = intent.getIntExtra(ID,0)
         val name = intent.getStringExtra(DISEASE_NAME)
         val cause = intent.getStringExtra(DISEASE_CAUSE)
         val treatment = intent.getStringExtra(DISEASE_TREATMENT)
@@ -49,7 +33,11 @@ class ResultActivity : AppCompatActivity() {
         val validation = intent.getStringExtra(VALIDATION)
         val percentage = intent.getStringExtra(PERCENTAGE)
 
-        binding.picTaken.setImageURI(Uri.parse(image))
+        Glide.with(this)
+            .load(image)
+            .placeholder(ColorDrawable(ContextCompat.getColor(this, R.color.shimmer)))
+            .error(ColorDrawable(ContextCompat.getColor(this, R.color.shimmer)))
+            .into(binding.picTaken)
 
         binding.percentage.text = percentage
         binding.validationContent.text = validation
@@ -61,7 +49,6 @@ class ResultActivity : AppCompatActivity() {
 
     companion object{
 
-        const val ID = "id"
         const val PERCENTAGE = "disease_percentage"
         const val DISEASE_IMAGE = "disease_image"
         const val DISEASE_NAME = "disease_name"

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/activity_result_scene"
+    tools:context=".ui.activity.result.ResultActivity">
+
+    <ImageView
+        android:id="@+id/pic_taken"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/placeholder" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="290dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gradient_overlay"
+        app:layout_constraintBottom_toBottomOf="@id/pic_taken"
+        app:layout_constraintEnd_toEndOf="@id/pic_taken"
+        app:layout_constraintStart_toStartOf="@id/pic_taken"
+        app:layout_constraintTop_toTopOf="@id/pic_taken" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/global_page_padding_margin">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="@dimen/back_button"
+            android:layout_height="@dimen/back_button"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/image_button"
+            android:backgroundTint="@color/secondary_light"
+            android:src="@drawable/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/disease"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/poppins_bold"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="30dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/medium_text"
+        app:layout_constraintBottom_toTopOf="@id/desc"
+        tools:text="Disease name" />
+
+    <TextView
+        android:id="@+id/percentage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="30dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/semi_large_text"
+        app:layout_constraintBottom_toTopOf="@id/disease"
+        tools:text="80%" />
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/desc"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="-30dp"
+        android:background="@drawable/result_shape"
+        android:paddingHorizontal="30dp"
+        android:paddingTop="35dp"
+        app:layoutDescription="@xml/activity_result_xml_desc_scene"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pic_taken">
+
+        <TextView
+            android:id="@+id/cause_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:text="@string/cause"
+            android:textSize="@dimen/upper_meidum_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cause_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cause_title"
+            tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an" />
+
+        <TextView
+            android:id="@+id/treatment_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:text="@string/treatment"
+            android:textSize="@dimen/upper_meidum_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cause_content" />
+
+        <TextView
+            android:id="@+id/tratement_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/treatment_title"
+            tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an" />
+
+        <TextView
+            android:id="@+id/validation_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:text="@string/validation"
+            android:textSize="@dimen/upper_meidum_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tratement_content" />
+
+        <TextView
+            android:id="@+id/validation_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:justificationMode="inter_word"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/validation_title"
+            tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

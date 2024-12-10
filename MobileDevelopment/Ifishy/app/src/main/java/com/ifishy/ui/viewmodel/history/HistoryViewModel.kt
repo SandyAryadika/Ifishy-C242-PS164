@@ -18,12 +18,12 @@ import javax.inject.Named
 @HiltViewModel
 class HistoryViewModel @Inject constructor(@Named("HistoryRepository") private val historyRepository: HistoryRepository) : ViewModel() {
 
-    val saveScanHistory: MutableLiveData<ResponseState<ResponseHistory>> = MutableLiveData()
-    val getScanHistory: MutableLiveData<SingleEvent<ResponseState<ResponseHistoryById>>> = MutableLiveData()
+    val saveScanHistory: MutableLiveData<SingleEvent<ResponseState<ResponseHistory>>> = MutableLiveData()
+    val getScanHistory: MutableLiveData<ResponseState<ResponseHistoryById>> = MutableLiveData()
 
     fun saveScanHistory(fishImage: MultipartBody.Part, userId: RequestBody, disease: RequestBody, confidence: RequestBody){
         viewModelScope.launch {
-            saveScanHistory.value = ResponseState.Loading
+            saveScanHistory.value = SingleEvent(ResponseState.Loading)
 
             val response = historyRepository.saveScanHistory(fishImage, userId, disease, confidence)
             saveScanHistory.postValue(response)
@@ -32,7 +32,7 @@ class HistoryViewModel @Inject constructor(@Named("HistoryRepository") private v
 
     fun getScanHistory(userId: Int){
         viewModelScope.launch {
-            getScanHistory.value = SingleEvent(ResponseState.Loading)
+            getScanHistory.value = ResponseState.Loading
 
             val response = historyRepository.getScanHistory(userId)
             getScanHistory.postValue(response)
