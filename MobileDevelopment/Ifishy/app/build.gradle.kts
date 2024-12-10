@@ -30,7 +30,7 @@ android {
         }
         release {
             buildConfigField("String","USER_PREFERENCE","\"user_preferences\"")
-            buildConfigField("String","BASE_URL","\"https://nodejs-backend-441158734882.asia-southeast2.run.app/api/auth/")
+            buildConfigField("String","BASE_URL","\"https://nodejs-backend-441158734882.asia-southeast2.run.app/api/auth/\"")
             buildConfigField("String","BASE_URL_ML","\"https://ifishy-api-441158734882.asia-southeast2.run.app/\"")
             isMinifyEnabled = false
             proguardFiles(

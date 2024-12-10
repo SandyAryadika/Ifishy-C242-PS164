@@ -1,6 +1,7 @@
 package com.ifishy.ui.activity.faq
 
 import android.os.Bundle
+import android.view.Window
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager

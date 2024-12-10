@@ -9,6 +9,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.viewModels
@@ -25,6 +26,7 @@ import com.ifishy.ui.activity.result.ResultActivity
 import com.ifishy.ui.dialog.ScanResultDialog
 import com.ifishy.ui.viewmodel.scan.ScanViewModel
 import com.ifishy.utils.Dialog
+import com.ifishy.utils.ImageProcessing
 import com.ifishy.utils.ResponseState
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,17 +44,17 @@ class ScanActivity : AppCompatActivity() {
     private val scanViewModel: ScanViewModel by viewModels()
     private var resultDialog: ScanResultDialog? = null
 
-    private val uCropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val resultUri = UCrop.getOutput(result.data!!)
-            resultUri?.let {
-                scanViewModel.imageScan = it
-                predict()
-            }
-        } else if (result.resultCode == UCrop.RESULT_ERROR) {
-            Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
-        }
-    }
+//    private val uCropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val resultUri = UCrop.getOutput(result.data!!)
+//            resultUri?.let {
+//                scanViewModel.imageScan = it
+//                predict()
+//            }
+//        } else if (result.resultCode == UCrop.RESULT_ERROR) {
+//            Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
     private val cameraPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -62,14 +64,16 @@ class ScanActivity : AppCompatActivity() {
         }else{
             Toast.makeText(this, getString(R.string.camera_must_allowed), Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private val lauchPicker = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ){uri->
+        binding.gallery.isEnabled = true
         if(uri != null){
-            cropImage(uri)
+            scanViewModel.imageScan = uri
+            predict()
+//            cropImage(uri)
         }else{
             Toast.makeText(this, R.string.no_image_selected, Toast.LENGTH_SHORT).show()
         }
@@ -77,7 +81,6 @@ class ScanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         supportActionBar?.hide()
         binding = ActivityScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -89,23 +92,25 @@ class ScanActivity : AppCompatActivity() {
         }
 
         binding.take.setOnClickListener {
+            binding.take.isEnabled = false
             takePhoto()
         }
 
         binding.gallery.setOnClickListener {
+            binding.gallery.isEnabled = false
             lauchPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }
 
-    private fun cropImage(uri: Uri) {
-        val destinationUri = Uri.fromFile(File(cacheDir, "classification_crop.jpg"))
-        val options = UCrop.Options()
-        options.setActiveControlsWidgetColor(ContextCompat.getColor(this,R.color.primary_light))
-        val intent = UCrop.of(uri, destinationUri)
-            .getIntent(this)
-
-        uCropLauncher.launch(intent)
-    }
+//    private fun cropImage(uri: Uri) {
+//        val destinationUri = Uri.fromFile(File(cacheDir, "classification_crop.jpg"))
+//        val options = UCrop.Options()
+//        options.setActiveControlsWidgetColor(ContextCompat.getColor(this,R.color.primary_light))
+//        val intent = UCrop.of(uri, destinationUri)
+//            .getIntent(this)
+//
+//        uCropLauncher.launch(intent)
+//    }
 
     private fun takePhoto() {
         val photoFile = File(cacheDir, "classification.jpg")
@@ -117,10 +122,13 @@ class ScanActivity : AppCompatActivity() {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    cropImage(Uri.fromFile(photoFile))
+                    binding.take.isEnabled = true
+                    scanViewModel.imageScan = Uri.fromFile(photoFile)
+                    predict()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
+                    binding.take.isEnabled = true
                     Toast.makeText(this@ScanActivity,
                         getString(R.string.error_while_take_photo), Toast.LENGTH_SHORT).show()
                 }
@@ -173,7 +181,7 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun predict(){
-        val inputStream = applicationContext.contentResolver.openInputStream(scanViewModel.imageScan!!)
+        val inputStream = applicationContext.contentResolver.openInputStream(Uri.fromFile(ImageProcessing.resizeAndCompressImageFromUri(this,scanViewModel.imageScan!!)))
         val file = File(applicationContext.cacheDir, "scan_img_temp")
         inputStream?.use { input ->
             file.outputStream().use { output ->
@@ -193,7 +201,7 @@ class ScanActivity : AppCompatActivity() {
                         is ResponseState.Success -> {
                             lifecycleScope.launch {
                                 val intent =  Intent(this@ScanActivity,ResultActivity::class.java)
-                                    .putExtra(ResultActivity.DISEASE_IMAGE,file.path)
+                                    .putExtra(ResultActivity.DISEASE_IMAGE,"${scanViewModel.imageScan}")
                                     .putExtra(ResultActivity.DISEASE_NAME,"${response.data.disease}")
                                     .putExtra(ResultActivity.DISEASE_CAUSE,"${response.data.details?.penyebab}")
                                     .putExtra(ResultActivity.DISEASE_TREATMENT, "${response.data.details?.rekomendasiPengobatan}")

@@ -111,7 +111,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -128,7 +130,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -144,7 +148,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -160,7 +166,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -176,7 +184,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -192,7 +202,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
@@ -210,7 +222,9 @@ class CommunityRepositoryImpl @Inject constructor(private val apiService: ApiSer
         }catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
         } catch (e: HttpException) {
-            SingleEvent(ResponseState.Error(e.response()?.errorBody().toString()))
+            val errorResponse = e.response()?.errorBody()?.string()
+            val errorMessage = Gson().fromJson(errorResponse, ErrorResponse::class.java)
+            SingleEvent(ResponseState.Error(errorMessage.message!!))
         }catch (e: IllegalStateException){
             SingleEvent(ResponseState.Error(context.getString(R.string.internal_server_error)))
         }
