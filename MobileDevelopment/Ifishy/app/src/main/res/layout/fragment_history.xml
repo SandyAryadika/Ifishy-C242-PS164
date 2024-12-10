@@ -27,13 +27,12 @@
             app:layout_constraintTop_toTopOf="parent"
             android:text="@string/judul_fragment_history"/>
 
-        <SearchView
+        <com.ifishy.ui.custom.CustomSearchBar
+            android:layout_marginHorizontal="@dimen/global_page_padding_margin"
             android:id="@+id/searchViewHistory"
             android:layout_width="0dp"
-            android:layout_height="@dimen/image_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/search_bar"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:backgroundTint="@color/edit_text_background"
             android:hint="@string/hint_search"
             app:layout_constraintStart_toStartOf="parent"

@@ -15,6 +15,8 @@ import com.ifishy.data.model.comments.request.AddCommentRequest
 import com.ifishy.data.model.community.response.AddPostResponse
 import com.ifishy.data.model.community.response.CommunityDetailResponse
 import com.ifishy.data.model.community.response.CommunityResponse
+import com.ifishy.data.model.history.ResponseHistory
+import com.ifishy.data.model.history.ResponseHistoryById
 import com.ifishy.data.model.profile.request.EditProfileRequest
 import com.ifishy.data.model.profile.response.ProfileResponse
 import com.ifishy.data.model.profile.response.UpdatePhotoProfileResponse
@@ -134,4 +136,18 @@ interface ApiService {
         @Part("content") content:RequestBody,
         @Part image: MultipartBody.Part
     ): AddPostResponse
+
+    @Multipart
+    @POST("scan-history")
+    suspend fun saveScanHistory(
+        @Part fishImage: MultipartBody.Part,
+        @Part("userId") userId: RequestBody,
+        @Part("disease") disease: RequestBody,
+        @Part("confidence") confidence: RequestBody
+    ): ResponseHistory
+
+    @GET("scan-history/{id}")
+    suspend fun getScanHistory(
+        @Path("id") userId : Int
+    ): ResponseHistoryById
 }
