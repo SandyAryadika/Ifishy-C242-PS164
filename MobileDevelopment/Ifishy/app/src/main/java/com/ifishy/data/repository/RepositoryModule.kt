@@ -10,6 +10,8 @@ import com.ifishy.data.repository.bookmark.BookmarkRepository
 import com.ifishy.data.repository.bookmark.BookmarkRepositoryImpl
 import com.ifishy.data.repository.community.CommunityRepository
 import com.ifishy.data.repository.community.CommunityRepositoryImpl
+import com.ifishy.data.repository.history.HistoryRepository
+import com.ifishy.data.repository.history.HistoryRepositoryImpl
 import com.ifishy.data.repository.profile.ProfileRepository
 import com.ifishy.data.repository.profile.ProfileRepositoryImpl
 import com.ifishy.data.repository.scan.ScanRepository
@@ -60,4 +62,11 @@ object RepositoryModule {
     fun provideScanRepo(mlService: MlService, context: Application): ScanRepository{
         return ScanRepositoryImpl(mlService,context)
     }
+
+    @Provides
+    @Named("HistoryRepository")
+    fun provideHistoryRepo(apiService: ApiService,context: Application): HistoryRepository {
+        return HistoryRepositoryImpl(apiService,context)
+    }
+
 }
