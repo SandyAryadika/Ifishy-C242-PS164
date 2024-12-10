@@ -654,7 +654,7 @@ const getProfilePictureUrl = async (userId) => {
     if (result.length > 0 && result[0].profile_photo) {
       const filePath = result[0].profile_photo;
 
-      return `https://storage.googleapis.com/${bucketName}/${filePath}`;
+      return `${filePath}`;
     } else {
       return `https://storage.googleapis.com/${bucketName}/${profileFolder}/default-profile.jpg`;
     }
@@ -821,6 +821,8 @@ const getCommentsById = async (req, res) => {
           `;
           const [userLikeReplyResult] = await pool.query(userLikeReplySql, [reply.id, userId]);
           const userLikedReply = userLikeReplyResult.length > 0;
+
+          const profilePictureUrlReply = await getProfilePictureUrl(reply.user_id);
 
           return {
             id: reply.id,
@@ -1496,41 +1498,72 @@ const getBookmarkById = async (req, res) => {
 
 const saveScanHistory = async (req, res) => {
   const { userId, disease, confidence } = req.body;
-    if (!userId || !disease || !confidence || !req.file) {
-        return res.status(400).json({ message: "Semua data harus diisi!" });
-    }
-    
-    const confidenceValue = parseFloat(confidence);
-    if (isNaN(confidenceValue)) {
-        return res.status(400).json({ message: "Confidence harus berupa angka desimal!" });
-    }
-    
-    const fishImage = req.file;
-    try {
-        const bucket = storage.bucket(bucketName);
-        const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
-        const file = bucket.file(fileName);
-        const blobStream = file.createWriteStream({
-            metadata: {
-                contentType: fishImage.mimetype,
-            },
+  
+  console.log ("userId:", userId);
+  console.log ("confidence:", confidence);
+  console.log ("disease:", disease);
+
+  if (!userId || !disease || !confidence || !req.file) {
+      return res.status(400).json({ message: "Semua data harus diisi!" });
+  }
+
+  const confidenceValue = parseFloat(confidence);
+  if (isNaN(confidenceValue)) {
+      return res.status(400).json({ message: "Confidence harus berupa angka desimal!" });
+  }
+
+  const fishImage = req.file;
+  if (!fishImage || !fishImage.buffer) {
+    return res.status(400).json({ message: "File gambar tidak ditemukan atau tidak valid!" });
+  }
+
+  try {
+    const bucket = storage.bucket(bucketName);
+    const fileName = `${scanHistoryFolder}/${Date.now()}_${fishImage.originalname}`;
+    const file = bucket.file(fileName);
+
+    const blobStream = file.createWriteStream({
+      metadata: {
+        contentType: fishImage.mimetype,
+      },
+    });
+
+    blobStream.on('finish', async () => {
+      try {
+        const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+        const query = `
+          INSERT INTO scan_history (user_id, fish_image, disease, confidence, scan_timestamp) 
+          VALUES (?, ?, ?, ?, NOW())
+        `;
+        await pool.query(query, [userId, publicUrl, disease, confidenceValue]);
+
+        res.status(201).json({
+          message: "Scan history berhasil disimpan!",
+          data: {
+            userId,
+            fishImage: publicUrl,
+            disease,
+            confidence: confidenceValue,
+          },
         });
-      
-        blobStream.on('finish', async () => {
-            const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
-            const query = `
-                INSERT INTO scan_history (user_id, fish_image, disease, confidence, scan_timestamp) 
-                VALUES (?, ?, ?, ?, NOW())
-            `;
-            await pool.query(query, [userId, publicUrl, disease, confidenceValue]);
-            res.status(201).json({ message: "Scan history berhasil disimpan!" });
-        });
-        blobStream.end(fishImage.buffer);
-    } catch (error) {
-        console.error("Error saat menyimpan scan history:", error.message);
-        res.status(500).json({ message: "Gagal menyimpan scan history." });
-    }
+      } catch (dbError) {
+        console.error("Error saat menyimpan ke database:", dbError.message);
+        res.status(500).json({ message: "Gagal menyimpan ke database." });
+      }
+    });
+
+    blobStream.on('error', (uploadError) => {
+      console.error("Error saat mengunggah file ke GCS:", uploadError.message);
+      res.status(500).json({ message: "Gagal mengunggah file ke GCS." });
+    });
+
+    blobStream.end(fishImage.buffer);
+  } catch (error) {
+    console.error("Error umum saat menyimpan scan history:", error.message);
+    res.status(500).json({ message: "Terjadi kesalahan pada server." });
+  }
 };
+
 
 const getScanHistoryById = async (req, res) => {
   const { userId } = req.params;
@@ -1539,28 +1572,25 @@ const getScanHistoryById = async (req, res) => {
   }
   try {
       const query = `
-          SELECT 
-              id, 
-              user_id, 
-              disease, 
-              confidence, 
-              description, 
-              treatment, 
-              scan_timestamp 
+          SELECT * 
           FROM scan_history 
           WHERE user_id = ? 
           ORDER BY scan_timestamp DESC
-      `;
-      const [results] = await db.execute(query, [userId]);
+        `;
+
+      const [results] = await pool.execute(query, [userId]);
+
       if (results.length === 0) {
           return res.status(404).json({ message: "Scan history tidak ditemukan untuk user ini." });
       }
+
       res.status(200).json({ data: results });
   } catch (error) {
       console.error("Error saat mengambil scan history:", error.message);
       res.status(500).json({ message: "Gagal mengambil scan history." });
   }
-}
+};
+
 
 module.exports = { 
   registerUser, 
