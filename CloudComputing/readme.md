@@ -13,7 +13,7 @@ The Google Cloud Estimated Price Preview outlines the services utilized for this
 
 Cloud SQL (MySQL) serves as the primary database, operating regionally in Jakarta with a micro-instance and zonal standard storage to manage user and application data. Cloud Storage is utilized to store application assets, such as images and related files, in the Jakarta region.
 
-## [Ifishy API Endpoints Documentation](https://docs.google.com/spreadsheets/d/1AnR8ifyktgZRyspRoGS_CgjIDOoaJQElb6PeBWj_5q8/edit?gid=0#gid=0)
+# [Ifishy API Endpoints Documentation](https://docs.google.com/spreadsheets/d/1AnR8ifyktgZRyspRoGS_CgjIDOoaJQElb6PeBWj_5q8/edit?gid=0#gid=0)
 This API supports various features for user management, community interaction, article access, and fish disease detection. Endpoints like `/users`, `/dashboard/:email`, and `/profile/:email` provide access to user data, including profiles and dashboards. Users can update their information through `/update` or delete their accounts with `/delete`. Profile photos are managed via `/upload-photo` and `/update-photo-profile`.
 
 Community features include creating, updating, and interacting with posts through endpoints such as `/community/posts` for creating or accessing post lists, and `/community/posts/:postId` for post details or updates. Comments and replies can be added or viewed via `/community/posts/:postId/comments` and `/comments/:commentId/reply`. Users can also `upvote/downvote` posts and check their voting status through relevant endpoints.
