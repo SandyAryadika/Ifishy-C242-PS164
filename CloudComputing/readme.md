@@ -108,7 +108,7 @@ gcloud run deploy ifishy-backend --image REGION-docker.pkg.dev/PROJECT-ID/REPOSI
 
 ### Step 5: Test and Monitor
 1. Access the application via the Cloud Run URL.
-2. Monitor logs and performance using **Google Cloud Logging** and **Monitoring**.
+2. Monitor logs and performance using **Google Cloud Logging**.
 
 # Environment Variables Explanation
 
