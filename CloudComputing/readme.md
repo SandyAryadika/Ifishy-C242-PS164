@@ -77,13 +77,13 @@ Below are the steps to deploy the IFISHY application using Google Cloud Platform
 ### Step 2: Create a Docker Image
 1. Dockerfile: Use the following configuration:
 ```
-FROM node:18
-WORKDIR /app
+FROM node:18-alpine
+WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 8080
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]
 ```
 2. Build the Image:
 
