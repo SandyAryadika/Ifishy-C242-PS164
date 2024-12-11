@@ -9,4 +9,28 @@
         <item name="cornerSize">5%</item>
     </style>
 
+    <style name="DatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primary_light
+        </item>
+        <item name="android:textColorPrimary">@color/textSpinner
+        </item>
+        <item name="android:textColorSecondary">@color/textSpinner
+        </item>
+        <item name="colorSecondary">@color/primary_light</item>
+
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+
+        <item name="android:colorAccent">@color/textSpinner</item>
+
+        <item name="android:colorControlNormal">@color/textSpinner</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerDialog.Text</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerDialog.Text</item>
+    </style>
+
+    <style name="DatePickerDialog.Text" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/primary_light</item> <!-- button text color -->
+    </style>
+
+
+
 </resources>
