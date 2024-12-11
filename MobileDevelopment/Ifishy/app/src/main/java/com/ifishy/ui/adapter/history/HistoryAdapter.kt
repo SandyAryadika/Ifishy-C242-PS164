@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.ifishy.R
 import com.ifishy.data.model.history.DataItem
 import com.ifishy.databinding.HistoryItemBinding
+import com.ifishy.utils.Date
 
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
@@ -42,18 +43,14 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: HistoryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DataItem, context: Context) {
-            binding.judulArtikelHistory.text = item.disease
-            binding.dateHistoryItem.text = item.scanTimestamp
+            binding.disease.text = item.disease
+            binding.dateHistoryItem.text = Date.format(item.scanTimestamp!!)
 
             Glide.with(context)
-                .load(item.imageUrl)
+                .load(item.fishImage)
                 .placeholder(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
                 .error(ColorDrawable(ContextCompat.getColor(context, R.color.shimmer)))
                 .into(binding.itemPhoto)
-
-            binding.root.setOnClickListener {
-                onItemClickListener.onItemClicked(item.id)
-            }
         }
     }
 
@@ -66,11 +63,14 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = asyncListDiffer.currentList[position]
         holder.bind(item, holder.itemView.context)
+        holder.itemView.setOnClickListener {
+            onItemClickListener.onItemClicked(item)
+        }
     }
 
     override fun getItemCount(): Int = asyncListDiffer.currentList.size
 
     interface OnClick {
-        fun onItemClicked(id: Int?)
+        fun onItemClicked(item:DataItem)
     }
 }

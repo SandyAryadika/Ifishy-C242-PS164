@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,67 +7,133 @@
     tools:context=".ui.fragment.history.HistoryFragment"
     android:fillViewport="true">
 
-    
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/error"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/global_page_padding_margin">
-        
-        <TextView
-            android:id="@+id/tvFragment"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/poppins_bold"
-            android:includeFontPadding="false"
-            android:textSize="@dimen/large_text"
-            android:textAlignment="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@string/judul_fragment_history"/>
+        android:layout_height="0dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="@dimen/medium_text"
+        android:visibility="visible"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Error" />
 
-        <com.ifishy.ui.custom.CustomSearchBar
-            android:layout_marginHorizontal="@dimen/global_page_padding_margin"
-            android:id="@+id/searchViewHistory"
-            android:layout_width="0dp"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:includeFontPadding="false"
+        android:text="@string/history_menu"
+        android:layout_marginTop="@dimen/global_page_padding_margin"
+        android:textAlignment="center"
+        android:textSize="@dimen/large_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/global_page_padding_margin"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.ifishy.ui.custom.CustomSearchBar
+                        android:id="@+id/search"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="@color/edit_text_background"
+                        android:hint="@string/hint_search"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/date_button"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/date_button"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/date"
+                        android:background="@drawable/shape_button"
+                        android:backgroundTint="@color/primary_light"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:backgroundTint="@color/edit_text_background"
-            android:hint="@string/hint_search"
+            app:layout_anchor="@id/app_bar"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/date_history"
-            app:layout_constraintTop_toBottomOf="@id/tvFragment" />
+            app:layout_constraintTop_toBottomOf="@id/search">
 
-        <ImageButton
-            android:id="@+id/date_history"
-            android:layout_width="@dimen/image_button"
-            android:layout_height="@dimen/image_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/search_bar"
-            android:backgroundTint="@color/primary_light"
-            android:contentDescription="@string/button_date_for_history"
-            android:outlineProvider="none"
-            android:src="@drawable/date"
-            app:layout_constraintStart_toEndOf="@id/searchViewHistory"
-            app:layout_constraintTop_toBottomOf="@id/tvFragment"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/community_item_shimmer" />
+
+                <include layout="@layout/community_item_shimmer" />
+
+                <include layout="@layout/community_item_shimmer" />
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvHistory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchViewHistory"
-            tools:listitem="@layout/history_item"/>
+            android:id="@+id/history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:visibility="visible"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            tools:listitem="@layout/history_item" />
 
 
-        
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>

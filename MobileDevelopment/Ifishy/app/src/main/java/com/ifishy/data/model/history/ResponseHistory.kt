@@ -13,6 +13,9 @@ data class ResponseHistory(
 
 data class Data(
 
+	@field:SerializedName("treatment")
+	val treatment: String? = null,
+
 	@field:SerializedName("disease")
 	val disease: String? = null,
 
@@ -22,6 +25,12 @@ data class Data(
 	@field:SerializedName("fishImage")
 	val fishImage: String? = null,
 
+	@field:SerializedName("description")
+	val description: String? = null,
+
 	@field:SerializedName("userId")
-	val userId: String? = null
+	val userId: String? = null,
+
+	@field:SerializedName("validation")
+	val validation: String? = null
 )

@@ -5,26 +5,26 @@ import com.google.gson.annotations.SerializedName
 data class ClassificationResponse(
 
 	@field:SerializedName("disease")
-	val disease: String? = null,
+	val disease: String,
 
 	@field:SerializedName("confidence")
-	val confidence: String? = null,
+	val confidence: String,
 
 	@field:SerializedName("details")
-	val details: Details? = null,
+	val details: Details,
 
 	@field:SerializedName("message")
-	val message: String? = null
+	val message: String,
 )
 
 data class Details(
 
 	@field:SerializedName("Validasi")
-	val validasi: String? = null,
+	val validasi: String,
 
 	@field:SerializedName("Rekomendasi Pengobatan")
-	val rekomendasiPengobatan: String? = null,
+	val rekomendasiPengobatan: String,
 
 	@field:SerializedName("Penyebab")
-	val penyebab: String? = null
+	val penyebab: String
 )
