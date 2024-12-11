@@ -1,5 +1,6 @@
 package com.ifishy.ui.activity.detail_post
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.Window
@@ -159,6 +160,18 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                         isLoading(true)
                     }
                     is ResponseState.Success -> {
+                        binding.shareButton.setOnClickListener {
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(
+                                    Intent.EXTRA_TEXT, """
+                                        ${response.data.post.title}
+                                        
+                                        Baca Selengkapnya di : Ifishy
+                                    """.trimIndent())
+                            }
+                            startActivity(Intent.createChooser(intent, "Bagikan menggunakan"))
+                        }
                         isLoading(false)
                         binding.apply {
                             this.title.text = response.data.post.title

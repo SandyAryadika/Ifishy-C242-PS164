@@ -175,7 +175,7 @@ class DetailArticleActivity : AppCompatActivity() {
                                         ${response.data.data.title}
                                         
                                         Baca Selengkapnya di : Ifishy
-                                    """.trimIndent()) // Teks yang ingin dibagikan
+                                    """.trimIndent())
                                 }
                                 startActivity(Intent.createChooser(intent, "Bagikan menggunakan"))
                             }

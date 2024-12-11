@@ -34,10 +34,11 @@ class AdapterFAQ(
 
             binding.answer.visibility = if (faqItem.isExpanded) View.VISIBLE else View.GONE
 
-
+            binding.root.setOnClickListener {
+                onFaqClick(adapterPosition)
+            }
             binding.expandButton.setOnClickListener {
                 onFaqClick(adapterPosition)
-
             }
         }
     }

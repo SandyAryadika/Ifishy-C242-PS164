@@ -45,6 +45,11 @@ class SettingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.faq.setOnClickListener {
+            val intent = Intent(this, FrequentlyAskMenu::class.java)
+            startActivity(intent)
+        }
+
 
 
         preferenceViewModel.theme.observe(this) { isDark ->
