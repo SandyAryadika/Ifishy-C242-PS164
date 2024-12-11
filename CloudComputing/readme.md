@@ -125,7 +125,7 @@ The `.env` file contains sensitive information required for the application to f
 1. Clone the repository from GitHub:
 ```
 git clone https://github.com/SandyAryadika/Ifishy-C242-PS164.git
-cd Ifishy-C242-PS164
+cd Ifishy-C242-PS164/CloudComputing
 ```
 
 ### Step 2: Install Dependencies
