@@ -1,5 +1,6 @@
 # Architecture Cloud Design
-<img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/CloudComputing/Ifishy%20Architecture.png" alt="Ifishy architecture">
+<img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/CloudComputing/Architecture%20Ifishy.png" alt="Ifishy architecture">
+<br>
 The architecture of IFISHY involves:
 
 - Cloud Run: Handles both the backend and Python-based prediction API.
