@@ -30,8 +30,8 @@ Ifishy is an AI-powered mobile application designed to help freshwater fish farm
 ## 👥 Meet the Team:
 Our team is composed of talented individuals from three distinct learning paths:
 3 Machine Learning, 
-2 Mobile Development,
-2 Cloud Computing.
+2 Cloud Computing,
+2 Mobile Development.
 
 | **ID Bangkit**       | **Nama**                                      | **Path**                  |
 |-----------------------|-----------------------------------------------|----------------------------|
