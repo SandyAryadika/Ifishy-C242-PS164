@@ -120,8 +120,8 @@ class HistoryFragment : Fragment() {
                                         .putExtra(HistoryDetailActivity.DISEASE_NAME,item.disease)
                                         .putExtra(HistoryDetailActivity.PERCENTAGE,"${item.confidence}%")
                                         .putExtra(HistoryDetailActivity.DISEASE_CAUSE,item.description)
-                                        .putExtra(HistoryDetailActivity.VALIDATION,item.validation)
-                                        .putExtra(HistoryDetailActivity.DISEASE_IMAGE,item.imageUrl)
+                                        .putExtra(HistoryDetailActivity.VALIDATION,item.validation.toString())
+                                        .putExtra(HistoryDetailActivity.DISEASE_IMAGE,item.fishImage)
                                         .putExtra(HistoryDetailActivity.DISEASE_TREATMENT,item.treatment)
                                     )
                                 }

@@ -143,7 +143,10 @@ interface ApiService {
         @Part fishImage: MultipartBody.Part,
         @Part("userId") userId: RequestBody,
         @Part("disease") disease: RequestBody,
-        @Part("confidence") confidence: RequestBody
+        @Part("confidence") confidence: RequestBody,
+        @Part("description") desc: RequestBody,
+        @Part("treatment") treat: RequestBody,
+        @Part("validation") validation:RequestBody
     ): ResponseHistory
 
     @GET("scan-history/{id}")

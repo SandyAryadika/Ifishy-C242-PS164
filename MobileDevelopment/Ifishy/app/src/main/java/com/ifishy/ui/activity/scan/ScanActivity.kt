@@ -203,6 +203,9 @@ class ScanActivity : AppCompatActivity() {
         userId: Int,
         disease: String,
         confidence: Float,
+        description: String,
+        treatment:String,
+        validation:String,
         image: Uri,
         onSaveComplete: () -> Unit
     ) {
@@ -222,8 +225,11 @@ class ScanActivity : AppCompatActivity() {
         val diseaseRequest = disease.toRequestBody("text/plain".toMediaTypeOrNull())
         val confidenceRequest = confidence.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val userIdRequest = userId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val descriptionRequest = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val treatmentRequest = treatment.toRequestBody("text/plain".toMediaTypeOrNull())
+        val validationRequest = validation.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        historyViewModel.saveScanHistory(fish, userIdRequest, diseaseRequest, confidenceRequest).apply {
+        historyViewModel.saveScanHistory(fish, userIdRequest, diseaseRequest, confidenceRequest,descriptionRequest,treatmentRequest,validationRequest).apply {
             historyViewModel.saveScanHistory.observe(this@ScanActivity) { event ->
                 event.getContentIfNotHandled()?.let { response ->
                     when (response) {
@@ -237,11 +243,13 @@ class ScanActivity : AppCompatActivity() {
                             onSaveComplete()
                         }
                         is ResponseState.Error -> {
+                            resultDialog?.dismiss()
                             Dialog.messageDialog(
                                 supportFragmentManager,
                                 getString(R.string.gagal_simpan),
                                 response.message
                             )
+
                         }
                     }
                 }
@@ -286,30 +294,35 @@ class ScanActivity : AppCompatActivity() {
                                     getString(R.string.ulangi)
                                 )
                             } else {
-                                save(
-                                    userId,
-                                    response.data.disease!!,
-                                    confidenceProcess(response.data.confidence),
-                                    scanViewModel.imageScan!!
-                                ) {
-                                    resultDialog?.dismiss()
-                                    val intent = Intent(this@ScanActivity, ResultActivity::class.java).apply {
-                                        putExtra(ResultActivity.ID, userId)
-                                        putExtra(ResultActivity.DISEASE_IMAGE, scanViewModel.imageScan!!.toString())
-                                        putExtra(ResultActivity.DISEASE_NAME, response.data.disease)
-                                        putExtra(ResultActivity.DISEASE_CAUSE, response.data.details?.penyebab)
-                                        putExtra(ResultActivity.DISEASE_TREATMENT, response.data.details?.rekomendasiPengobatan)
-                                        putExtra(ResultActivity.VALIDATION, response.data.details?.validasi)
-                                        putExtra(ResultActivity.PERCENTAGE, response.data.confidence)
+                                response.data.details.penyebab.let {
+                                    save(
+                                        userId,
+                                        response.data.disease,
+                                        confidenceProcess(response.data.confidence),
+                                        it,
+                                        response.data.details.rekomendasiPengobatan,
+                                        response.data.details.validasi
+                                        ,scanViewModel.imageScan!!
+                                    ) {
+                                        resultDialog?.dismiss()
+                                        val intent = Intent(this@ScanActivity, ResultActivity::class.java).apply {
+                                            putExtra(ResultActivity.ID, userId)
+                                            putExtra(ResultActivity.DISEASE_IMAGE, scanViewModel.imageScan!!.toString())
+                                            putExtra(ResultActivity.DISEASE_NAME, response.data.disease)
+                                            putExtra(ResultActivity.DISEASE_CAUSE, response.data.details.penyebab)
+                                            putExtra(ResultActivity.DISEASE_TREATMENT, response.data.details.rekomendasiPengobatan)
+                                            putExtra(ResultActivity.VALIDATION, response.data.details.validasi)
+                                            putExtra(ResultActivity.PERCENTAGE, response.data.confidence)
+                                        }
+                                        startActivity(intent)
                                     }
-                                    startActivity(intent)
                                 }
                             }
                         }
                         is ResponseState.Error -> {
                             resultDialog?.dismiss()
                             Dialog.messageDialog(supportFragmentManager,
-                                getString(R.string.scanning_error), response.message)
+                                getString(R.string.scanning_error), response.message){}
                         }
                     }
                 }

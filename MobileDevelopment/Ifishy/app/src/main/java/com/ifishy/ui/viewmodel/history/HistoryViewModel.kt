@@ -21,11 +21,13 @@ class HistoryViewModel @Inject constructor(@Named("HistoryRepository") private v
     val saveScanHistory: MutableLiveData<SingleEvent<ResponseState<ResponseHistory>>> = MutableLiveData()
     val getScanHistory: MutableLiveData<ResponseState<ResponseHistoryById>> = MutableLiveData()
 
-    fun saveScanHistory(fishImage: MultipartBody.Part, userId: RequestBody, disease: RequestBody, confidence: RequestBody){
+    fun saveScanHistory(fishImage: MultipartBody.Part, userId: RequestBody, disease: RequestBody, confidence: RequestBody,description: RequestBody,
+                        treatment: RequestBody,
+                        validation: RequestBody){
         viewModelScope.launch {
             saveScanHistory.value = SingleEvent(ResponseState.Loading)
 
-            val response = historyRepository.saveScanHistory(fishImage, userId, disease, confidence)
+            val response = historyRepository.saveScanHistory(fishImage, userId, disease, confidence,description,treatment, validation)
             saveScanHistory.postValue(response)
         }
     }

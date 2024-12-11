@@ -20,7 +20,10 @@ interface HistoryRepository{
     suspend fun saveScanHistory(fishImage: MultipartBody.Part,
                                 userId: RequestBody,
                                 disease: RequestBody,
-                                confidence: RequestBody
+                                confidence: RequestBody,
+                                description: RequestBody,
+                                treatment: RequestBody,
+                                validation: RequestBody
     ): SingleEvent<ResponseState<ResponseHistory>>
 
     suspend fun getScanHistory(userId: Int): ResponseState<ResponseHistoryById>
@@ -31,10 +34,13 @@ class HistoryRepositoryImpl @Inject constructor(private val apiService: ApiServi
         fishImage: MultipartBody.Part,
         userId: RequestBody,
         disease: RequestBody,
-        confidence: RequestBody
+        confidence: RequestBody,
+        description: RequestBody,
+        treatment: RequestBody,
+        validation: RequestBody
     ): SingleEvent<ResponseState<ResponseHistory>>{
         return try {
-            val response = apiService.saveScanHistory(fishImage, userId, disease, confidence)
+            val response = apiService.saveScanHistory(fishImage, userId, disease, confidence,description,treatment,validation)
             SingleEvent(ResponseState.Success(response))
         } catch (e: IOException) {
             SingleEvent(ResponseState.Error(context.getString(R.string.no_internet)))
