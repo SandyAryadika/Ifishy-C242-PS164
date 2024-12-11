@@ -42,27 +42,32 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
 3. Build the Docker Image
 
    Use Docker to build the image:
-   `docker build -t ifishy-api .`
+```
+   docker build -t ifishy-api .
+```
 
 ### Step 3: Push the Docker Image to Artifact Registry
 1. Tag the Docker Image
 
    Tag the Docker image for Artifact Registry in Google Cloud:
-
-   `docker tag ifishy-api REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api`
+```
+   docker tag ifishy-api REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api
+```
 
 3. Push the Docker Image
 
    Push the tagged image to Artifact Registry:
-
-   `docker push REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api`
+```
+   docker push REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api
+```
 
 ### Step 4: Deploy the Image to Cloud Run
 1. Deploy the Container
 
    Use the following command to deploy the Docker image to Cloud Run:
-
-   `gcloud run deploy ifishy-api --image REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api --platform managed --region asia-southeast2 --allow-unauthenticated`
+```
+   gcloud run deploy ifishy-api --image REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api --platform managed --region asia-southeast2 --allow-unauthenticated
+```
 
 3. After the deployment is complete, you will receive a Cloud Run URL which can be used to access the live application.
 
