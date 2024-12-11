@@ -33,7 +33,6 @@ IFISHY utilizes a robust and modern tech stack for its development and deploymen
 - Nodemon: For automatic server reloading during development.
 - Sequelize: ORM for MySQL database management.
 - Axios: For HTTP requests and API integration.
-- Puppeteer & Cheerio: For web scraping and HTML parsing.
 - Multer: To handle file uploads.
 - Form-data: Used for working with `multipart/form-data` in HTTP requests.
 - Cheerio: For scraping web pages and extracting data.
