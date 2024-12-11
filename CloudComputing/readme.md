@@ -119,3 +119,43 @@ The `.env` file contains sensitive information required for the application to f
 - PORT: Application port for server hosting.
 - GCP_BUCKET_NAME: Name of the Cloud Storage bucket for storing images.
 - GCP_CREDENTIALS_PATH: Path to the service account key JSON file.
+
+# Running the IFISHY application both locally and using the URL used
+### Step 1: Clone the Repository
+1. Clone the repository from GitHub:
+```
+git clone https://github.com/SandyAryadika/Ifishy-C242-PS164.git
+cd Ifishy-C242-PS164
+```
+
+### Step 2: Install Dependencies
+1. Run ```npm install``` to install the necessary dependencies listed in the ```package.json```:
+```
+npm install
+```
+
+### Step 3: Configure Environment Variables Locally
+1. Create a ```.env``` file in the root of the project folder if it doesn’t already exist.
+2. Add the following environment variables to the .env file, [here](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#deployment-process) and [the explanation](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#environment-variables-explanation) [and make sure you use the same depedencies!](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#technology-stack). [You can find endpoint documentation here](https://docs.google.com/spreadsheets/d/1AnR8ifyktgZRyspRoGS_CgjIDOoaJQElb6PeBWj_5q8/edit?gid=0#gid=0)
+
+### Step 4: Run the Application Locally
+1. Run the app locally using the following command:
+```
+npm run dev
+```
+2. Access the application in your browser at `http://localhost:8080`.
+
+### Step 5: Test the Local Application
+1. Ensure that the application is running without any errors.
+2. Use tools like Postman or your browser to test the API locally.
+
+### Step 6: Access the Deployed Application on Cloud Run
+1. After successfully deploying your application to Google Cloud Run, you’ll be given a URL for your application.
+2. Access the live application via the Cloud Run URL. This should be provided in the Google Cloud Console after deployment, and it typically looks like:
+```
+Service URL: https://<your-app-id>-<random-id>.a.run.app
+```
+
+### Step 7: Monitor Logs and Performance
+1. Use Google **Cloud Logging** to **monitor** logs and troubleshoot any issues.
+2. Use Google **Cloud Monitoring** to keep track of the performance and health of the application after deployment.
