@@ -1,7 +1,9 @@
-# Ifishy-C242-PS164
+# **Ifishy**
 
-<img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/Bangkit.png" alt="Bangkit Logo" width="600/">
-<img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/Ifishy.png" alt="Ifishy Logo" width="200"/>
+<p align="center">
+  <img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/Bangkit.png" alt="Bangkit Logo" width="350"/>
+  <img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/Ifishy.png" alt="Ifishy Logo" width="150"/>
+</p>
 
 Ifishy is an AI-powered mobile application designed to help freshwater fish farmers detect and manage fish diseases. The app uses a camera-based system to identify various diseases such as Aeromoniasis, Bacterial Gill Disease, and White Tail Disease through real-time image analysis. In addition to disease detection, the app offers treatment recommendations and preventive measures to support sustainable and productive fish farming. Our project integrates machine learning, mobile development, and cloud computing to create a reliable, scalable solution for farmers.
 
@@ -11,6 +13,19 @@ Ifishy is an AI-powered mobile application designed to help freshwater fish farm
 - Articles about the ocean and fish
 - Image-based fish disease scans
 - Scan history
+
+## Tech Stack
+
+| Domain              | Technology                                                                                                   |
+|---------------------|-------------------------------------------------------------------------------------------------------------|
+| **Machine Learning**| <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/tensorflow-auto.svg" alt="TensorFlow" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/matplotlib-auto.svg" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/python-auto.svg" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/numpy-auto.svg" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/fastapi.svg" width="40" height="40"> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white" alt="Keras"> |
+| **Cloud Computing** | <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/nodejs-auto.svg" alt="Node.js" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/expressjs-auto.svg" alt="Express.js" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/gcp-auto.svg" alt="Google Cloud" width="40" height="40"> <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Docker.svg" alt="Docker" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/postman.svg" width="40" height="40"> <img src="https://camo.githubusercontent.com/ae9cb24826c35627ed60348918678db59c45b9e212c24874b62bd2515a272551/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d436c6f756453514c2d3434373941313f7374796c653d666c61742d737175617265266c6f676f3d436c6f756453514c266c6f676f436f6c6f723d7768697465" alt="Cloud SQL">|
+| **Mobile Development** | <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/figma-auto.svg" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/kotlin-auto.svg" alt="Kotlin" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/androidstudio-auto.svg" alt="Android" width="40" height="40"> <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/ngrok.svg" width="40" height="40"> |
+
+## Dataset
+
+| <img src="https://github.com/LelouchFR/skill-icons/blob/main/assets/kaggle-auto.svg" width="40" height="40">             | [dataset](https://www.kaggle.com/datasets/subirbiswas19/freshwater-fish-disease-aquaculture-in-south-asia)                                                                                                  |
+|---------------------|-------------------------------------------------------------------------------------------------------------|
 
 ## 👥 Meet the Team:
 Our team is composed of talented individuals from three distinct learning paths:
