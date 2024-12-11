@@ -19,8 +19,10 @@ import com.ifishy.data.preference.PreferenceViewModel
 import com.ifishy.databinding.FragmentHistoryBinding
 import com.ifishy.ui.activity.history.HistoryDetailActivity
 import com.ifishy.ui.adapter.history.HistoryAdapter
+import com.ifishy.ui.fragment.date.DatePickerFragment
 import com.ifishy.ui.viewmodel.history.HistoryViewModel
 import com.ifishy.ui.viewmodel.profile.ProfileViewModel
+import com.ifishy.utils.Date
 import com.ifishy.utils.ResponseState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,8 +35,7 @@ class HistoryFragment : Fragment() {
     private val preferenceViewModel: PreferenceViewModel by viewModels()
     private val historyViewModel: HistoryViewModel by viewModels()
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
-    private var listHistory: List<DataItem>? = null
-    private var searchValue: String? = null
+    private var lisHistory: List<DataItem>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,18 +54,24 @@ class HistoryFragment : Fragment() {
             }
         }
 
+        binding.dateButton.setOnClickListener {
+            val datePickerFragment = DatePickerFragment { selectedDate ->
+                filterByDate(selectedDate)
+            }
+            datePickerFragment.show(parentFragmentManager, DatePickerFragment::class.java.simpleName)
+        }
+
         binding.search.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(search: Editable?) {
                 search.let {
-                    searchValue = search.toString()
                     if (search.isNullOrEmpty()) {
-                        listHistory?.let {
+                        lisHistory?.let {
                             adapter.submitData(it)
                         }
                     } else {
-                        listHistory?.filter {
+                        lisHistory?.filter {
                             it.disease?.trim()?.contains(search.trim(), true) == true
                         }
                             ?.let { data -> adapter.submitData(data) }
@@ -73,7 +80,6 @@ class HistoryFragment : Fragment() {
             }
 
         })
-
 
     }
 
@@ -95,6 +101,25 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    private fun filterByDate(selectedDate: String) {
+        lisHistory?.let { historyList ->
+
+            val filteredData = historyList.filter { Date.formatHistoryDate(it.scanTimestamp) == selectedDate }
+
+            if (filteredData.isNotEmpty()) {
+                binding.history.visibility = View.VISIBLE
+                adapter.submitData(filteredData)
+                binding.error.visibility = View.GONE
+            } else {
+                binding.history.visibility = View.GONE
+                binding.error.apply {
+                    visibility = View.VISIBLE
+                    text = context.getString(R.string.tidak_ada_data_untuk_tanggal, Date.beautifyDate(selectedDate))
+                }
+            }
+        }
+    }
+
     private fun getHistory(userId:Int){
         historyViewModel.getScanHistory(userId).apply {
             historyViewModel.getScanHistory.observe(viewLifecycleOwner){response->
@@ -113,6 +138,7 @@ class HistoryFragment : Fragment() {
                         }else{
                             binding.history.adapter = adapter
                             binding.history.layoutManager = LinearLayoutManager(requireActivity())
+                            lisHistory = response.data.data
                             adapter.submitData(response.data.data)
                             adapter.setOnItemClickListener(object : HistoryAdapter.OnClick{
                                 override fun onItemClicked(item: DataItem) {

@@ -141,5 +141,8 @@
     <string name="gagal_simpan">Gagal menyimpan ke riwayat</string>
     <string name="disimpan_di_riwayat">Disimpan di riwayat</string>
     <string name="belum_ada_history">Belum ada history</string>
+    <string name="tidak_ada_data_untuk_tanggal">Tidak ada data untuk tanggal %1$s</string>
+    <string name="pilih">Pilih</string>
+    <string name="batal">Batal</string>
 
 </resources>
