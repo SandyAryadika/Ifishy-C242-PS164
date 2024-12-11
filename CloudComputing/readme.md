@@ -159,4 +159,3 @@ Service URL: https://<your-app-id>-<random-id>.a.run.app
 
 ### Step 7: Monitor Logs and Performance
 1. Use Google **Cloud Logging** to **monitor** logs and troubleshoot any issues.
-2. Use Google **Cloud Monitoring** to keep track of the performance and health of the application after deployment.
