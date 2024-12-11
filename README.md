@@ -42,3 +42,11 @@ Our team is composed of talented individuals from three distinct learning paths:
 | C296B4KY4062          | Sandy Aryadika Widodo                         | Cloud Computing            |
 | A296B4KY0828          | Bayu Setiawan                                 | Mobile Development         |
 | A296B4KY3665          | Rajawali Shaktika Anugrah Prasetya            | Mobile Development         |
+
+## Documentation per Path:
+
+Machine Learning
+
+[Cloud Computing](https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/CloudComputing/readme.md)
+
+Mobile Development
