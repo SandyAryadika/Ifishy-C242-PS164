@@ -50,7 +50,7 @@ IFISHY utilizes a robust and modern tech stack for its development and deploymen
 - bcrypt: To hash user passwords.
 - dotenv: To manage environment variables securely.
 
-# Deployment Process
+# Deployment Process to Cloud Run via Docker and Artifact Registry
 Below are the steps to deploy the IFISHY application using Google Cloud Platform:
 
 ### Step 1: Prepare the Environment
