@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
+import com.airbnb.lottie.LottieAnimationView
 import com.ifishy.R
 import com.ifishy.ui.activity.opening.OpeningActivity
 
@@ -32,6 +33,10 @@ class OnBoardingMotionLayout @JvmOverloads constructor(
 
             override fun onTransitionCompleted(p0: MotionLayout?, cuurentId: Int) {
                 animated = false
+                if(cuurentId == R.id.end){
+                    val lottieView = findViewById<LottieAnimationView>(R.id.anim_2)
+                    lottieView?.playAnimation()
+                }
                 if (cuurentId == R.id.last){
                     val intent = Intent(context, OpeningActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
