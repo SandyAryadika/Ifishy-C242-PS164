@@ -3,8 +3,10 @@ package com.ifishy.ui.activity.onboarding
 
 import android.os.Bundle
 import android.view.Window
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ifishy.R
@@ -19,5 +21,6 @@ class OnBoardingActivity : AppCompatActivity() {
         supportActionBar?.hide()
         binding = ActivityOnBoardingBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_on_boarding)
+
     }
 }

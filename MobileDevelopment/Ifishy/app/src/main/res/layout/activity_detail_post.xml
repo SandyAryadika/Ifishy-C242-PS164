@@ -179,7 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_button"
-            android:drawableLeft="@drawable/comments"
+            android:drawableStart="@drawable/comments"
             android:drawableTint="@color/white"
             android:fontFamily="@font/poppins_bold"
             android:paddingHorizontal="30dp"

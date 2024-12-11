@@ -286,7 +286,7 @@ class ScanActivity : AppCompatActivity() {
                             resultDialog = Dialog.resultDialog(supportFragmentManager, scanViewModel.imageScan!!)
                         }
                         is ResponseState.Success -> {
-                            if (confidenceProcess(response.data.confidence!!) < 40) {
+                            if (confidenceProcess(response.data.confidence) < 40) {
                                 resultDialog?.dismiss()
                                 Dialog.messageDialog(supportFragmentManager,
                                     getString(R.string.scanning_error),
