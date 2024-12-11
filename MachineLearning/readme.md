@@ -39,7 +39,7 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
    CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-3. Build the Docker Image
+2. Build the Docker Image
 
    Use Docker to build the image:
 ```
@@ -54,7 +54,7 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
    docker tag ifishy-api REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api
 ```
 
-3. Push the Docker Image
+2. Push the Docker Image
 
    Push the tagged image to Artifact Registry:
 ```
@@ -69,7 +69,7 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
    gcloud run deploy ifishy-api --image REGION-docker.pkg.dev/PROJECT-ID/REPOSITORY/ifishy-api --platform managed --region asia-southeast2 --allow-unauthenticated
 ```
 
-3. After the deployment is complete, you will receive a Cloud Run URL which can be used to access the live application.
+2. After the deployment is complete, you will receive a Cloud Run URL which can be used to access the live application.
 
 ### Step 5: Monitor and Test
 1. Monitor Logs
