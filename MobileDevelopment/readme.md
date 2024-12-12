@@ -1,5 +1,5 @@
 # Architecture Mobile Development
-
+<img src="https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/MobileDevelopment/architec.png" />
 
 # Technology Stack
 - Android Studio:  the official Integrated Development Environment (IDE) for Android app development.
