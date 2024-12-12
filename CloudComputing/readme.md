@@ -137,7 +137,7 @@ npm install
 
 ### Step 3: Configure Environment Variables Locally
 1. Create a ```.env``` file in the root of the project folder if it doesn’t already exist.
-2. Add the following environment variables to the .env file, [here](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#deployment-process) and [the explanation](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#environment-variables-explanation) [and make sure you use the same depedencies!](https://github.com/SandyAryadika/Ifishy-C242-PS164/edit/main/CloudComputing/readme.md#technology-stack). [You can find endpoint documentation here](https://docs.google.com/spreadsheets/d/1AnR8ifyktgZRyspRoGS_CgjIDOoaJQElb6PeBWj_5q8/edit?gid=0#gid=0)
+2. Add the following environment variables to the .env file, [here](https://github.com/SandyAryadika/Ifishy-C242-PS164/tree/main/CloudComputing#deployment-process-to-cloud-run-via-docker-and-artifact-registry) and [the explanation](https://github.com/SandyAryadika/Ifishy-C242-PS164/tree/main/CloudComputing#environment-variables-explanation) [and make sure you use the same depedencies!](https://github.com/SandyAryadika/Ifishy-C242-PS164/tree/main/CloudComputing#technology-stack). [You can find endpoint documentation here](https://docs.google.com/spreadsheets/d/1AnR8ifyktgZRyspRoGS_CgjIDOoaJQElb6PeBWj_5q8/edit?gid=0#gid=0)
 
 ### Step 4: Run the Application Locally
 1. Run the app locally using the following command:
