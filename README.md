@@ -49,4 +49,4 @@ Our team is composed of talented individuals from three distinct learning paths:
 
 [Cloud Computing](https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/CloudComputing/readme.md)
 
-Mobile Development
+[Mobile Development](https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/MobileDevelopment/readme.md)
