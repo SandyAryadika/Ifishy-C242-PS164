@@ -16,7 +16,7 @@ IFISHY uses a modern and scalable technology stack for its development and deplo
 - TensorFlow: Open-source machine learning library for building and deploying machine learning models for fish disease detection.
 - Pillow: Image processing library to handle image manipulation and format conversion.
 - NumPy: A powerful library for numerical computing in Python, used for handling large, multi-dimensional arrays.
-- python-multipart: A library to handle file uploads via multipart/form-data encoding.
+- python-multipart: A library to handle file uploads via `multipart/form-data` encoding.
 
 ### Google Cloud Platform (GCP)
 - Cloud Run: Fully managed compute platform to deploy containerized applications, including backend APIs and prediction models.
@@ -28,13 +28,16 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
 
 ### Step 1: Prepare the Environment
 1. Install Dependencies
-   Run the following command to install all required libraries from requirements.txt:
+
+   Run the following command to install all required libraries from `requirements.txt`:
+```
    pip install -r requirements.txt
+```
 
 ### Step 2: Create a Docker Image
 1. Dockerfile
 
-   Create a Dockerfile in the root folder with the following configuration:
+   Create a `Dockerfile` in the root folder with the following configuration:
 ```
    FROM python:3.12-slim
    WORKDIR /app
@@ -80,3 +83,64 @@ Here are the steps to deploy the IFISHY application to Google Cloud Run using Do
 ### Step 5: Monitor and Test
 1. Monitor Logs
    Use Google Cloud Logging to monitor the logs and troubleshoot any errors.
+
+# Running the IFISHY Application Locally and Using the URL
+
+### Step 1: Clone the Repository
+1. Clone the repository from GitHub:
+```
+git clone https://github.com/SandyAryadika/Ifishy-C242-PS164.git
+cd Ifishy-C242-PS164/MachineLearning
+```
+
+### Step 2: Install Dependencies
+1. Run the following command to install the necessary dependencies listed in requirements.txt:
+```
+pip install -r requirements.txt
+```
+
+### Step 3: Build and Run the Application Locally Using Docker Desktop
+1. Build the Docker Image
+
+   Run the following command to build the Docker image:
+```
+docker build -t ifishy-api .
+```
+
+2. Run the Docker Container
+
+   Use Docker Desktop to run the container:
+```
+docker run -d -p 8080:8080 ifishy-api
+```
+
+3. Verify the Application: Access the application in your browser at `http://localhost:8080`.
+
+### Step 4: Test the Local Application Using Postman
+1. You can download Postman [here](https://www.postman.com/downloads/).
+
+2. Ensure that the application is running without any errors. You can verify this by checking the logs or confirming that the Docker container is running correctly with the following command:
+```
+docker ps
+```
+
+3. Open Postman and test the API endpoints locally:
+   - Example: Test the `/predict` endpoint to check fish disease prediction functionality.
+   - Use the local URL: `http://localhost:8080/predict` for making requests.
+   - Tip: If the endpoint requires a file upload (like an image for prediction), ensure that you set the request type to `POST` and select the appropriate file in the request body.
+
+4. Check Logs in Docker Desktop:
+   - Open Docker Desktop and go to the "Containers/Apps" tab.
+   - Find your running container (`ifishy-api`) and click on it.
+   - You should see the logs of the running container displayed there. This is useful for troubleshooting any issues while the app is running locally.
+
+### Step 5: Access the Deployed Application on Cloud Run
+1. After successfully deploying your application to Google Cloud Run, you will be given a URL for your application.
+
+2. Access the live application via the Cloud Run URL. The URL should look something like:
+```
+Service URL: https://<your-app-id>-<random-id>.a.run.app
+```
+
+### Step 7: Monitor Logs
+1. Use **Google Cloud Logging** to monitor the logs and troubleshoot any issues during deployment or runtime.
