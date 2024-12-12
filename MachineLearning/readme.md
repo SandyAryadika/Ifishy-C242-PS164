@@ -17,6 +17,7 @@ IFISHY uses a modern and scalable technology stack for its development and deplo
 - Pillow: Image processing library to handle image manipulation and format conversion.
 - NumPy: A powerful library for numerical computing in Python, used for handling large, multi-dimensional arrays.
 - python-multipart: A library to handle file uploads via `multipart/form-data` encoding.
+- Keras: A simple API for neural networks.
 
 ### Google Cloud Platform (GCP)
 - Cloud Run: Fully managed compute platform to deploy containerized applications, including backend APIs and prediction models.
