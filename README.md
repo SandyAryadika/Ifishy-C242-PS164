@@ -45,7 +45,7 @@ Our team is composed of talented individuals from three distinct learning paths:
 
 ## Documentation per Path:
 
-Machine Learning
+[Machine Learning](https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/MachineLearning/readme.md)
 
 [Cloud Computing](https://github.com/SandyAryadika/Ifishy-C242-PS164/blob/main/CloudComputing/readme.md)
 
