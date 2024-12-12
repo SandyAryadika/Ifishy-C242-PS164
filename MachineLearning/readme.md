@@ -100,21 +100,23 @@ pip install -r requirements.txt
 ```
 
 ### Step 3: Build and Run the Application Locally Using Docker Desktop
-1. Build the Docker Image
+1. You can download Docker Desktop [here](https://docs.docker.com/get-started/get-docker/).
+
+2. Build the Docker Image
 
    Run the following command to build the Docker image:
 ```
 docker build -t ifishy-api .
 ```
 
-2. Run the Docker Container
+3. Run the Docker Container
 
    Use Docker Desktop to run the container:
 ```
 docker run -d -p 8080:8080 ifishy-api
 ```
 
-3. Verify the Application: Access the application in your browser at `http://localhost:8080`.
+4. Verify the Application: Access the application in your browser at `http://localhost:8080`.
 
 ### Step 4: Test the Local Application Using Postman
 1. You can download Postman [here](https://www.postman.com/downloads/).
