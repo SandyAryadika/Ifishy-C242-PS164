@@ -94,7 +94,7 @@ cd Ifishy-C242-PS164/MachineLearning
 ```
 
 ### Step 2: Install Dependencies
-1. Run the following command to install the necessary dependencies listed in requirements.txt:
+1. Run the following command to install the necessary dependencies listed in `requirements.txt`:
 ```
 pip install -r requirements.txt
 ```
@@ -142,5 +142,5 @@ docker ps
 Service URL: https://<your-app-id>-<random-id>.a.run.app
 ```
 
-### Step 7: Monitor Logs
+### Step 6: Monitor Logs
 1. Use **Google Cloud Logging** to monitor the logs and troubleshoot any issues during deployment or runtime.
